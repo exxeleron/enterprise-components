@@ -1,0 +1,8 @@
+------------------------------------------------------------------------------
+  enterprise-components 3.0 [2014.05.16]
+------------------------------------------------------------------------------
+
+  - Components: accessPoint, dist, feedCsv, hdb, mock, rdb, tickHF, authentication, eodMng, feedMng, hk, monitor, stream, tickLF
+  - Libraries: cfgRdr, qsl
+
+------------------------------------------------------------------------------
