@@ -1,0 +1,35 @@
+#/E/ [group:core]
+#/E/   [[core.wdb]]
+#/E/     type = q:wdb
+#/E/     qsd = stream.qsd, streamWdb.qsd
+#/E/     port = ${basePort} + 30
+#/E/     command = "q stream.q -lib streamWdb.q -w 30000"
+#/E/     cfg.dataDumpInterval = 60
+#/E/
+#/E/ [table:trade]
+#/E/   [[in.tickHF]]
+#/E/
+#/E/   [[core.wdb]]
+#/E/     srcTickHF = in.tickHF
+#/E/     hdbConn = core.hdb
+#/E/
+#/E/   [[core.hdb]]
+
+
+[group]
+   #/C/ Frequency of data dump in minutes.
+   #/C/ Data dump procedure is storing the data from .cache namespace to temporary splayed location.
+   #/E/ cfg.dataDumpInterval = 10
+   cfg.dataDumpInterval = <type(INT), greater(0), default(10)>
+   
+   #/C/ eod configuration - Triggers fill of missing tables in hdb after eod
+   cfg.fillMissingTabsHdb = <type(BOOLEAN), default(TRUE)>
+   
+   #/C/ eod configuration - Triggers reload of hdb after eod
+   cfg.reloadHdb = <type(BOOLEAN), default(TRUE)>
+
+[table]
+   #/C/ eod configuration - hdb name
+   #/C/ Note: only one hdbConn within one streamWdb is supported at the moment.
+   hdbConn = <type(SYMBOL), isComponent()>
+   

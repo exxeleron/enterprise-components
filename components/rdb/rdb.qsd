@@ -1,0 +1,47 @@
+#/S/ Configuration definition for rdb component:
+
+#/E/ [table:quote]
+#/E/   [[kdb.rdb]]
+#/E/   serverSrc = kdb.tickHF
+#/E/   hdbConn = kdb.hdb
+#/E/   eodClear = 1
+#/E/   eodPerform = 1
+
+[group]
+  #/C/ connection timeout
+  #/E/ cfg.timeout = 100
+  cfg.timeout = <type(INT), default(100)>
+  #/C/ flag for reloading hdb after eod
+  #/E/ cfg.reloadHdb = 1
+  cfg.reloadHdb = <type(BOOLEAN), default(1)>
+  #/C/ flag for filling missing tables in hdb after eod
+  #/E/ cfg.fillMissingTabsHdb = 1
+  cfg.fillMissingTabsHdb = <type(BOOLEAN), default(1)>
+  #/C/ display warning if audit for synchronous communication is turned on
+  cfg.warnIfSyncAccess = <type(BOOLEAN), default(1)>
+  #/C/ display warning if audit for asynchronous communication is turned on
+  cfg.warnIfAsyncAccess = <type(BOOLEAN), default(1)>
+  #/C/ display warning if authorization is turned on
+  cfg.warnIfAuthorization = <type(BOOLEAN), default(1)>
+[table]
+  #/C/ connection settings for hdb, path to hdb location is taken automatically from system.cfg (field: dataPath) for given hdb name
+  #/E/ hdbConn = kdb.hdb
+  hdbConn = <type(COMPONENT), isComponent()>
+  #/C/ flag for clearing table after eod
+  #/E/ eodClear = 1
+  eodClear = <type(BOOLEAN) default(1)>
+  #/C/ flag for performing eod
+  #/E/ eodPerform = 1
+  eodPerform = <type(BOOLEAN) default(1)>
+[sysTable]
+  #/C/ connection settings for hdb
+  #/E/ hdbConn = kdb.hdb
+  hdbConn = <type(COMPONENT), isComponent()>
+  #/C/ flag for clearing table after eod
+  #/E/ eodClear = 1
+  eodClear = <type(BOOLEAN) default(1)>
+  #/C/ flag for performing eod
+  #/E/ eodPerform = 1
+  eodPerform = <type(BOOLEAN) default(1)>
+[user]
+[userGroup]

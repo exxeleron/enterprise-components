@@ -1,0 +1,15 @@
+#/C/ plugin configuration for compression of the splayed partitions; 
+#/C/    *param1* - logical block size, 2 to the power of N, where N is between 12 and 20; 
+#/C/    *param2* - compression algorithm, one of the following: *0* (none), *1* (kdb+ ipc), *2* (gzip); 
+#/C/    *param3* - compression level between 0 and 9 (valid only for gzip, use 0 for other algorithms); 
+#/C/    for more details please visit http://code.kx.com/wiki/Cookbook/FileCompression
+
+#/E/ [table:quote]
+#/E/    [[rtr.hkCompression]]
+#/E/    hdbHousekeeping = ((action(compress), dayInPast(30), param1(17), param2(2), param3(6)))
+
+[group]
+[table]
+[sysTable]
+[user]
+[userGroup]

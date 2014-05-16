@@ -1,0 +1,14 @@
+[group]
+  #/C/ journal prefix, journal name consists of prefix and current date
+  #/E/ cfg.jrnPrefix = in.tickHF
+  cfg.jrnPrefix = <type(STRING), default(${EC_COMPONENT_ID})>
+  #/C/ path to the journal file
+  #/E/ cfg.dataPath = /data/in.tickHF/
+  cfg.dataPath = <type(PATH), default(${dataPath}/)>
+  #/C/ aggregation interval, messages are cached and published on given time interval
+  #/E/ cfg.aggrInterval = 100
+  cfg.aggrInterval = <type(INT), default(NULL)>
+[table]
+[sysTable]  
+[user]
+[userGroup]

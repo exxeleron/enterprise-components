@@ -1,0 +1,118 @@
+#/S/ Definition for central configuration file system.cfg:
+
+  EC_COMPONENT_INSTANCE = <type(STRING), default("")>
+  EC_COMPONENT_TYPE = <type(STRING), default("")>
+  EC_COMPONENT_PKG = <type(STRING), default("")>
+
+#/C/ Working directory, component specific
+binPath = <type(PATH)>
+#/C/ Data directory, component specific
+dataPath = <type(PATH)>
+#/C/ Log files directory. Directory for standard output and standard error redirections
+logPath = <type(PATH)>
+#/C/ Base port value.
+basePort = <type(PORT)>
+#/C/ Memory cap for q process in MB (q -w command line option; see code.kx.com for more details).
+memCap = <type(INT), default(NULL)>
+#/C/ Run system in UTC or local (LOCAL) time.
+#/C/ This will affect messages' timestamping, log messages' timestamping and log rotating, timer callbacks and end-of-day broadcasting.
+#/C/ To enable KDB_TIMESTAMP_MODE in the custom code there is need to use interface functions described in <sl.q>
+timestampMode = <type(SYMBOL), in(LOCAL, UTC), default(UTC)>
+#/C/ End-of-day delay. If greater than 00:00:00.000 will delay end-of-day procedure. 
+#/C/ E.g. will enable late ticks handling and delay eod broadcasting in tickHF(<tickHF.q>), delay end-of-day procedure on tickLF (<tickLF.q>), rdb (<rdb.q>), stream (<stream.q>), eodMng (<eodMng.q>) and hdb queries that are using interface functions from  <query.q>.
+#/C/ To get the current date that includes EC_EOD_DELAY there is need to use <.sl.eodSyncedDate[]> function described in <sl.q>
+eodDelay = <type(TIME), default(00:00:00.000)>
+
+#/C/ Wait period for process startup
+startWait = <type(FLOAT)>
+#/C/ Wait period for process stop
+stopWait = <type(FLOAT)>
+
+#/C/ qsl library path. List of directories searched for requested q modules
+libPath = <type(LIST PATH), pathExist()>
+#/C/ qsl shared object path. List of directories searched for shared objects
+dllPath = <type(LIST PATH), pathExist()>
+#/C/ qsl configuration path. Directory searched for configuration files
+etcPath = <type(PATH), pathExist()>
+
+#/C/ Logging level. Sets the log level (one of DEBUG, INFO, WARN, ERROR or FATAL)
+logLevel = <type(SYMBOL), in(DEBUG, INFO, WARN, ERROR, FATAL)>
+#/C/ Destination (or collection of destinations) where the log is written.
+#/C/ Currently only FILE, CONSOLE and STDERR are supported.
+#/C/ 
+#/C/ CONSOLE - write log messages to the console
+#/C/ FILE - write messages to a log file in $logPath.
+#/C/ STDERR - write ERROR and FATAL level messages to the standard error output and ignores messages on other levels. 
+#/C/ 
+#/C/ Destinations are separated by commas in the environment variable
+logDest = <type(LIST SYMBOL), in(CONSOLE, FILE, STDERR)>
+#/C/ Time for log rotate (specified according to KDB_TIMESTAMP_MODE)
+logRotate = <type(TIME), default(NULL)>
+
+#/C/ CPU affinity settings. Can be overridden on group or component level. Multiple CPU number are allowed.
+cpuAffinity = <type(LIST INT)>
+
+#/C/ User-access option to use. See u/U command line options on <http://code.kx.com>
+uOpt = <type(STRING), default(NULL)>
+#/C/ User-access file to use
+uFile = <type(PATH), default(NULL)>
+
+#/C/ Location to store event files. (see <event.q> library)
+eventPath = <type(PATH)>
+
+#/C/ List of variable patterns to export. Configuration variables matching patterns specified here
+#/C/ are automatically added to the environment created for component execution.
+export = <type(LIST SYMBOL)>
+
+#/C/ Actions to perform during housekeeping. Housekeeping is described in <hk.q>.
+housekeeping = <type(ARRAY), model(action(SYMBOL), dir(PATH), age(INT), pattern(SYMBOL)), default(())>
+
+#/C/ If set to TRUE and qsl/sub_dist.q library loaded, subscription to dist server will be done automatically, 
+#/C/ otherwise <.sub.init[]> must be invoked in the custom code
+subAutoSubscribe = <type(BOOLEAN), default(TRUE)>
+
+#/C/ Group definition. Grouping allows creating collections of components for easier reference.
+#/C/ Groups can be passed as arguments to `yak' start/stop/info commands.
+#/E/ [group:core]
+#/E/   [[rtr.feed]]
+#/E/   # component instance parameters go here
+#/E/   [[rtr.tick]]
+#/E/   # ...
+#/E/   [[rtr.rdb]]
+#/E/   # ...
+#/E/   [[rtr.hdb]]
+#/E/   # ...
+[group:<type(SYMBOL)>]
+#/C/ Component instance definition. Name of the instance should consist of 'namespace' prefix. 
+#/C/ Namespaces can be used to group similar functionalities (for instance input, batches, admin)
+#/E/ [[rtr.hdb]]                       # give a name
+#/E/   command = "q"                   # run command, chdir to $binPath first
+#/E/   type = q:hdb/hdb                # this is a q-based process
+#/E/   requires = rtr.rdb              # start only if rtr.rdb is running
+#/E/   port = ${basePort} + 10         # simple arithmetic operations are allowed
+#/E/   multithreaded = TRUE            # give hdb negative port number = multithreaded mode
+  [[<type(SYMBOL), isComponent()>]]
+
+  #/C/ Type of instance. Mandatory value describing type of the component. 
+  #/C/ Type consists of colon-separated typeid and description (description part is not used).
+  #/C/ 
+  #/C/ c: - external connection. Definition of a component deployed on some other site. Used for connections only.
+  #/C/ q: - q-based process definition.
+  #/C/ cmd: - external command. Used when integrating external tools into the system.
+  type = <type(COMPONENT_TYPE), isComponentType()>
+
+  #/C/ List of additional libraries
+  libs = <type(COMPONENT_TYPE), default(NULL)>
+
+  #/C/ List of required component dependencies. If not empty, listed components have to run before starting this instance.
+  requires =  <type(LIST SYMBOL), isComponent(), default()>
+  #/C/ Port number (type q: instances only). Basic arithmetic operations are allowed. 
+  port = <type(PORT)>
+  #/C/ Command to execute. Command starting defined instance (valid only for q: and cmd: types)
+  command = <type(STRING), default()>
+  #/C/ Host name (type c: instances only). Valid only for external connections connections (type=c)
+  host = <type(STRING), default()>
+  #/C/ Multithreaded execution mode (type q: instances only). Run configured instance with negative port 
+  #/C/ as described on <http://code.kx.com/wiki/Cookbook/MultithreadedInputMode>
+  multithreaded = <type(BOOLEAN), default(FALSE)>
+

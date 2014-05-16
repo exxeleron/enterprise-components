@@ -1,0 +1,56 @@
+#/E/ [group:core]
+#/E/    [[rtr.eodMng]]
+#/E/    cfg.rdbName = rtr.rdb
+#/E/    cfg.eodMngList = rtr.eodMng, prod2.eodMng, prod3.eodMng
+#/E/    cfg.hdbConn = rtr.hdb
+#/E/    cfg.syncProcessName = rtr.hdbSync
+#/E/    cfg.hkProcessName = rtr.hdbHk
+
+[group]
+  #/C/ Time (in milliseconds, default at 24h) stating how long status can stay in 'idle', after this value is exceeded status is switched to 'error'
+  #/E/ cfg.idleHangTime = 86400000
+  cfg.idleHangTime = <type(LONG), default(86400000)>
+  #/C/ Time (in milliseconds, default at 6h) stating how long status can stay in 'eod_during', after this value is exceeded status is switched to 'error'
+  #/E/ cfg.eodHangTime = 21600000
+  cfg.eodHangTime = <type(LONG), default(21600000)>
+  #/C/ Internal timer (in milliseconds); values below 5000 (5 seconds) should not be used as unexpected behaviour may occur; all values should be the same for all sites
+  #/E/ cfg.timer = 60000
+  cfg.timer = <type(INT), default(60000), greater(4999)>
+  #/C/ Timeout (in milliseconds) for connections with other eodMng applications
+  #/E/ cfg.timeout = 100
+  cfg.timeout = <type(INT), default(100)>
+  #/C/ Path to 'communication directory', all temporary status and config files will be placed there
+  #/E/ cfg.comDir = ${dataPath}
+  cfg.comDir  = <type(PATH), default(${dataPath})>
+  #/C/ Name of rdb process to be monitored
+  #/E/ cfg.rdbName = rtr.rdb
+  cfg.rdbName = <type(STRING), isComponent()> 
+  #/C/ Information required for data synchronization, array of columns : (eodMng(EOD_MNG_PROCESS_NAME), rdb(RDB_PROCESS_NAME), hbd(HDB_PROCESS_NAME)); 
+  #/C/ HDB_PROCESS_NAME must have defined $dataPath value as it is used to validate data synchronisation; 
+  #/C/ if array contains more than one host, sync.cfg file is required
+  #/E/ cfg.eodMngList = ((eodMng(rtr.eodMng),   rdb(rtr.rdb),   hdb(rtr.hdb)), 
+  #/E/                   (eodMng(prod2.eodMng), rdb(prod2.rdb), hdb(prod2.hdb)), 
+  #/E/                   (eodMng(prod3.eodMn),  rdb(prod3.rdb), hdb(prod3.hdb)))
+  cfg.eodMngList = <type(ARRAY), model(rdb(SYMBOL), eodMng(SYMBOL), hdb(SYMBOL))>
+  #/C/ eodMng list with cold setup, in case of active there is no need to add this to the system.cfg file
+  #/E/ cfg.eodMngListCold = rtr.eodMng
+  cfg.eodMngListCold = <type(LIST SYMBOL), isComponent(), default()> 
+  #/C/ Name of hdb that is managed by eodMng (required for reloading hdb)
+  #/E/ cfg.hdbConn = rtr.hdb
+  cfg.hdbConn = <type(SYMBOL), isComponent()>
+  #/C/ Name od the synchronization process (type = q:hdbSync)
+  #/E/ cfg.syncProcessName = rtr.sync
+  cfg.syncProcessName = <type(STRING), isComponent()>
+  #/C/ Name od the housekeeping process (type = q:hdbHk)
+  #/E/ cfg.hkProcessName = rtr.hkConflation
+  cfg.hkProcessName = <type(STRING), isComponent()> 
+  #/C/ Directory for backup sym files
+  #/E/ cfg.symDir = ${dataPath}/backup
+  cfg.symDir = <type(PATH), default(${dataPath}/backup)>
+      #/C/ Describes order of synchronisation; variable needs to be defined in sync.cfg
+  #/E/ cfg.eodOrder = core.eodMng, prod2.eodMng
+  cfg.eodOrder = <type(LIST SYMBOL), isComponent(), syncOnly()>
+[table]
+[sysTable]
+[user]
+[userGroup]

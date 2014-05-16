@@ -1,0 +1,6 @@
+[group]
+	cfg.eodPath = <type(PATH), default(hdb)>
+[table]
+[sysTable:sysUniverse]
+[user]
+[userGroup]

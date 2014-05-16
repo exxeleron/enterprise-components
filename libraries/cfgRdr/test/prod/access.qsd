@@ -1,0 +1,16 @@
+#/C/ stop words definiotion, any custom list shoudl be setup at the beginning of the access.cfg file, above all sections
+stopWords = <type(LIST STRING), default(delete,exit,access,value,save,read0,read1,insert,update,system,upsert,set,.z.pw,.z.pg,.z.ps,.z.pi,.z.ph,.z.pp,.z,parse,eval,.q.parse,.q.eval,.q.system,.z.exit,.z.po,.z.pc,.ap.cfg.serverAux,.ap.cfg.timeout,.ap.cfg.namespaces,.ap.cfg.stopWords,.ap.cfg.usergroups,.ap.stopWords,.ap.users,.ap.usergroups,.ap.status,.ap.user2nm,\\,\)> 
+
+#/C/ user name
+[user:<type(STRING)>]
+#/C/ encrypted password (password generation is described in DEVnet Enterprise Components, Chapter 4.3.2 Generating user password)
+pass = <type(STRING)>  
+#/C/ names of the user groups, that are specified below
+usergroups = <type(LIST SYMBOL)>
+  [[<type(SYMBOL)]]
+ 
+#/C/ permissions for the user groups
+[userGroup:<type(SYMBOL)>]
+	[[<type(SYMBOL), isComponent()>]]
+    #/C/ list of available namespaces on the accessPoint for users assigned to this group
+	namespaces = <type(LIST SYMBOL)>

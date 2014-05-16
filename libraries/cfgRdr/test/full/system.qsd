@@ -1,0 +1,50 @@
+#/C/ working directory
+KDB_BIN_PATH = <type(PATH)>
+#/C/ data directory
+KDB_DATA_PATH = <type(PATH)>
+#/C/ directory for standard output and standard error redirections
+KDB_LOG_PATH = <type(PATH)>
+#/C/ base value for the port definition
+KDB_PORT_BASE = <type(PORT)>
+#/C/ Period to wait for process startup
+start_wait = <type(INT)>
+#/C/ Period to wait for process stop
+stop_wait = <type(INT)>
+#/C/ username for inter-process connections
+kdb_user = <type(STRING)>
+#/C/ password for inter-process connections; hashed
+kdb_password = <type(STRING)>
+
+#/C/ list of directories searched for requested q modules
+KDB_LIB_PATH = <type(LIST PATH), pathExist()>
+#/C/ list of directories searched for shared objects
+KDB_DLL_PATH = <type(LIST PATH), pathExist()>
+#/C/ list of directories searched for requested configuration files
+KDB_ETC_PATH = <type(PATH), pathExist()>
+
+#/C/ sets the log level - one of DEBUG, INFO, WARN, ERROR or FATAL
+KDB_LOG_LEVEL = <type(SYMBOL), in(DEBUG, INFO, WARN, ERROR, FATAL)>
+#/C/ sets the destination (or collection of destinations) where the log is written. Currently only FILE,CONSOLE and STDERR are supported. 
+#/C/ The CONSOLE destination prints log messages to the console. The FILE destination writes messages to a file located in the directory specified by KDB_LOG_PATH.
+#/C/ The STDERR destination writes the messages on the ERROR and FATAL level to the standard error output and ignores messages on other levels. 
+#/C/ Destinations are separated by commas in the environment variable
+KDB_LOG_DEST = <type(LIST SYMBOL), in(CONSOLE, FILE, STDERR)>
+#/C/ sets time of log rotate (UTC)
+KDB_LOG_ROTATE = <type(TIME), default(NULL)>
+
+[group:<type(SYMBOL)>]
+   [[<type(SYMBOL), isComponent()>]]
+    #/C/ mandatory value describing type of the component
+	type = <type(SYMBOL), isComponentType()>  
+    #/C/ list of required service ids
+	requires =  <type(LIST SYMBOL), isComponent(), default()>
+    #/C/ mandatory parameter with the port of KDB+ process
+	port = <type(PORT)>
+    #/C/ parameter with the name of schema definition file 
+	qsd = <type(LIST SYMBOL), default()>
+    #/C/ the OS command starting KDB+ process
+	command = <type(STRING), default()>
+    #/C/ host name, optional parameter for external connections
+	host = <type(STRING), default()>  
+    #/C/ timestamp mode can be local (LOCAL) or UTC time. This setting is used for messages timestamping and for end-of-day broadcasting
+    timestamp_mode = <type(SYMBOL),in(LOCAL,UTC), default(UTC)>

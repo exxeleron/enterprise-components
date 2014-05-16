@@ -1,0 +1,12 @@
+For succesfull testing :
+1. rdb with eodlib (currently in rdb branch "eodlib") should be downloaded from SVN repository 
+   I    rdb.q should be placed in this directory
+   II.  sub.q should be placed into lib_example directory
+   III. eodlib.q should be placed into lib_example directory
+2. yak.cfg should be edited so testing user should be able to manage processes (just edit sys_user at the first line of config and add your login)
+3. create "lib" directory and copy contents of "lib_example" to it
+4. Make sure your network is operable
+5. run command : "sh test/test.sh"
+6. test takes approx 1.5h, but it displays result of each test as it goes
+7. after all tests it cleans after itself
+

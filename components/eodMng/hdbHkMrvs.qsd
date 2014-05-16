@@ -1,0 +1,10 @@
+#/C/ plugin configuration for retrieving last value per symbol
+#/E/ [table:quote]
+#/E/    [[rtr.hkMrvs]]
+#/E/    hdbHousekeeping = ((action(mrvs), dayInPast(30)))
+
+[group]
+[table]
+[sysTable]
+[user]
+[userGroup]

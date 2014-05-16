@@ -1,0 +1,16 @@
+#/E/  [group:core]
+#/E/    [[kdb.accessPoint]]
+#/E/    cfg.serverAux = rtr.rdb, rtr.hdb
+#/E/    cfg.timeout = 500
+
+[group]
+  #/C/ Auxiliary connection settings.
+  #/E/ cfg.serverAux = rtr.rdb, rtr.hdb
+  cfg.serverAux = <type(LIST COMPONENT), isComponent()>
+  #/C/ Timeout for new connections.
+  #/E/ cfg.timeout = 100
+  cfg.timeout = <type(INT), default(100)>
+[table]
+[sysTable]
+[user]
+[userGroup]

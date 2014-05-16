@@ -1,0 +1,12 @@
+#/C/ plugin configuration for conflating splayed partitions; 
+#/C/    *param1* - conflation interval (in milliseconds)
+
+#/E/ [table:quote]
+#/E/    [[rtr.hkConflation]]
+#/E/    hdbHousekeeping = ((action(conflate), dayInPast(30), param1(60000)))
+
+[group]
+[table]
+[sysTable]
+[user]
+[userGroup]

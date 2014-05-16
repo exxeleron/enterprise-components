@@ -1,0 +1,19 @@
+
+[group]
+  #/C/ frequency of mrvs failover dump in milliseconds
+  #/E/ cfg.mrvsDumpInterval = 600000
+  cfg.mrvsDumpInterval = <type(INT), greater(0), default(60000)>
+  #/C/ eod configuration - fill missing tables in hdb after eod
+  cfg.fillMissingTabsHdb = <type(BOOLEAN), default(TRUE)>
+  #/C/ eod configuration - reload hdb after eod
+  cfg.reloadHdb = <type(BOOLEAN), default(TRUE)>
+
+[table]
+  #/C/ table name for most recent values
+  outputTab = <type(SYMBOL), default()>
+  #/C/ connection settings to hdb, path to hdb location is taken automatically from system.cfg (field: dataPath) for given hdb name
+  hdbConn = <type(SYMBOL), isComponent()>
+  #/C/ eod configuration - clear memory after eod
+  eodClear = <type(BOOLEAN), default(TRUE)>
+  #/C/ eod configuration - perform eod
+  eodPerform = <type(BOOLEAN), default(TRUE)>

@@ -1,0 +1,8 @@
+[group]
+  #/C/ hdb location 
+  #/E/ cfg.hdbPath = ${dataPath}
+  cfg.hdbPath = <type(PATH), default(${dataPath})>
+[table]
+[sysTable]
+[user]
+[userGroup]

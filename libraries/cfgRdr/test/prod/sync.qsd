@@ -1,0 +1,5 @@
+
+[group:<type(SYMBOL)>]
+   [[<type(SYMBOL), isComponent()>]]
+   cfg.eodOrder =  <type(LIST SYMBOL), isComponent(), default()>
+   cfg.replicatorOrder =  <type(LIST SYMBOL), isComponent(), default()>

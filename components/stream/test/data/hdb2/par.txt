@@ -1,0 +1,1 @@
+D:/P/svn/KDBINT/kdb_components/stream/trunk/test/data/par1/

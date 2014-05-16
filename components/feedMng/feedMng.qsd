@@ -1,0 +1,29 @@
+#/E/ [table:referenceData]
+#/E/    [[kdb.feedMng]]
+#/E/    serverSrc = kdb.tickLF
+#/E/ [sysTable:sysUniverse]
+#/E/    [[kdb.feedMng]]
+#/E/    serverSrc = kdb.tickLF
+
+[group]
+  #/C/ connection timeout   
+  #/E/ cfg.timeout = 100
+  cfg.timeout = <type(INT), default(100)>
+  #/C/ auxiliary connection settings
+  #/E/ cfg.serverAux = kdb.rdb
+  cfg.serverAux = <type(LIST SYMBOL), isComponent(), default()>
+[table]
+  #/C/ connection settings to subscription
+  #/E/ serverSrc = kdb.tickLF
+  serverSrc = <type(SYMBOL), isComponent()>
+[sysTable]
+  #/C/ connection settings to subscription
+  #/E/ serverSrc = kdb.tickLF
+  serverSrc = <type(SYMBOL), isComponent()>
+  
+[sysTable:sysUniverse]
+  #/C/ data model of sysUniverse table
+  model = <type(TABLE), col1(SYMBOL), col2(SYMBOL), default(time(TIME), sym(SYMBOL), instrumentGroup(SYMBOL), instrument(SYMBOL), subItem(SYMBOL)), final()>
+  
+[user]
+[userGroup]

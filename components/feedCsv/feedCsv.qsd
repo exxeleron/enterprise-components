@@ -1,0 +1,154 @@
+#/E/ [group:core]
+#/E/    [[kdb.feedCsv]]
+#/E/    cfg.serverDst = kdb.tickLF
+#/E/ [table:universe]
+#/E/    dirSrc =  ${dataPath}/universe
+#/E/    pattern = *universe*
+#/E/    separator = ;
+#/E/
+#/E/    Configuration examples:
+#/E/
+#/E/    [table:universe]
+#/E/    model = time(TIME), sym(SYMBOL), underSym(SYMBOL)
+#/E/ 
+#/E/    1. Configuration example if file is matching the data model completely (header and column types are the same as in data model).
+#/E/       Fields fileModel and file2Tab are taken as defaults.
+#/E/ 
+#/E/       Csv file example:
+#/E/
+#/E/          time;sym;underSym
+#/E/          00:00:00.000;instrument;underlying
+#/E/    
+#/E/       Configuration example:
+#/E/
+#/E/          [[kdb.feedCsv]]
+#/E/          dirSrc =  ${dataPath}/universe
+#/E/          pattern = *universe*
+#/E/          separator = ;
+#/E/    
+#/E/    2. Configuration example if file is matching the data model completely, but csv file doesn't contain header.
+#/E/       Fields fileModel and file2Tab are taken as defaults.
+#/E/ 
+#/E/       Csv file example:
+#/E/
+#/E/          00:00:00.000;instrument;underlying
+#/E/    
+#/E/       Configuration example:
+#/E/
+#/E/          [[kdb.feedCsv]]
+#/E/          dirSrc =  ${dataPath}/universe
+#/E/          pattern = *universe*
+#/E/          separator = ;
+#/E/          headerInFile = FALSE
+#/E/
+#/E/    3. Configuration example if file is not matching the data model and custom plugin is required.
+#/E/    
+#/E/       Csv file contains tmp column that should be split into sym and underSym columns:
+#/E/
+#/E/          time;tmp
+#/E/          00:00:00.000;`instrument`underlying
+#/E/
+#/E/       In this case there is need to configure fileModel field and plugin .fcsv.plug.enrich[`universe]:
+#/E/
+#/E/          [[kdb.feedCsv]]
+#/E/          dirSrc =  ${dataPath}/universe
+#/E/          pattern = *universe*
+#/E/          separator = ;
+#/E/          fileModel = time(TIME), tmp(STRING)
+#/E/        
+#/E/    4. Configuration example if file is not matching the data model and reorder of columns from csv file is required.
+#/E/    
+#/E/       Csv file example:
+#/E/
+#/E/          time;underSym;sym
+#/E/          00:00:00.000;underlying;instrument
+#/E/
+#/E/       In this case there is need to configure fileModel and file2Tab fields:
+#/E/
+#/E/          [[kdb.feedCsv]]
+#/E/          dirSrc =  ${dataPath}/universe
+#/E/          pattern = *universe*
+#/E/          separator = ;
+#/E/          fileModel = time(TIME), underlying(SYMBOL), sym(SYMBOL)
+#/E/          file2Tab = time(time), sym(sym), underSym(underlying)  
+#/E/
+#/E/    5. Configuration example if file is not matching the data model and there is need to parse selected columns and assign proper order.
+#/E/ 
+#/E/       Csv file example without header:
+#/E/
+#/E/          00:00:00.000;notRequired;underlying;instrument
+#/E/    
+#/E/       Configuration example with using artificial column names col1, col2, etc.:
+#/E/
+#/E/          [[kdb.feedCsv]]
+#/E/          dirSrc =  ${dataPath}/universe
+#/E/          pattern = *universe*
+#/E/          separator = ;
+#/E/          headerInFile = FALSE
+#/E/          fileModel = col1(TIME), col3(SYMBOL), col4(SYMBOL)    # parse only selected columns col1, col3, col4 from csv file 
+#/E/          file2Tab = time(col1),sym(col4),underSym(col3)        # add order here that is matching the data model
+#/E/
+#/E/    6. Configuration example if file is not matching the data model and there is need to parse selected columns.
+#/E/ 
+#/E/       Csv file example without header:
+#/E/
+#/E/          00:00:00.000;instrument;underlying;notRequired
+#/E/    
+#/E/       Configuration example with using artificial column names col1, col2, etc.:
+#/E/
+#/E/          [[kdb.feedCsv]]
+#/E/          dirSrc =  ${dataPath}/universe
+#/E/          pattern = *universe*
+#/E/          separator = ;
+#/E/          headerInFile = FALSE
+#/E/          fileModel = col1(TIME), col2(SYMBOL), col3(SYMBOL)    # parse only selected columns col1, col2, col3 from csv file 
+#/E/          file2Tab = time(col1),sym(col2),underSym(col3)        # add order here, select only required columns
+
+
+[group]
+  #/C/ connection settings to data receiver
+  #/E/ cfg.serverDst = kdb.tickLF
+  cfg.serverDst = <type(SYMBOL), isComponent()>
+  #/C/ connection timeout
+  #/E/ cfg.timeout = 100
+  cfg.timeout = <type(INT), default(100)>
+  #/C/ timer setting for file searching on disk
+  #/E/ cfg.timer = 5000
+  cfg.timer = <type(INT), default(5000)>
+  #/C/ flag for files archiving, files can be either moved to archive directory or marked as parsed in cfg.parsedFiles
+  #/E/ cfg.filesMoving = 1b
+  cfg.filesMoving = <type(BOOLEAN), default(1)>
+  #/C/ location of txt file with parsed file
+  #/E/ cfg.parsedFiles = ${dataPath}/parsedFiles.txt
+  cfg.parsedFiles = <type(PATH), default(${dataPath}/parsedFiles.txt)>
+     #/C/ location of txt file with pending files
+  #/E/ cfg.pendingFiles = ${dataPath}/pendingFiles.txt
+  cfg.pendingFiles = <type(PATH), default(${dataPath}/pendingFiles.txt)>
+[table]
+  #/C/ absolute path to a directory that has to be watched
+  #/E/dirSrc =  ${dataPath}/universe
+  dirSrc =  <type(PATH)>
+  #/C/ pattern to match against files found in directory specified above; note that parsed files that are pushed to tickLF should include in the file names: upd or img (e.g. [date].upd.[table].csv, [date].img.[table].csv)
+  #/E/ pattern = *universe*
+  pattern = <type(STRING)>
+  #/C/ parse string, deprecated field; please use fileModel and file2Tab instead
+  #/E/ fileFormat = TSS
+  fileFormat = <type(STRING), default(deprecated)>
+  #/C/ column separator
+  #/E/ separator = ;
+  separator = <type(STRING)>
+  #/C/ flag to indicate if csv file contains header
+  #/E/ headerInFile = TRUE
+  headerInFile = <type(BOOLEAN), default(1)>
+  #/C/ format definition of file as list of pairs: column name and format; if default is used, then order is taken from csv file as it is
+  #/E/ fileModel = time(TIME), underlying(SYMBOL), sym(SYMBOL)  # file with header
+  #/E/ fileModel = col1(TIME), col2(SYMBOL), col3(SYMBOL)       # file without header
+  fileModel = <type(TABLE), col1(SYMBOL), col2(SYMBOL), default()>
+  #/C/ mapping for columns in data model and csv file as list of pairs: column name from data model and column from csv file, if default is used, then order is taken from csv file as it is
+  #/E/ file2Tab = time(time), sym(sym), underSym(underlying)    # file with header
+  #/E/ file2Tab = time(col1),sym(col2),underSym(col3)           # file without header
+  file2Tab = <type(TABLE), col1(SYMBOL), col2(SYMBOL), default()>
+    
+[sysTable]
+[user]
+[userGroup]

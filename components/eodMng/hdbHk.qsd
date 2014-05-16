@@ -1,0 +1,35 @@
+#/E/ [table:quote]
+#/E/    [[rtr.hkConflation]]
+#/E/    hdbHousekeeping = ((action(conflate), dayInPast(30), param1(60000)))
+
+
+[group]
+  #/C/ directory for hdb backups
+  #/E/ cfg.bckDir = ${dataPath}/backup
+  cfg.bckDir   = <type(PATH), default(${dataPath}/backup)>
+  #/C/ directory for sync raports
+  #/E/ cfg.raportDir = ${dataPath}/raport
+  cfg.raportDir   = <type(PATH), default(${dataPath}/raport)>
+  #/C/ number of days for which backup should be kept (0 means no backup at all)
+  #/E/ cfg.backupDays = 3
+  cfg.bckDays = <type(INT),default(7)>
+[table]
+  #/C/ description of hdb housekeeping tasks; 
+  #/C/ *action* - housekeeping plugin to execute; 
+  #/C/ *dayInPast* - specifies date of partition (EOD date minus dayInPast) on which plugin will be performed;
+  #/C/ *param1* - *param6* - arguments passed to plugin (if any required)
+  #/E/ hdbHousekeeping=((action(compress), dayInPast(1), param1(17), param2(2), param3(6)),
+  #/E/                  (action(delete), dayInPast(720)))
+  hdbHousekeeping = <type(ARRAY), model(action(SYMBOL), dayInPast(INT), param1(SYMBOL), param2(SYMBOL), param3(SYMBOL), param4(SYMBOL), param5(SYMBOL), param6(SYMBOL))>
+
+[sysTable]
+  #/C/ description of hdb housekeeping tasks; 
+  #/C/ *action* - housekeeping plugin to execute
+  #/C/ *dayInPast* - specifies date of partition (EOD date minus dayInPast) on which plugin will be performed
+  #/C/ *param1* - *param6* - arguments passed to plugin (if any required)
+  #/E/ hdbHousekeeping=((action(compress),dayInPast(1),param1(17),param2(2),param3(6)),
+  #/E/                  (action(delete),dayInPast(720)))
+  hdbHousekeeping = <type(ARRAY), model(action(SYMBOL), dayInPast(INT), param1(SYMBOL), param2(SYMBOL), param3(SYMBOL), param4(SYMBOL), param5(SYMBOL), param6(SYMBOL))>
+
+[user]
+[userGroup]

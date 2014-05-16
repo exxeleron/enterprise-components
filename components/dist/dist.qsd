@@ -1,0 +1,22 @@
+#/E/ [table:trade]
+#/E/   [[in.dist]]
+#/E/   sectors = sector1, sector2, sector3
+
+[group]
+  #/C/ path to journal directory
+  #/E/ cfg.jrnDir = /data/in.tickLF
+  cfg.jrnDir = <type(PATH), default(${dataPath})>
+  #/C/ timer setting
+  #/E/ cfg.timer = 1000
+  cfg.timer = <type(INT), default(1000)>
+
+[table]
+  #/C/ list of sectors for the table
+  #/E/ cfg.sectors = sector1, sector2, sector3
+  sectors = <type(LIST SYMBOL)>
+[sysTable]
+  #/C/ list of sectors for the table
+  #/E/ cfg.sectors = sector1, sector2, sector3
+  sectors = <type(LIST SYMBOL)>
+[user]
+[userGroup]

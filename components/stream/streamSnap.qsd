@@ -1,0 +1,9 @@
+[group]
+  #/C/ Integer with snapshot time range in minutes
+  #/E/ cfg.snapMinuteBase = 10
+  cfg.snapMinuteBase = <type(INT), greater(0), default(1)>
+  #/C/ Timeout in milliseconds to handle late ticks
+  cfg.snapTimeoutInMs = <type(INT), greater(0), default(30000)>
+[table]
+  #/C/ Table name for published snapshots
+  outputTab = <type(SYMBOL), default()>

@@ -1,0 +1,64 @@
+#/C/ stream process is keeping processing logic as plugin code
+
+#/E/  [group:core]
+#/E/    [[kdb.mrvs]]
+#/E/    cfg.timeout = 100
+#/E/    cfg.journal = ${DATAPATH}/jrn
+#/E/    cfg.savepointFile = ${DATAPATH}/savepoint
+#/E/    cfg.tsInterval = 1000
+#/E/    cfg.serverAux = kdb.rdb
+#/E/     
+#/E/  [table:trade]
+#/E/     [[kdb.mrvs]]
+#/E/     srcServer = kdb.tickHF
+#/E/     
+#/E/  [table:quote]
+#/E/     [[kdb.mrvs]]
+#/E/     srcTickHF = kdb.tickHF
+#/E/     
+#/E/  [table:universe]
+#/E/     [[kdb.mrvs]]
+#/E/     srcTickLF = kdb.tickLF
+
+[group]
+   #/E/ cfg.timeout = 100
+   cfg.timeout = <type(INT), greater(0), default(100)>
+   
+   #/E/ cfg.tsInterval = 1000
+   cfg.tsInterval = <type(INT), greater(0), default(1000)>
+   
+   #/E/ cfg.journal = ${dataPath}/jrn
+   cfg.journal = <type(PATH), default(${dataPath}/streamJrn)>
+   
+   #/E/ cfg.savepointFile = ${dataPath}/savepoint
+   cfg.savepointFile = <type(PATH), default(${dataPath}/savepoint)>
+   
+   #/E/ cfg.serverAux = kdb.rdb
+   cfg.serverAux = <type(LIST SYMBOL), isComponent() default()>
+   
+   #/C/ display warning if audit for synchronous communication is turned on
+   cfg.warnIfSyncAccess = <type(BOOLEAN), default(1)>
+   
+   #/C/ display warning if audit for asynchronous communication is turned on
+   cfg.warnIfAsyncAccess = <type(BOOLEAN), default(1)>
+   
+   #/C/ display warning if authorization is turned on
+   cfg.warnIfAuthorization = <type(BOOLEAN), default(1)>
+   
+[table]
+   #/C/ Name of the source tickHF server
+   #/E/ srcTickHF = kdb.tickHF
+   srcTickHF = <type(SYMBOL), isComponent(), default()>
+
+   #/C/ Name of the source tickLF server
+   #/E/ srcTickLF = kdb.tickLF
+   srcTickLF = <type(SYMBOL), isComponent(), default()>
+
+[sysTable]
+   #/C/ Name of the source tickHF server
+   #/E/ srcTickHF = kdb.tickHF
+   srcTickHF = <type(SYMBOL), isComponent(), default()>
+
+   #/C/ Name of the source tickLF server
+   #/E/ srcTickLF = kdb.tickLF
+   srcTickLF = <type(SYMBOL), isComponent(), default()>

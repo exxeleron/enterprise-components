@@ -1,0 +1,16 @@
+[group]
+  #/C/ size of the universe
+  cfg.uniSize = <type(LONG), default(100)>
+  #/C/ destination server name, should be tickHF or dist
+  cfg.dst = <type(SYMBOL), isComponent()>
+  #/C/ Time of the eod trigger
+  cfg.eodTime = <type(TIME), default(00:00:00.000)>
+[table]
+  #/C/ period defining the frequency of data generation (in milliseconds)
+  period = <type(INT), default(500)>
+  #/C/ size of each generated package
+  pkgSize = <type(INT), default(10)>
+  #/C/ list of sectors (used in case of PROTOCOL_DIST)
+  sectors = <type(LIST SYMBOL), default(NULL)>
+[user]
+[userGroup]

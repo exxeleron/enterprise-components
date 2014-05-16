@@ -1,0 +1,38 @@
+#/S/ Definition for central configuration file dataflow.cfg:
+
+#/C/ Instance field - filled in case of running in clone mode.
+EC_COMPONENT_INSTANCE = <type(STRING), default("")>
+
+#/C/ qsl/sub subscription configuration - component id of the data source
+subSrc = <type(SYMBOL), isComponent(), default()>
+
+#/C/ qsl/sub subscription configuration - if TRUE then predefine default callbacks
+subPredefineCallbacks = <type(BOOLEAN), default(TRUE)>
+
+#/C/ qsl/sub subscription configuration - namespace that should be used to capture incoming data (DIST only)
+subNs = <type(SYMBOL), default()>
+
+#/C/ qsl/sub subscription configuration - columns that should be left in memory (DIST only)
+subCols = <type(LIST SYMBOL), default()>
+
+#/C/ qsl/sub subscription configuration - subscription list (DIST only at the moment)
+subList = <type(LIST SYMBOL), default(ALL)>
+
+#/C/ section that contains configuration connected with one table
+[table:<type(SYMBOL)>]
+  #/C/ template names, by default no template
+  template = <type(LIST SYMBOL), default()>
+    #/C/ data model of the table
+  model = <type(TABLE), col1(SYMBOL), col2(SYMBOL)>
+
+  #/C/ component-specific sections describing interactions with the table
+  [[<type(SYMBOL), isComponent()>]]
+
+#/C/ sysTables are used for internal purposes that are connected with used framework, e.g. sysUniverse
+[sysTable:<type(SYMBOL)>]
+  #/C/ template names, by default no template
+  template = <type(LIST SYMBOL), default()>
+  #/C/ name of the component that contains data model definition in its qsd file
+  modelSrc = <type(SYMBOL), isComponent()>
+  #/C/ component-specific sections describing interactions with the table
+  [[<type(SYMBOL), isComponent()>]]

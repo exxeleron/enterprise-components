@@ -1,0 +1,4 @@
+#/C/ configuration of plugin that deletes splayed partitions
+#/E/ [table:quote]
+#/E/    [[rtr.hkDeletion]]
+#/E/    hdbHousekeeping = ((action(delete), dayInPast(30)))

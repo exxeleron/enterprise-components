@@ -1,0 +1,46 @@
+#/E/ [table:universe]
+#/E/   [[kdb.tickLF]]
+#/E/   jrnSwitch = img,eod
+#/E/   eodImg2Jrn = TRUE
+#/E/   memory = TRUE
+
+
+[group]
+  #/C/ directory with journal storing
+  #/E/ cfg.jrnDir = /data/in.tickLF
+  cfg.jrnDir = <type(PATH), default(${dataPath})>
+  #/C/ timer setting
+  #/E/ cfg.timer = 1000
+  cfg.timer = <type(INT), default(1000)>
+[table]
+  #/C/ turn on/off validation
+  #/E/ cfg.validation = TRUE
+  validation = <type(BOOLEAN), default(TRUE)>
+  #/C/ flag for journal switching, journal can be rolled over when
+  #/E/ jrnSwitch = `img      # data image is received (.tickLF.pubImg is called)
+  #/E/ jrnSwitch = `eod      # at the end-of-day
+  #/E/ jrnSwitch = `img`eod  # in both cases described above
+  #/E/ jrnSwitch = `off      # journal rollover is turned off
+  jrnSwitch =  <type(LIST SYMBOL), in(eod,img,off), default(eod)>
+  #/C/ store img to the journal at eod
+  #/E/ cfg.eodImg2Jrn = TRUE
+  eodImg2Jrn = <type(BOOLEAN), default(FALSE)>
+  #/C/ keep table in memory
+  #/E/ cfg.memory = TRUE
+  memory = <type(BOOLEAN), default(FALSE)>
+  #/C/ status tracking
+  #/E/ cfg.status = TRUE
+  status = <type(BOOLEAN), default(TRUE)>
+[sysTable]
+  #/C/ turn on/off validation
+  validation = <type(BOOLEAN), default(TRUE)>
+  #/C/ type of journal switching
+  jrnSwitch =  <type(LIST SYMBOL), in(eod,img,off), default(eod)>
+  #/C/ store img to the journal at eod
+  eodImg2Jrn = <type(BOOLEAN), default(FALSE)>
+  #/C/ keep table in memory
+  memory = <type(BOOLEAN), default(FALSE)>
+  #/C/ status tracking
+  status = <type(BOOLEAN), default(TRUE)>
+[user]
+[userGroup]
