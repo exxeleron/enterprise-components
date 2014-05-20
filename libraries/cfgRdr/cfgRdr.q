@@ -281,7 +281,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   :res;
   };
  
-)) 
+
 .cr.p.byte:{[ps]
   res:.par.oneOf["0123456789abcdefABCDEF"] ps;
   if[null res[`errp];
