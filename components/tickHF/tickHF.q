@@ -21,14 +21,14 @@
 /S/ - in cases when time is not sent in the first column by data provider, current time can be added automatically in both modes: zero-latency and aggregation mode
 /S/ - support for handling ticks that arrived after midnight but which are still 'belonging' to the previous day (called later as "late ticks")
 /S/ Notes:
-/S/ - in order to properly process late ticks, EC_EOD_DELAY in system.cfg has to be setup, for example to handle ticks 10 seconds after midnight:
+/S/ - in order to properly process late ticks, eodDelay in system.cfg has to be setup, for example to handle ticks 10 seconds after midnight:
 /S/ (start code)
-/S/ EC_EOD_DELAY = 00:00:10.000 -  (TIME format)
+/S/ eodDelay = 00:00:10.000 -  (TIME format)
 /S/ (end)
 /S/ - this will delay end-of-day for 10 seconds; during this period ticks that belong to the previous day will be published normally and ticks for the next day will be cached in memory
 /S/ - after this period end-of-day callback will be broadcast and cached ticks will be published to all subscribers
 /S/ - in order to use this feature late and next day ticks are recognized *only by the time in first column* delivered by the data provider
-/S/ EC_EOD_DELAY is a global variable and will affect all components that have build-in end-of-day procedure: tickLF (<tickLF.q>), rdb (<rdb.q>), stream (<stream.q>), eodMng (<eodMng.q>) and hdb queries that are using interface functions from <query.q>
+/S/ eodDelay is a global variable and will affect all components that have build-in end-of-day procedure: tickLF (<tickLF.q>), rdb (<rdb.q>), stream (<stream.q>), eodMng (<eodMng.q>) and hdb queries that are using interface functions from <query.q>
 
 /S/ Tick modes:
 /S/ Tick can work in two modes
