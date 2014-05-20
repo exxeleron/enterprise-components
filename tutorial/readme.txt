@@ -141,10 +141,10 @@
 ------------------------------------------------------------------------------------------------------------------------
 0.4 DemoSystem installation
 
-0.4.1 Download and unpack package ec_DemoSystem_l32_vX.XX.tgz
+0.4.1 Download and unpack package ec_vX.X.X_DemoSystem_Linux32bit_Lessons_X-X.tgz
 
-  > tar zxvf ec_DemoSystem_l32_vX.XX.tgz
-
+  > tar zxvf ec_vX.X.X_DemoSystem_Linux32bit_Lessons_X-X.tgz
+  
 0.4.2 Create link to configuration for LessonXX
 
   > cd DemoSystem
