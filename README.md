@@ -1,4 +1,4 @@
-## [Enterprise Components for kdb+](https://github.com/exxeleron/enterprise-components.old/wiki)
+## [Enterprise Components for kdb+](https://github.com/exxeleron/enterprise-components/wiki)
 
 ![Overview](../master/doc/img/Slide1.PNG)
 
@@ -49,4 +49,4 @@ With scalability, flexibility, robustness, optimization and consistent configura
 
 ### Getting started
 
-For tutorial and more details about Enterprise Components please see our [wiki](https://github.com/exxeleron/enterprise-components.old/wiki).
+For tutorial and more details about Enterprise Components please see our [wiki](https://github.com/exxeleron/enterprise-components/wiki).
