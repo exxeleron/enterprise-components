@@ -25,8 +25,8 @@ EC_ETC_PATH=${EC_SYS_PATH}/etc
 export EC_QSL_PATH EC_ETC_PATH
 
 # ---- cmd prompt decoration ---- #
-EC_SYS_ID="DemoSt01"
-EC_SYS_TYPE="DEV1"
+EC_SYS_ID="DemoSystem"
+EC_SYS_TYPE="Lesson02"
 export EC_SYS_ID EC_SYS_TYPE
 PS1='[${EC_SYS_ID}(${EC_SYS_TYPE})][\u@\h:\w]\$ '
 export PS1
