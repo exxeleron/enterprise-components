@@ -48,5 +48,17 @@ With scalability, flexibility, robustness, optimization and consistent configura
 ![Overview](../master/doc/img/Slide7.PNG)
 
 ### Getting started
+#### DemoSystem download
+Most recent DemoSystem for Linux can be downloaded from [here](http://www.devnet.de/fileadmin/downloads/ec_v3.0.0_DemoSystem_Linux32bit_Lessons_1-3.tgz).
 
-For tutorial and more details about Enterprise Components please see our [wiki](https://github.com/exxeleron/enterprise-components/wiki).
+#### Tutorial
+
+- [Introduction](https://github.com/exxeleron/enterprise-components/wiki/Introduction)
+- [Installation](https://github.com/exxeleron/enterprise-components/wiki/Installation)
+- [Troubleshooting](https://github.com/exxeleron/enterprise-components/wiki/Troubleshooting)
+- [Lesson 1](https://github.com/exxeleron/enterprise-components/wiki/Lesson-1) - basic system
+- [Lesson 2](https://github.com/exxeleron/enterprise-components/wiki/Lesson-2) - adding `quote` table 
+- [Lesson 3](https://github.com/exxeleron/enterprise-components/wiki/Lesson-3) - storing data in `hdb`
+
+#### Wiki
+For more details please visit our [wiki](https://github.com/exxeleron/enterprise-components/wiki).
