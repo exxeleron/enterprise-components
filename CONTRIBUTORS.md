@@ -1,0 +1,10 @@
+DEVnet:
+- Joanna Jarmulska    (j.jarmulska@devnet.de)
+- Pawel Hudak         (p.hudak@devnet.de)
+- Bartosz Kaliszuk    (b.kaliszuk@devnet.de)
+- Slawomir Kolodynski (s.kolodynski@devnet.de)
+- Bartosz Dolecki     (b.dolecki@devnet.de)
+- Piotr Szawlis       (p.szawlis@devnet.de)
+- Wieslaw Nosal       (w.nosal@devnet.de)
+- Jens Rick           (j.rick@devnet.de)
+- Rafal Sytek         (r.sytek@devnet.de)

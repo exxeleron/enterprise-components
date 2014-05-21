@@ -1,4 +1,6 @@
-## Enterprise Components for kdb+
+## [Enterprise Components for kdb+](https://github.com/exxeleron/enterprise-components/wiki)
+
+![Overview](../master/doc/img/Slide1.PNG)
 
 ### Objective
 Enterprise Components have been designed with the goal to provide core functionality to kdb+ installations:
@@ -6,6 +8,8 @@ Enterprise Components have been designed with the goal to provide core functiona
 - keeping the performance and flexibility of kdb+
 - making kdb+ development easier as well as faster and infrastructures more robust
 - ensuring efficient operations of kdb+ infrastructures
+
+![Overview](../master/doc/img/Slide2.PNG)
 
 In order to achieve these goals Exxeleron’s solutions follow best practices for robust and efficient IT service delivery and system architecture. Enterprise Components’ development is guided by overall TCO (total cost of ownership) considerations where special attention is given to: 
 - System Vision - new infrastructure should fit naturally into the architectural blueprint, 
@@ -23,6 +27,26 @@ Customers building their kdb+ architectures with Enterprise Components benefit f
 - motivated kdb+ teams focusing on core business requirements rather than basic infrastructure functionality
 
 ### Key features
-Enterprise Components provide an optimized set of building blocks that can get quickly assembled into complex kdb+ deployments. Enterprise Components enable management of the data flow at all levels, starting from high-frequency data capture and stream distribution through on-stream, in-memory, and on-disk data analysis to interface components for applications and programming languages.
+Enterprise Components provide an optimized set of building blocks that can get quickly assembled into complex kdb+ deployments. 
 
-Enterprise Components’ functionality is driven by real-life needs. It combines DEVnet experience with modular kdb+ installations that harness kdb+’s full power and flexibility. With scalability, flexibility, robustness, optimization and consistent configuration as design goals it plays well in enterprise deployment.
+![Overview](../master/doc/img/Slide3.PNG)
+
+Building blocks are based on common foundation - set of libraries built on top of q. The libraries are unifying and facilitating usage of various q resources. New building blocks can be easily created by using these libraries which enable development process and allow natural integration with the rest of the system.
+
+![Overview](../master/doc/img/Slide4.PNG)
+
+Enterprise Components enable management of the data flow at all levels, starting from high-frequency data capture and stream distribution through on-stream, in-memory, and on-disk data analysis to interface components for applications and programming languages.
+
+![Overview](../master/doc/img/Slide5.PNG)
+
+Enterprise Components’ functionality is driven by real-life needs. It combines DEVnet experience with modular kdb+ installations that harness kdb+’s full power and flexibility. 
+
+![Overview](../master/doc/img/Slide6.PNG)
+
+With scalability, flexibility, robustness, optimization and consistent configuration as design goals it plays well in enterprise deployment.
+
+![Overview](../master/doc/img/Slide7.PNG)
+
+### Getting started
+
+For tutorial and more details about Enterprise Components please see our [wiki](https://github.com/exxeleron/enterprise-components/wiki).
