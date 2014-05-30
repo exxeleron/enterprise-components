@@ -53,12 +53,12 @@ Most recent DemoSystem for Linux can be downloaded from [here](http://www.devnet
 
 #### Tutorial
 
-- [Introduction](https://github.com/exxeleron/enterprise-components/wiki/Introduction)
-- [Installation](https://github.com/exxeleron/enterprise-components/wiki/Installation)
-- [Troubleshooting](https://github.com/exxeleron/enterprise-components/wiki/Troubleshooting)
-- [Lesson 1](https://github.com/exxeleron/enterprise-components/wiki/Lesson-1) - basic system
-- [Lesson 2](https://github.com/exxeleron/enterprise-components/wiki/Lesson-2) - adding `quote` table 
-- [Lesson 3](https://github.com/exxeleron/enterprise-components/wiki/Lesson-3) - storing data in `hdb`
+- [Introduction](tutorial)
+- [Installation](tutorial/Installation.md)
+- [Troubleshooting](tutorial/Troubleshooting_linux.md)
+- [Lesson 1](tutorial/Lesson01) - basic system
+- [Lesson 2](tutorial/Lesson02) - adding `quote` table 
+- [Lesson 3](tutorial/Lesson03) - storing data in `hdb`
 
 #### Wiki
 For more details please visit our [wiki](https://github.com/exxeleron/enterprise-components/wiki).
