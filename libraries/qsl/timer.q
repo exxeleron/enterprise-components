@@ -127,6 +127,7 @@
   .log.info[`tmr] "recovering original configuration: timer period ",string .tmr.p.t;
   .z.ts:.tmr.p.zts;
   system "t ", string .tmr.p.t;
+  .tmr.p.cleanup:{};
   delete from `.tmr.status;
   };
 
@@ -218,7 +219,7 @@
 /F/ Calculates gcd of all periods in the status tables and sets the timer.
 /F/ This should only be done when all functions are at tick 0, hence the check
 .tmr.p.recalcGcd:{
-  if[all 0=.tmr.status`tick;
+  if[(0<count .tmr.status) and  all 0=.tmr.status`tick;
     .log.debug[`tmr] "cleanup, callbacks:",("," sv string each .tmr.status`fun)," tick: ",("," sv string each .tmr.status`tick), " period: ", ("," sv string each .tmr.status`period);
     factor:(newt:.tmr.p.gcd .tmr.status`periodms)%system "t";
     update tick:`int$tick%factor,period:`int$period%factor from `.tmr.status;
