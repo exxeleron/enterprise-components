@@ -78,3 +78,19 @@
     };
   };
 
+.tst.desc["[sl.q] converting backslashes to forward slashes in log path"]{
+  before{
+    system "l sl.q";
+    .sl.test.logpath:getenv `EC_LOG_PATH;
+    `EC_LOG_PATH setenv "C:\\dir1\\dir2/dir3/";
+    // remove current path variable if any
+    .log _:`path;
+    .sl.p.initLog[];
+    };
+    after {
+      if[0<count .sl.test.logpath;`EC_LOG_PATH setenv .sl.test.logpath];
+      };
+    should["convert backslashes to forward slashes in log path"]{
+      (count string .log.path) mustmatch (string .log.path)?"\\";
+      };
+  };
