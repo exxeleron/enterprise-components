@@ -33,10 +33,11 @@ Good luck!
  - [Lesson 1](Lesson01) - basic system
  - [Lesson 2](Lesson02) - adding `quote` table
  - [Lesson 3](Lesson03) - storing data in `hdb`
+ - [Lesson 4](Lesson04) - user queries
  
 ## DemoSystem
 `DemoSystem` for Linux can be downloaded from 
-[here](http://www.devnet.de/fileadmin/downloads/ec_v3.0.0_DemoSystem_Linux32bit_Lessons_1-3.tgz).
+[here](https://github.com/exxeleron/enterprise-components/releases).
 
 <!--------------------------------------------------------------------------------------------------------------------->
 ### Package content
