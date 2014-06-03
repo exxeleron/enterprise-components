@@ -1,4 +1,4 @@
-## [Enterprise Components for kdb+](https://github.com/exxeleron/enterprise-components/wiki)
+## [Enterprise Components for kdb+](tutorial)
 
 ![Overview](../master/doc/img/Slide1.PNG)
 
@@ -49,16 +49,16 @@ With scalability, flexibility, robustness, optimization and consistent configura
 
 ### Getting started
 #### DemoSystem download
-Most recent DemoSystem for Linux can be downloaded from [here](http://www.devnet.de/fileadmin/downloads/ec_v3.0.0_DemoSystem_Linux32bit_Lessons_1-3.tgz).
+Most recent DemoSystem for Linux can be downloaded from [here](https://github.com/exxeleron/enterprise-components/releases).
 
 #### Tutorial
 
-- [Introduction](tutorial)
 - [Installation](tutorial/Installation.md)
 - [Troubleshooting](tutorial/Troubleshooting_linux.md)
 - [Lesson 1](tutorial/Lesson01) - basic system
 - [Lesson 2](tutorial/Lesson02) - adding `quote` table 
 - [Lesson 3](tutorial/Lesson03) - storing data in `hdb`
+- [Lesson 4](/tutorial/Lesson04) - user queries
 
 #### Wiki
 For more details please visit our [wiki](https://github.com/exxeleron/enterprise-components/wiki).
