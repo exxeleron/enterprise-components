@@ -256,7 +256,7 @@
 /F/ Initializes the log functionality. This overrides the values used for bootstrapping
 .sl.p.initLog:{
   .sl.setConfVar[`.log.maxHistSize;`EC_LOG_MAXHIST;10000;{`long$parse x}];
-  .sl.setConfVar[`.log.path;`EC_LOG_PATH;`:./log;{x[where x="\\"]="/";`$x}]; // replace \ by / because Windows
+  .sl.setConfVar[`.log.path;`EC_LOG_PATH;`:./log;{x[where x="\\"]:"/";`$x}]; // replace \ by / because Windows
   .sl.setConfVar[`.log.dest;`EC_LOG_DEST;enlist `CONSOLE;{`$"," vs x}];
   .sl.setConfVar[`.log.level;`EC_LOG_LEVEL;`INFO;{`$x}];
   .sl.setConfVar[`.log.time;`EC_TIMESTAMP_MODE;`.z.z;{$[x~"LOCAL";`.z.Z;`.z.z]}];
