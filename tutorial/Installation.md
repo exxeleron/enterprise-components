@@ -68,8 +68,9 @@ Instructions in Lessons relay on checking data or status of KDB+ processes, ther
     DemoSystem> ls -l
       bin
       etc -> bin/ec/tutorial/LessonXX/etc/
-      readme.txt
-      troubleshooting.txt
+      Installation.md
+      README.md
+      Troubleshooting_linux.md
     ```
 
 <!--------------------------------------------------------------------------------------------------------------------->
