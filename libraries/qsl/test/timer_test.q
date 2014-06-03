@@ -54,6 +54,18 @@ system "l event.q";
     1b mustmatch 1000>.z.t - start;
     };
   };
+  
+.tst.desc["[timer.q] .tmr.recalcGcd"]{
+  before{
+    .tst.tmr.f:{};
+    .tmr.start[`.tst.tmr.f;10000;`.tst.tmr.f];
+    .tmr.reset[];
+    };
+  after{};
+  should[".tmr.p.recalcGcd not should not fail on empty .tmr.status"]{
+    .tmr.p.recalcGcd[];
+    };
+  };
 
 .tst.desc["[timer.q] .tmr.change: starting, stopping and changing period of a callback - .tmr.start[], .tmr.stop[]"]{
   before{
