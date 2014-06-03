@@ -41,7 +41,7 @@ Instructions in Lessons relay on checking data or status of KDB+ processes, ther
 <!--------------------------------------------------------------------------------------------------------------------->
 ## `DemoSystem` installation
 
-1. [Download](http://www.devnet.de/fileadmin/downloads/ec_v3.0.0_DemoSystem_Linux32bit_Lessons_1-3.tgz) and unpack 
+1. [Download](https://github.com/exxeleron/enterprise-components/releases) and unpack 
    package ec_vX.X.X_DemoSystem_Linux32bit_Lessons_X-X.tgz
   
     ```bash
@@ -136,7 +136,7 @@ stopped.
 
 > :heavy_exclamation_mark: Note:
 
-> Make sure that system is really stopped before deleting these directories, otherwise yak will lose its connection details resulting in error described in [Issue 4](../wiki/Troubleshooting#issue-4).
+> Make sure that system is really stopped before deleting these directories, otherwise yak will lose its connection details resulting in error described in [Issue 4](../tutorial/Troubleshooting_linux.md#issue-4---startup-failed-address-already-in-use).
 
 1. Stop the system
 
