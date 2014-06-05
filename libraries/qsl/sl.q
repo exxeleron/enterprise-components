@@ -84,6 +84,7 @@
 
 /F/ Load q modules requested from command line
 .sl.libCmd:{[]
+  if[`commonLibs in key p:.Q.opt[.z.x];.sl.lib each `$p[`commonLibs]];
   if[`libs in key p:.Q.opt[.z.x];.sl.lib each `$p[`libs]];
   if[`lib in key .Q.opt[.z.x];.log.warn[`sl] "obsoleted parameter -lib will be ignored, use -libs instead"];
   };

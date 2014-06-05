@@ -71,6 +71,10 @@ housekeeping = <type(ARRAY), model(action(SYMBOL), dir(PATH), age(INT), pattern(
 #/C/ otherwise <.sub.init[]> must be invoked in the custom code
 subAutoSubscribe = <type(BOOLEAN), default(TRUE)>
 
+#/C/ List of common libraries that should be loaded to all processes in system.cfg file or within one [group]
+#/C/ This command option is analogical to the field `libs`. Note that it is applied before `libs` field.
+commonLibs = <type(LIST COMPONENT_TYPE), default(NULL)>
+
 #/C/ Group definition. Grouping allows creating collections of components for easier reference.
 #/C/ Groups can be passed as arguments to `yak' start/stop/info commands.
 #/E/ [group:core]
@@ -102,7 +106,7 @@ subAutoSubscribe = <type(BOOLEAN), default(TRUE)>
   type = <type(COMPONENT_TYPE), isComponentType()>
 
   #/C/ List of additional libraries
-  libs = <type(COMPONENT_TYPE), default(NULL)>
+  libs = <type(LIST COMPONENT_TYPE), default(NULL)>
 
   #/C/ List of required component dependencies. If not empty, listed components have to run before starting this instance.
   requires =  <type(LIST SYMBOL), isComponent(), default()>
