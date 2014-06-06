@@ -8,7 +8,7 @@
 
 <!--------------------------------------------------------------------------------------------------------------------->
 ### Operating system
-`DemoSystem` can only be run Linux on Linux or Windows operating system. The Windows support is experimental, tested on Windows 7.
+`DemoSystem` can be run on Linux or Windows operating systems. The Windows support is experimental, tested on Windows 7.
 
 <!--------------------------------------------------------------------------------------------------------------------->
 ### Compatibility libraries
@@ -42,16 +42,16 @@ Instructions in Lessons relay on checking data or status of KDB+ processes, ther
 ## `DemoSystem` installation
 
 1. [Download](https://github.com/exxeleron/enterprise-components/releases) and unpack 
-   package ec_vX.X.X_DemoSystem_Linux32bit_Lessons_X-X.tgz
-  
+   package `ec_vX.X.X_DemoSystem_Linux32bit_Lessons_X-X.tgz`
+
     ```bash
     > tar zxvf ec_vX.X.X_DemoSystem_Linux32bit_Lessons_X-X.tgz
     ```
 
-    On Windows download and unpack the package ec_vX.X.X_DemoSystem_Win32_Lessons_X-X.zip
+    On Windows download and unpack the package `ec_vX.X.X_DemoSystem_Win32_Lessons_X-X.zip`
     
     ```Batchfile
-    >unzip ec_vX.X.X_DemoSystem_Win32_Lessons_X-X.zip
+    > unzip ec_vX.X.X_DemoSystem_Win32_Lessons_X-X.zip
     ```
 
 1. Create link to configuration for LessonXX
@@ -64,8 +64,8 @@ Instructions in Lessons relay on checking data or status of KDB+ processes, ther
    The corresponding commands for Windows are
    
    ```Batchfile
-   >cd DemoSystem
-   DemoSystem>mklink /J etc bin\ec\tutorial\Lesson01\etc
+   > cd DemoSystem
+   DemoSystem> mklink /J etc bin\ec\tutorial\Lesson01\etc
    ```
   
 1. Check if `etc` folder is linked to correct Lesson
@@ -102,8 +102,8 @@ Common installation problems with solutions for [linux](Troubleshooting_linux.md
     ```
     On Windows one needs to run
     
-    ```bash
-    DemoSystem>etc\env.bat
+    ```Batchfile
+    DemoSystem> etc\env.bat
     ```
     
 1. Start all components in the system (restart command is used just in case the system was already running)
@@ -180,8 +180,8 @@ stopped.
     
     On Windows, do
     
-    ```
-    DemoSystem>rmdir etc
+    ```Batchfile
+    DemoSystem> rmdir etc
     ```
     
 1. Create link to configuration for LessonYY
@@ -194,8 +194,8 @@ stopped.
     
     On Windows:
     
-    ```
-    DemoSystem>mklink /J etc bin\ec\tutorial\LessonYY\etc
+    ```Batchfile
+    DemoSystem> mklink /J etc bin\ec\tutorial\LessonYY\etc
     ```
     
 1. Start the system again
