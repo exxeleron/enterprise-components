@@ -74,7 +74,8 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 
 /------------------------------------------------------------------------------/
 .sl.lib["cfgRdr/cfgRdr"];
-.sl.lib[`$"qsl/timer"];
+.sl.lib["qsl/timer"];
+.sl.lib["qsl/os"];
 
 /------------------------------------------------------------------------------/
 /G/ source directory for synchronization
@@ -121,7 +122,8 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
     destDir;
     .hdbSync.p.getDatePath[parDest;"D"$partition]
     ];
-  system "mkdir -p ", .hdbSync.cfg.symDir;
+  // system "mkdir -p ", .hdbSync.cfg.symDir;
+  .os.mkdir .hdbSync.cfg.symDir;
   system "rsync -rvce ssh \"",destDir,"/sym\" \"", .hdbSync.cfg.symDir,"/",ssr[string .sl.zz[];":";"."],".sym\"";
   system "rsync -vce ssh \"",sourceDir,"/sym\" \"", destDir,"/sym\"";
   .hdbSync.p.saveStatus[`sync_partition];
