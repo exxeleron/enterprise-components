@@ -20,7 +20,7 @@
 /F/ removes a directory - Linux version
 /P/ dirname:STRING
 .os.rmdirL:{[dirname]
-  system "rmdir -r ",dirname;
+  system "rm -r ",dirname;
   };
 
 
