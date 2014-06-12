@@ -298,8 +298,8 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 
 .hdbHk.p.pluginAct:{[date;plugin;tabs;when;args]
   hnd:.hdbHk.getDateHnd[date-when];
-  if[()~ key hnd;  // partition not exists
-    .log.warn[`hdbHk] "Partition ", string[hnd], " not exists";
+  if[()~ key hnd;  // partition does not exist
+    .log.warn[`hdbHk] "Partition ", string[hnd], " does not exist";
     :();
     ];
   
