@@ -19,14 +19,14 @@
 
 /F/ removes a directory - Linux version
 /P/ dirname:STRING
-.os.rmdirL:{[dirname]
+.os.p.L.rmdir:{[dirname]
   system "rm -r ",dirname;
   };
 
 
 /F/ removes a directory Windows version
 /P/ dirname:STRING
-.os.rmdirW:{[dirname]
+.os.p.W.rmdir:{[dirname]
   system "rmdir /S /Q ",.os.p.q dirname;
   };
   
@@ -34,47 +34,41 @@
 /F/ copies directory with contents - Linux version
 /P/ dir1:STRING - source dir
 /P/ dir2:STRING - target dir
-.os.cpdirL:{[dir1;dir2]
+.os.p.L.cpdir:{[dir1;dir2]
   system "cp -rf ",(.os.p.q dir1)," ",.os.p.q dir2;
   };
   
-/F/ copies directory with contents - Linux version
+/F/ copies directory with contents - Windows version
 /P/ dir1:STRING - source dir
 /P/ dir2:STRING - target dir
-.os.cpdirW:{[dir1;dir2]
+.os.p.W.cpdir:{[dir1;dir2]
   system "xcopy  ",(.os.p.q dir1)," ",(.os.p.q dir2)," /i/q/k/h/o/y";
   };
   
 /F/ creates a directory - Linux version
 /P/ dir:STRING - name of the directory to create
-.os.mkdirL:{[dir]
+.os.p.L.mkdir:{[dir]
   system "mkdir -p ",.os.p.q dir; 
   };
   
 /F/ creates a directory - Windows version
 /P/ dir:STRING - name of the directory to create
-.os.mkdirW:{[dir]
+.os.p.W.mkdir:{[dir]
   system "mkdir ",.os.p.q dir;
   };
   
 /F/ moves a file - Linux version
 /P/ source:STRING - the source name
 /P/ target:STRING - the target name
-.os.moveL:{[source;target]
+.os.p.L.move:{[source;target]
   system "mv ",source," ",target;
   };
+  
   
 /F/ moves a file - Windows version
 /P/ source:STRING - the source name
 /P/ target:STRING - the target name
-.os.moveL:{[source;target]
-  system "mv ",source," ",target;
-  };
-  
-/F/ moves a file - Windows version
-/P/ source:STRING - the source name
-/P/ target:STRING - the target name
-.os.moveW:{[source;target]
+.os.p.W.move:{[source;target]
   system "move /y ",source," ",target;
   };
   
@@ -85,17 +79,4 @@
 
 
 /S/ initialization
-$["w"~first string .z.o;
-  [.os.rmdir:.os.rmdirW;
-   .os.cpdir:.os.cpdirW;
-   .os.mkdir:.os.mkdirW;
-   .os.slash:"\\";
-   .os.move:.os.moveW
-   ];
-  [.os.rmdir:.os.rmdirL;
-   .os.cpdir:.os.cpdirL;
-   .os.mkdir:.os.mkdirL;
-   .os.slash:"/";
-   .os.move:.os.moveL
-   ]
-  ];
+$["w"~first string .z.o;.os,:.os.p.W;.os,:.os.p.L];
