@@ -204,6 +204,7 @@ if[0~count .z.x;
 
 
 .sl.main:{[flags]
+  if["w"~first string .z.o;.log.fatal[`hk] "hdbSync.q has not been ported to Windows yet";'`$"nyi"];
   };
 
 .sl.run[`hdbSync;`.sl.main;`];    
