@@ -77,6 +77,27 @@
 /P/ s:STRING
 .os.p.q:{[s] "\"",s,"\""};
 
+/--- stubs for docs generation, overwritten by initialization
+/F/ removes a directory 
+/P/ dirname:STRING
+.os.rmdir:{[dirname] };
 
-/S/ initialization
+/F/ copies directory with contents
+/P/ dir1:STRING - source dir
+/P/ dir2:STRING - target dir
+.os.cpdir:{[dir1;dir2] };
+
+/F/ creates a directory
+/P/ dir:STRING - name of the directory to create
+.os.mkdir:{[dir] };
+
+/F/ moves a file
+/P/ source:STRING - the source name
+/P/ target:STRING - the target name
+.os.move:{[source;target] };
+
+
+/--- initialization
 $["w"~first string .z.o;.os,:.os.p.W;.os,:.os.p.L];
+
+
