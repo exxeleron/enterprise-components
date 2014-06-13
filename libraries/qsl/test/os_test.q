@@ -24,6 +24,8 @@ system"l lib/qspec/qspec.q";
 .sl.init[`os_test];
 system"l lib/qsl/os.q";
 
+/F/ for windows converts forward slashes to backslashes
+
 /------------------------------------------------------------------------------/
 /                                tests                                         /
 /------------------------------------------------------------------------------/

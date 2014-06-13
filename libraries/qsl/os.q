@@ -20,6 +20,7 @@
 /F/ removes a directory - Linux version
 /P/ dirname:STRING
 .os.p.L.rmdir:{[dirname]
+  dirname:.os.slash dirname;
   system "rm -r ",dirname;
   };
 
@@ -27,6 +28,7 @@
 /F/ removes a directory Windows version
 /P/ dirname:STRING
 .os.p.W.rmdir:{[dirname]
+  dirname:.os.slash dirname;
   system "rmdir /S /Q ",.os.p.q dirname;
   };
   
@@ -35,6 +37,8 @@
 /P/ dir1:STRING - source dir
 /P/ dir2:STRING - target dir
 .os.p.L.cpdir:{[dir1;dir2]
+  dir1:.os.slash dir1;
+  dir2:.os.slash dir2;
   system "cp -rf ",(.os.p.q dir1)," ",.os.p.q dir2;
   };
   
@@ -42,18 +46,22 @@
 /P/ dir1:STRING - source dir
 /P/ dir2:STRING - target dir
 .os.p.W.cpdir:{[dir1;dir2]
+  dir1:.os.slash dir1;
+  dir2:.os.slash dir2;
   system "xcopy  ",(.os.p.q dir1)," ",(.os.p.q dir2)," /i/q/k/h/o/y";
   };
   
 /F/ creates a directory - Linux version
 /P/ dir:STRING - name of the directory to create
 .os.p.L.mkdir:{[dir]
+  dir:.os.slash dir;
   system "mkdir -p ",.os.p.q dir; 
   };
   
 /F/ creates a directory - Windows version
 /P/ dir:STRING - name of the directory to create
 .os.p.W.mkdir:{[dir]
+  dir:.os.slash dir;
   system "mkdir ",.os.p.q dir;
   };
   
@@ -61,6 +69,8 @@
 /P/ source:STRING - the source name
 /P/ target:STRING - the target name
 .os.p.L.move:{[source;target]
+  source:.os.slash source;
+  target:.os.slash target;
   system "mv ",source," ",target;
   };
   
@@ -69,15 +79,25 @@
 /P/ source:STRING - the source name
 /P/ target:STRING - the target name
 .os.p.W.move:{[source;target]
+  source:.os.slash source;
+  target:.os.slash target;
   system "move /y ",source," ",target;
   };
-  
+
+/F/ converts slashes to the correct ones for Linux. Makes it easier to use literal paths 
+/P/ p:STRING - a path
+.os.p.L.slash:{[p] p[where p="\\"]:"/";:p};
+
+/F/ converts slashes to the correct ones for Linux. Makes it easier to use literal paths 
+/P/ p:STRING - a path
+.os.p.W.slash:{[p] p[where p="/"]:"\\";:p};
 
 /F/ surrounds a string with quotation marks
 /P/ s:STRING
 .os.p.q:{[s] "\"",s,"\""};
 
 /--- stubs for docs generation, overwritten by initialization
+
 /F/ removes a directory 
 /P/ dirname:STRING
 .os.rmdir:{[dirname] };
@@ -96,6 +116,10 @@
 /P/ target:STRING - the target name
 .os.move:{[source;target] };
 
+/F/ converts slashes to the correct ones for OS. Makes it easier to use literal paths 
+/P/ p:STRING - a path
+/R/ :STRING - a path with all wrong slashes converted to correct ones
+.os.slash:{[p] };
 
 /--- initialization
 $["w"~first string .z.o;.os,:.os.p.W;.os,:.os.p.L];
