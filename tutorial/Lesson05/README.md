@@ -284,17 +284,76 @@ access.ap
 / String queries are also not allowed on STRICT level
 q).hnd.h[`strict.demo] "1+1"
 'unsupported query type for check level: STRICT, query: "1+1"
+/ Queries from other namespaces are blocked
+q).hnd.h[`core.rdb.demo] (`.cb.status;::)
+'access denied
 
 ```
+> Note:
+
+> For more details on `.hnd.status` table or `.hnd` interface functions please refer to the source
+> code documentation in `libraries/qsl/handle.q`.
 
 #### NONE check level - sample queries
-> **TODO** add some samples
+
+As we already have seen, technical user can execute queries without any restrictions. It is possible
+to assign such check level also to ordinary users (non-technical). Such configuration should be
+assigned only for __trusted__ users. Please follow to next section, where such example user will be
+added.
 
 #### Additional user and group
 
-> c) **TODO** Add additional user and group to show that it is possible to have different number of users on
-> different processes? Currently all processes have two users configured.
+As mentioned before, users, passwords and usergroups are stored in `access.cfg` configuration
+file. Let's add a new user (`usernone`) with password `nonepassword`. Our new user will be assigned
+to `trusted` group of users. `trusted` group will have full access to `access.ap` process and will
+be restricted only on `core.rdb` (where all queries containing words "quote" or "trade" will be
+blocked).
 
+```
+DemoSystem> yak console admin.genPass
+Starting interactive console...
+[ --- output truncated --- ]
+INFO  2014.06.16 22:13:29.424 gp    - | status=`EVENT_STARTED| descr="initializing gp component"| funcName=`.gp.genpass| arg=`| defVal=`| tsId=2014.06.16D22:13:29.423947000
+
+Please enter new password: nonepassword
+Please re-enter new password: nonepassword
+New password is: 0xa0a1a0abbeafbdbdb9a1bcaa
+```
+
+User and group definition can now be put into `etc/access.cfg` file:
+
+```
+[user:usernone]
+  pass = 0xa0a1a0abbeafbdbdb9a1bcaa
+  usergroups = trusted
+
+[userGroup:trusted]
+  [[access.ap]]
+    namespaces = ALL
+    checkLevel = NONE
+  [[core.rdb]]
+    stopWords = trade, quote
+    namespacess = ALL
+    checkLevel = FLEX
+
+```
+
+After running `admin.refreshUFiles` we can see that we have access to every namespace on `access.ap`
+proces. It is left as an excercise for the reader to compare possible queries as `usernone` and
+`demo` user.
+
+For contrast, `core.rdb` is constrained when query contains words listed in `stopWords`
+configuration field.
+
+```
+/executed on core.rdb as usernone
+q)select from trade
+'access denied
+```
+
+> **TODO**
+> * Update resources figure
+> * Add some 'air' to STRICT section
 ## Summary
 
 ![Summary](summary_Lesson05.png)
