@@ -24,8 +24,9 @@ working. Specifically these sections should be looked at in more detail:
 <!------------------------------------------------------------------------------------------------->
 ## Components used
 
-This lesson expands the system from [Lesson 4](../Lesson04) with additional `accessPoint`
-configuration:
+This lesson expands the system from [Lesson 4](../Lesson04) with two administration components
+`authentication/genPass` and `authentication/refreshUFiles`. Additionally `accessPoint`
+configuration with be extended with:
 
 - new users and groups
 - user access restrictions
@@ -83,7 +84,8 @@ Authorization checks can be set on different levels:
 Authentication flags (`uOpt`/`uFile`) are set in `system.cfg` file. 
 
 You can enable or disable authentication in `system.cfg` configuration file. Component instances
-which have `uOpt` and `uFile` flags set will allow only users defined in `access.cfg` file.
+which have `uOpt` (`93` line) and `uFile` (`96` line) flags set will allow only users defined in
+`access.cfg` file.
 
 
 ```diff
@@ -155,13 +157,12 @@ Users, groups, authorization and are defined in `access.cfg` file.
 
 ### Generating user passwords
 
-Passwords stored in Enterprise Components configuration files are XOR-ed against built-in mask. For
-simplicity of this lesson, default mask value is used.
+Passwords stored in Enterprise Components configuration files are obfuscated by using XOR against
+built-in mask. (`.sl.p.m` variable in `qsl/sl.q` file)
 
 > Note:
 >
-> XOR mask is stored in `.sl.p.m` variable in `qsl/sl.q` file. It is advised to change this mask on
-> productive systems.
+> Passwords are protected (obfuscated) only to avoid from accidential reading.
 
 In order to generate a new password for a user (XOR password), please run `admin.genPass` in
 interactive mode (we used `demouser` as a password for a user we added in this lesson):
@@ -196,7 +197,7 @@ INFO  2014.06.01 03:05:11.787 ru    - Refresh completed
 ```
 ### Verifying access settings
 
-#### queries on FLEX level
+#### FLEX check level - sample queries
 
 As mentioned before, `FLEX` allows to execute queries that conform to allowed namespaces and do not
 contain any words specified in `stopWords`.
@@ -232,40 +233,61 @@ q).example.tradeStats[{delete from .hnd.status}`]
 
 ```
 
-#### queries on STRICT level
-> **TODO** execute sample queries on core.rdb but need to setup standalone q process for that.
+#### STRICT check level - sample queries
+
+Default connections visible in `.hnd.status` use technical user (which has all the access rights to
+all namespaces). We need to add a new connection to `core.rdb` process, but with a different user
+(demo/demouser).
+
 ```
-/executed in a standalone q session
-q)h:hopen `:localhost:17011:demo:demouser
-/ we fake empty parameter list here to get keyed table content
-q)h (`.hnd.status;::)
-server   | timeout state connstr                   handle ashandle topen     ..
----------| ------------------------------------------------------------------..
-         |                                         ()     ()                 ..
-/ let's open some connection
-q)h (`.hnd.hopen;`access.ap;100i;`eager)
-/ we can observe changes in .hnd.status table
-q)h (`.hnd.status;::)
-server   | timeout state connstr                   handle ashandle topen     ..
----------| ------------------------------------------------------------------..
-         |                                         ()     ()                 ..
-access.ap| 100     open  ::17050:tu:0xbabbbbbdabbc 11i    -11i     2014.06.01..
-/ or only access.ap rows with parameter
-q)h (`.hnd.status;`access.ap)
-timeout  | 100
-state    | `open
-connstr  | `::17050:tu:0xbabbbbbdabbc
-handle   | 11i
-ashandle | -11i
-topen    | 2014.06.01D04:45:36.364768000
-tclose   | 0Np
-tlost    | 0Np
-reconn   | 0
-msg      | ""
-remoteHnd| 0N
+/ Queries are executed on access.ap as technical user (tu/tuuser).
+q).hnd.hopen[enlist[`strict.demo]!enlist[`$"::17011:demo:0xaaaba3a1bbbdabbc"];100i;`eager]
+
+/ We can see new connection in .hnd.status table
+q).hnd.status
+server
+---------
+
+core.hdb
+core.rdb
+strict.demo
+
+/ We can now execute queries in a parse-tree form
+q)key .hnd.h[`strict.demo] (`.hnd.status;::)
+server
+---------
+         
+core.hdb 
+core.tick
+
+q).hnd.h[`strict.demo] (`.hnd.hopen;`access.ap;100i;`eager)
+q)key .hnd.h[`strict.demo] (`.hnd.status;::)
+server
+---------
+         
+core.hdb 
+core.tick
+access.ap
+
+/ But we are not allowed to pass functions not from .hnd namespace
+q).hnd.h[`strict.demo] (key;`.hnd.status)
+'unsupported query type for check level: STRICT, query: (!:;`.hnd.status)
+/ Which is allowed for technical user
+q).hnd.h[`core.rdb] (key;`.hnd.status)
+server
+---------
+         
+core.hdb 
+core.tick
+access.ap
+
+/ String queries are also not allowed on STRICT level
+q).hnd.h[`strict.demo] "1+1"
+'unsupported query type for check level: STRICT, query: "1+1"
+
 ```
 
-#### NONE check level description
+#### NONE check level - sample queries
 > **TODO** add some samples
 
 #### Additional user and group
