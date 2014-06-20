@@ -47,7 +47,10 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 //----------------------- dist -----------------------------------------------//
 .dist.p.init:{[]
   .dist.actions:(exec first ipc, first jrn by action from .dist.cfg.actions);
-  tabs:ungroup select tab:table, sector:sectors from .dist.cfg.tables;
+
+  diskState:1!update sectors:key each .dist.cfg.jrn .Q.dd'table from ([]table:key .dist.cfg.jrn);
+  //TODO: validate sectors of tables that are on disk and in the configuration
+  tabs:ungroup select tab:table, sector:sectors from diskState,.dist.cfg.tables;
   .dist.status:2!update jrnDir:.dist.p.initSectorDir'[tab;sector], jrn:`, jrnHnd:0Ni, jrnI:0Nj, w:`int$count[i]#() from tabs;
 
   //open and count all journals
@@ -72,9 +75,8 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 //.dist.p.getSectors[`sector;`sector1]
 //.dist.p.getSectors[`sector;`]
 //.dist.p.getSectors[`sectorGr;`]
-.dist.p.getSectors:{[tab;subType;subList]
-  `tab`subType`subList set' (tab;subType;subList);
-  if[`ALL in subList;:.dist.cfg.tables[tab][`sectors]];
+.dist.p.getSectors:{[tabName;subType;subList]
+  if[`ALL in subList;:exec sector from .dist.status where tab=tabName];
   if[subType~`SECTOR;:(),subList];
   '"subType:",.Q.s1[subType]," with subList:",.Q.s1[subList], " not supported"
   }; 
@@ -88,7 +90,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 /P/  subType:SYMBOL - subscription type, currently must be SECTOR
 /P/  subList:SYMBOL - subscription list, currently must be SECTOR list
 .dist.sub:{[tab;subActions;subType;subList]
-  if[null tab;tab:exec table from .dist.cfg.tables];
+  if[null tab;tab:exec distinct tab from .dist.status];
   subscriptions:([]tab:tab;subActions;subType;count[tab]#enlist(),subList);
   :.dist.subBatch[subscriptions];
   };
@@ -121,10 +123,10 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 //.dist.p.usub[`;`;56i]
 //`tab`sec`w set' (`;`;56i);
 //`tab`sec`w set' (`Account;`sector2;56i)
-.dist.p.usub:{[tab;sec;w]
-  if[tab~`;:.dist.p.usub[;sec;w] each exec table from .dist.cfg.tables];
-  if[sec~`;:.dist.p.usub[tab;;w] each .dist.cfg.tables[tab][`sectors]];
-  .dist.status[tab,sec;`w]:.dist.status[tab,sec;`w] except w;
+.dist.p.usub:{[tabName;sec;w]
+  if[tabName~`;:.dist.p.usub[;sec;w] each exec distinct tab from .dist.status];
+  if[sec~`;:.dist.p.usub[tabName;;w] each exec sector from .dist.status where tab=tabName];
+  .dist.status[tabName,sec;`w]:.dist.status[tabName,sec;`w] except w;
   .dist.p.refreshW[];
   };
 
@@ -211,7 +213,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 
 //x:first 0!.dist.status
 .dist.p.initJrn:{[x]
-  newJrn:.dist.p.jrnNewFile[x`tab;x`sector];
+  newJrn:.dist.p.jrnNewFile[x`jrnDir];
   x[`jrn]:newJrn;
   if[()~key x[`jrn];x[`jrn] set ()];
   x[`jrnHnd]:hopen x[`jrn];
@@ -219,10 +221,10 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   x
   };
 
-//tab:`Account;sec:`sector1
-.dist.p.jrnNewFile:{[tab;sec]
+//jrnDir:x`jrnDir
+.dist.p.jrnNewFile:{[jrnDir]
   ts:string[.sl.zz[]]except":";
-  ` sv .dist.status[tab,sec;`jrnDir],`$"jrn",ts
+  ` sv jrnDir,`$"jrn",ts
   };
 
 .dist.p.initSectorDir:{[tab;sec]
@@ -254,6 +256,23 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
     ];
   //create new journal
   .dist.status,:.dist.p.initJrn first 0!?[`.dist.status;((=;`tab;enlist tab);(=;`sector;enlist sector));0b;()];
+  };
+
+/------------------------------------------------------------------------------/
+/F/ Add ad-hoc new table which was not configured using dataflow.cfg file.
+/P/ tab:SYMBOL - table name
+/P/ sectors:LIST SYMBOL - list of sectors
+/P/ dataModel:TABLE - empty table with the data model of added table
+//tab:`New; sectors:`sec0`sec1
+/E/.dist.addTable[`NewTab;`sector0`sector1; ([]col1:`int$();col2:`float$())]
+.dist.addTable:{[tab;sectors;dataModel]
+  //TODO: validate input for .dist.addTable function
+  tab set dataModel;
+  new:2!update jrnDir:.dist.p.initSectorDir'[tab;sector], jrn:`, jrnHnd:0Ni, jrnI:0Nj, w:`int$count[i]#() from ([]tab;sector:sectors);
+  //open and init journals
+  new:2!@[.dist.p.initJrn;;::] each 0!new;
+  .dist.status,:new;
+  .dist.p.refreshW[];
   };
 
 /------------------------------------------------------------------------------/
