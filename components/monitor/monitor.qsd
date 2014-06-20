@@ -218,6 +218,9 @@
   
 #/C/ Table describing disk usage statistics.
 [sysTable:sysDiskUsage]
+  #/C/ Frequency of updates, specified in milliseconds
+  frequency = <type(INT), greater(999), default(600000)>
+  
   #/C/ sysDiskUsage data model.
   #/C/ 
     #/C/ -- time:TIME               - timestamp of published information
