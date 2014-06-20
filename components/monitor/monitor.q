@@ -548,7 +548,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   .sl.libCmd[];
   .monitor.p.init[];
   sysHdbSummaryProcList:raze exec finalValue from .cr.getCfgTab[`THIS;`sysTable;`hdbProcList] where sectionVal=`sysHdbSummary;
-  .monitor.cfg.sysHdbSummaryPathDict:sysHdbSummaryProcList!.cr.getCfgField[;`group;`dataPath] each sysHdbSummaryProcList;
+  .monitor.cfg.sysHdbSummaryPathDict:sysHdbSummaryProcList!.cr.getCfgField[;`group;`cfg.hdbPath] each sysHdbSummaryProcList;
   .monitor.cfg.sysHdbStatsProcList:raze exec finalValue from .cr.getCfgTab[`THIS;`sysTable;`hdbProcList] where sectionVal=`sysHdbStats;
 
   .monitor.cfg.sysFuncSummaryProcList:raze exec finalValue from .cr.getCfgTab[`THIS;`sysTable;`procList] where sectionVal=`sysFuncSummary;
