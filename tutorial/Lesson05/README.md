@@ -141,7 +141,7 @@ Users, groups, authorization and are defined in `access.cfg` file.
 + 37. [userGroup:demoquery]
 + 38.   # List of forbidden words. Including any of these words in a query will cause query
 + 39.   # to be blocked.
-+ 40.   stopWords = <type(LIST STRING), default(delete,exit,access,value,save,read0,read1,insert,update,system,upsert,set,.z.pw,.z.pg,.z.ps,.z.pi,.z.ph,.z.pp,.z,parse,eval,.q.parse,.q.eval,.q.system,.z.exit,.z.po,.z.pc,.ap.cfg.serverAux,.ap.cfg.timeout,.auth.stopWords,.auth.status,.auth.user2nm,\\,\)> 
++ 40.   stopWords = delete,exit,access,value,save,read0,read1,insert,update,system,upsert,set,.z.pw,.z.pg,.z.ps,.z.pi,.z.ph,.z.pp,.z,parse,eval,.q.parse,.q.eval,.q.system,.z.exit,.z.po,.z.pc,.ap.cfg.serverAux,.ap.cfg.timeout,.auth.stopWords,.auth.status,.auth.user2nm,\\,\)
 + 41.   [[ALL]]
 + 42.     checkLevel = STRICT # By default allow only parse-tree queries and only to .hnd
 + 43.                         # namespace
