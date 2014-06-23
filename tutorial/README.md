@@ -108,10 +108,10 @@ Lessons are based on `DemoSystem`. Each Lesson is:
 ### Conventions
 
 1. Conventions used in readme files
-    - execute `pwd` system command from DemoSystem directory:
+    - execute `cd etc` system command from DemoSystem directory:
 
         ```bash
-        DemoSystem> pwd
+        DemoSystem> cd etc
         ```
     - execute q command `-100#trade` against `core.rdb` process on designated port number (for example using kdb+ studio):
 

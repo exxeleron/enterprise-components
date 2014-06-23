@@ -39,6 +39,7 @@
 /------------------------------------------------------------------------------/
 //calculate hdb size
 .monitor.p.hdbSummary:{[path]
+  if["w"~first string .z.o;:([]hdb:enlist `$path;sizeMB:0Nj)];
   sizeKB:.pe.atLog[`monitor;`.q.system;"du --max-depth=0 ",path;enlist"\t",path;`error];
   r:select hdb:`$path, sizeMB:1+`int$sizeKB%1024 from flip `dir`sizeKB!reverse "IS"$'flip"\t"vs/:sizeKB;
   if[count key par:hsym `$path,"/par.txt";
