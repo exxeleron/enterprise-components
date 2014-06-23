@@ -24,8 +24,8 @@ working. Specifically these sections should be looked at in more detail:
 <!------------------------------------------------------------------------------------------------->
 ## Components used
 
-This lesson expands the system from [Lesson 4](../Lesson04) with two administration components
-`authentication/genPass` and `authentication/refreshUFiles`. Additionally `accessPoint`
+This lesson expands the system from [Lesson 4](../Lesson04) with two administrative components: 
+`authentication/genPass` and `authentication/refreshUFiles`. Additionally, `accessPoint`
 configuration with be extended with:
 
 - new users and groups
@@ -43,7 +43,7 @@ configuration with be extended with:
 ## Enterprise Components security model
 
 Enterprise Components can be setup to allow only specific users in the system
-(_authentication_). Those users can granted access only to specific resources
+(_authentication_). Those users can be granted access only to specific resources
 (_authorization_). 
 
 ### Authentication
@@ -62,17 +62,17 @@ Authentication in Enterprise Components utilizes raw `-u`/`-U` command line para
 
 ### Authorization
 
-Authorization specifies access to resources available for users. It also specifies how detailed
+Authorization specifies access to resources available to users. It also specifies how detailed
 should be the checks of queries issued by users.
 
-It is possible to block query execution basing on forbidden words (`stopWords`) or allowed `q`
+It is possible to block query execution based on forbidden words (`stopWords`) or allowed `q`
  namespaces.
 
 Authorization checks can be set on different levels:
 - `NONE` - do not perform any query checks; allow user to freely run code. Recommended for technical
   users.
 - `STRICT` - allow only functional-form queries; do not check `stopWords`; check function name against
-  allowed namespaces. Recommended for interface functions' calls (e.g. from qJava)
+  allowed namespaces. Recommended for interface functions' calls (e.g. from [`qJava`](https://github.com/exxeleron/qJava))
 - `FLEX` - perform detailed check on a query (functional or passed as string); check against
   `stopWords` and allowed namespaces but allow nested function calls
 
@@ -84,7 +84,7 @@ Authorization checks can be set on different levels:
 Authentication flags (`uOpt`/`uFile`) are set in `system.cfg` file. 
 
 You can enable or disable authentication in `system.cfg` configuration file. Component instances
-which have `uOpt` (`93` line) and `uFile` (`96` line) flags set will allow only users defined in
+which have `uOpt` (line `93`) and `uFile` (line `96`) flags set will allow only users defined in
 `access.cfg` file.
 
 
@@ -122,7 +122,7 @@ which have `uOpt` (`93` line) and `uFile` (`96` line) flags set will allow only 
 
 ### `access.cfg`
 
-Users, groups, authorization and are defined in `access.cfg` file.
+Users, groups and authorization are defined in `access.cfg` file.
 
 ```diff
 --- access.cfg     (Lesson 4)
@@ -157,14 +157,14 @@ Users, groups, authorization and are defined in `access.cfg` file.
 
 ### Generating user passwords
 
-Passwords stored in Enterprise Components configuration files are obfuscated by using XOR against
+Passwords stored in Enterprise Components configuration files are obfuscated by using `XOR` against
 built-in mask. (`.sl.p.m` variable in `qsl/sl.q` file)
 
 > Note:
 >
 > Passwords are protected (obfuscated) only to avoid from accidential reading.
 
-In order to generate a new password for a user (XOR password), please run `admin.genPass` in
+In order to generate a new password for a user (`XOR` password), please run `admin.genPass` in
 interactive mode (we used `demouser` as a password for a user we added in this lesson):
 
 ```bash
@@ -200,7 +200,7 @@ INFO  2014.06.01 03:05:11.787 ru    - Refresh completed
 #### FLEX check level - sample queries
 
 As mentioned before, `FLEX` allows to execute queries that conform to allowed namespaces and do not
-contain any words specified in `stopWords`.
+contain any words specified in `stopWords`:
 
 ```
 // query executed on access.ap as 'demo' user
@@ -210,7 +210,7 @@ hh| cnt
 19| 10500
 ```
 
-It is also possible to pass nested function calls as parameters to predefined queries. 
+It is also possible to pass nested function calls as parameters to predefined queries:
 
 ```
 // query with function call as a parameter
@@ -219,7 +219,7 @@ hh| cnt
 --| -----
 19| 10550
 ```
-Anonymous functions are also allowed in queries, unless they contain any `stopWords`.
+Anonymous functions are also allowed in queries, unless they contain any `stopWords`:
 
 ```
 // query with anonymous function as parameter (might cause side-effects and be potentially dangerous)
@@ -236,8 +236,8 @@ q).example.tradeStats[{delete from .hnd.status}`]
 #### STRICT check level - sample queries
 
 Default connections visible in `.hnd.status` use technical user (which has all the access rights to
-all namespaces). We need to add a new connection to `core.rdb` process, but with a different user
-(demo/demouser).
+all namespaces). We need to add a new connection to `core.rdb` process but with a different user
+(demo/demouser):
 
 ```
 / Queries are executed on access.ap as technical user (tu/tuuser).
@@ -292,7 +292,7 @@ q).hnd.h[`core.rdb.demo] (`.cb.status;::)
 > Note:
 
 > For more details on `.hnd.status` table or `.hnd` interface functions please refer to the source
-> code documentation in `libraries/qsl/handle.q`.
+> code documentation in [`libraries/qsl/handle.q`](../../libraries/qsl/handle.q).
 
 #### NONE check level - sample queries
 
@@ -342,8 +342,9 @@ After running `admin.refreshUFiles` we can see that we have access to every name
 proces. It is left as an excercise for the reader to compare possible queries as `usernone` and
 `demo` user.
 
-For contrast, `core.rdb` is constrained when query contains words listed in `stopWords`
-configuration field.
+In contrast, queries on `core.rdb` containing words listed in `stopWords`
+configuration field will not be allowed:
+
 
 ```
 /executed on core.rdb as usernone
