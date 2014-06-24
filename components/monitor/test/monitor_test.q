@@ -516,8 +516,12 @@
   should[".monitor.p.getKdbLicSummary[]"]{
     `.sl.componentId mock `core.rdb;
     lic:.monitor.p.getKdbLicSummary[];
-    if[0<count .z.l; // check only for commercial version
-      (delete time from lic) mustmatch ([]sym:enlist`core.rdb;maxCoresAllowed:"I"$.z.l 0;expiryDate:"D"$.z.l 1;updateDate:"D"$.z.l 2;cfgCoreCnt:.z.c)];
+    if[count .z.l;
+      (delete time from lic) mustmatch ([]sym:enlist`core.rdb;maxCoresAllowed:"I"$.z.l 0;expiryDate:"D"$.z.l 1;updateDate:"D"$.z.l 2;cfgCoreCnt:.z.c);
+      ];
+    if[0=count .z.l;
+      (delete time from lic) mustmatch ([]sym:enlist`core.rdb;maxCoresAllowed:enlist 0Ni;expiryDate:enlist 0Nd;updateDate:enlist 0Nd;cfgCoreCnt:.z.c);
+      ];
     };
   should[".monitor.p.dailyExec.getKdbLicSummary[]"]{
     .monitor.p.dailyExec.sysKdbLicSummary[];
