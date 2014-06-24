@@ -20,5 +20,5 @@ functionalities that are known not to work. These include:
 3. [**Monitor**](../components/monitor) component - checking of disk usage and free disk space is currently 
    not working on Windows. (this functionality is originally based on `du` and `df`)
    The rest of the `monitor`'s functionality is working on Windows.
-   
+4. The reconnect feature of the [**handle**](../libraries/qsl/handle.q) library may cause a process to be not responsive (busy and not accepting connections) when there are more than two processes to which the process is trying to reconnect.  
 
