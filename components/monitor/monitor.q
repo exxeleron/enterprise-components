@@ -520,7 +520,9 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 /P/ flags - currently unused
 
 .sl.main:{[flags]
-  
+
+  .cr.loadCfg[`ALL];
+
   .monitor.p.initSysTables[];
   
   .monitor.cfg.procMaskList:  .cr.getCfgField[`THIS;`group;`cfg.procMaskList];
