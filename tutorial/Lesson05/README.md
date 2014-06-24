@@ -203,7 +203,7 @@ As mentioned before, `FLEX` allows to execute queries that conform to allowed na
 contain any words specified in `stopWords`:
 
 ```
-// query executed on access.ap as 'demo' user
+/ execute on access.ap (port 17050) as 'demo' user
 q).example.tradeStats[]
 hh| cnt  
 --| -----
@@ -213,7 +213,7 @@ hh| cnt
 It is also possible to pass nested function calls as parameters to predefined queries:
 
 ```
-// query with function call as a parameter
+/ query with function call as a parameter
 q).example.tradeStats[1+1]
 hh| cnt  
 --| -----
@@ -222,7 +222,7 @@ hh| cnt
 Anonymous functions are also allowed in queries, unless they contain any `stopWords`:
 
 ```
-// query with anonymous function as parameter (might cause side-effects and be potentially dangerous)
+/ query with anonymous function as parameter (might cause side-effects and be potentially dangerous)
 q).example.tradeStats[{sum x}[1 1]]
 hh| cnt  
 --| -----
@@ -240,10 +240,10 @@ all namespaces). We need to add a new connection to `core.rdb` process but with 
 (demo/demouser):
 
 ```
-/ Queries are executed on access.ap as technical user (tu/tuuser).
+/ execute on access.ap (port 17050) as technical user (tu/tuuser).
 q).hnd.hopen[enlist[`strict.demo]!enlist[`$"::17011:demo:0xaaaba3a1bbbdabbc"];100i;`eager]
 
-/ We can see new connection in .hnd.status table
+/ check new connection in .hnd.status table
 q).hnd.status
 server
 ---------
@@ -252,7 +252,7 @@ core.hdb
 core.rdb
 strict.demo
 
-/ We can now execute queries in a parse-tree form
+/ execute queries in a parse-tree form
 q)key .hnd.h[`strict.demo] (`.hnd.status;::)
 server
 ---------
@@ -268,8 +268,11 @@ server
 core.hdb 
 core.tick
 access.ap
+```
 
-/ But we are not allowed to pass functions not from .hnd namespace
+We are not allowed to pass functions not from `.hnd` namespace as parameters (function `key`).
+
+```
 q).hnd.h[`strict.demo] (key;`.hnd.status)
 'unsupported query type for check level: STRICT, query: (!:;`.hnd.status)
 / Which is allowed for technical user
@@ -280,8 +283,12 @@ server
 core.hdb 
 core.tick
 access.ap
+```
 
-/ String queries are also not allowed on STRICT level
+String queries are also not allowed on STRICT level. Such queries are usually send from kdbStudio or
+other IDEs.
+
+```
 q).hnd.h[`strict.demo] "1+1"
 'unsupported query type for check level: STRICT, query: "1+1"
 / Queries from other namespaces are blocked
@@ -352,9 +359,6 @@ q)select from trade
 'access denied
 ```
 
-> **TODO**
-> * Update resources figure
-> * Add some 'air' to STRICT section
 ## Summary
 
 ![Summary](summary_Lesson05.png)
