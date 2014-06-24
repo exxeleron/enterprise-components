@@ -51,7 +51,7 @@ Instructions in Lessons relay on checking data or status of KDB+ processes, ther
     On Windows download and unpack the package `ec_vX.X.X_DemoSystem_Win32_Lessons_X-X.zip`
     
     ```Batchfile
-    > unzip ec_vX.X.X_DemoSystem_Win32_Lessons_X-X.zip
+    > unzip ec_vX.X.X_DemoSystem_Windows32bit_Lessons_X-X.zip
     ```
 
 1. Create link to configuration for LessonXX
