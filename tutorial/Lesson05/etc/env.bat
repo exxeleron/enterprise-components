@@ -19,7 +19,7 @@ set EC_QSL_PATH=%EC_SYS_PATH%/bin/ec/libraries/qsl/
 set EC_ETC_PATH=%EC_SYS_PATH%/etc
 
 set EC_SYS_ID="DemoSystem"
-set EC_SYS_TYPE="Lesson04"
+set EC_SYS_TYPE="Lesson05"
 
 GOTO END
 :NOBIN
