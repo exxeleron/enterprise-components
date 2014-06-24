@@ -3,7 +3,7 @@
 
 <!------- https://github.com/exxeleron/enterprise-components/tree/master/tutorial/Lesson05 -------->
 
-#                     **Lesson 5 - Security in Enterprise Components**
+#                     **Lesson 5 - Authentication and authorization**
 
 <!------------------------------------------------------------------------------------------------->
 ## Goal of the lesson
