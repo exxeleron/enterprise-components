@@ -1,4 +1,4 @@
-[:arrow_backward:](../Lesson03)
+[:arrow_backward:](../Lesson03) | [:arrow_forward:](../Lesson05)
 <!----------------- https://github.com/exxeleron/enterprise-components/tree/master/tutorial/Lesson04 ------------------>
 
 #                                         **Lesson 4 - User queries**
@@ -347,7 +347,7 @@ date       |sym     | time     | open  | high  | low   | close | size | vwap
 ![Summary](summary_Lesson04.png)
 
 <!--------------------------------------------------------------------------------------------------------------------->
-[:arrow_backward:](../Lesson03)
+[:arrow_backward:](../Lesson03) | [:arrow_forward:](../Lesson05)
 
 <sub>[Super Mono Icons](http://files.softicons.com/download/toolbar-icons/super-mono-sticker-icons-by-double-j-design/readme.txt) 
 by [Double-J Design](http://www.doublejdesign.co.uk/) / [CC BY 3.0](http://creativecommons.org/licenses/by/3.0/)</sub>
