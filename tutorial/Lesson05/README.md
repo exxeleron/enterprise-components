@@ -26,7 +26,7 @@ working. Specifically these sections should be looked at in more detail:
 
 This lesson expands the system from [Lesson 4](../Lesson04) with two administrative components: 
 `authentication/genPass` and `authentication/refreshUFiles`. Additionally, `accessPoint`
-configuration with be extended with:
+configuration will be extended with:
 
 - new users and groups
 - user access restrictions
