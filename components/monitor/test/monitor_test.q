@@ -522,7 +522,6 @@
     if[0=count .z.l;
       (delete time from lic) mustmatch ([]sym:enlist`core.rdb;maxCoresAllowed:enlist 0Ni;expiryDate:enlist 0Nd;updateDate:enlist 0Nd;cfgCoreCnt:.z.c);
       ];
-
     };
   should[".monitor.p.dailyExec.getKdbLicSummary[]"]{
     .monitor.p.dailyExec.sysKdbLicSummary[];

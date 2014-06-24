@@ -221,6 +221,10 @@ DemoSystem> ls -l data/core.hdb/
   sym
 ```
 
+> Note:
+
+> On Windows you can use `dir` in place of `ls -l` to list the files.
+
 <!--------------------------------------------------------------------------------------------------------------------->
 ## Summary
 

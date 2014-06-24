@@ -108,7 +108,7 @@
     `.hdbHk.getDateHnd mock {[x] `:tmp};
     .tst.mockFunc[`.log.warn;2;""];
     () mustmatch .hdbHk.p.pluginAct[date:2012.01.01;plugin:`a;tabs:`a;when:1;args:()];
-    .tst.trace[`.log.warn] mustmatch enlist((`hdbHk;"Partition :tmp not exists"));
+    .tst.trace[`.log.warn] mustmatch enlist((`hdbHk;"Partition :tmp does not exist"));
     };
   should["perform plugin and create a backup"]{
     .hdbHk.p.pluginAct[2012.01.02;`test;`table1`table2;1;()];
