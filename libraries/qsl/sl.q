@@ -325,6 +325,11 @@
   if[level~`INFO;:()];
   .log.debug: .log.p.out[out;`DEBUG;"DEBUG ";];
   };
+  
+/F/ a helper function replacing forward slashes to backslashes for use on Windows
+/P/ s:STRING - string to be converted
+/R/ :STRING - s with / replaced with \
+.sl.p.winsl:{[s] s[where s="/"]:"\\";:s};
 
 /F/ Rotates logs
 .log.p.rotate:{
