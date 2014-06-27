@@ -195,6 +195,11 @@ INFO  2014.06.01 03:05:11.787 ru    - Create security file in :/DemoSystem/data/
 INFO  2014.06.01 03:05:11.787 ru    - Create security file in :/DemoSystem/data/shared/security/core.tick.txt with #users:2
 INFO  2014.06.01 03:05:11.787 ru    - Refresh completed
 ```
+
+> Note:
+>
+> In this lesson the above command should be run at least once on a newly installed system before any component is started. 
+
 ### Verifying access settings
 
 #### FLEX check level - sample queries
