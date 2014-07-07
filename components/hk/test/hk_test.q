@@ -1,3 +1,4 @@
+// q test/hk_test.q --noquit -p 5001
 
 \l lib/qspec/qspec.q
 \l lib/qsl/sl.q
@@ -7,7 +8,7 @@
 .tst.desc["test initialization"]{
   before{
     .sl.noinit:1b;
-    system["l hk.q"];
+    @[system;"l hk.q";0N];
     `bigfiles mock `:test/datadir/bigfiles;
     `manyfiles mock `:test/datadir/manyfiles;
     `.hk.taskList mock ([] action:`delete`compress;dir:(bigfiles;manyfiles); age:4 8;pattern:(`$"*.bigs";`$"*.files");proc:`proc1`proc2);
@@ -29,7 +30,7 @@
   should["perform full housekeepeing"]{
     big:key bigfiles;
     many:key manyfiles;
-    .hk.p.processAllTasks[.hk.taskList];
+    .hk.processAllTasks[.hk.taskList];
     count[big] mustgt count[key bigfiles];
     bigfilelist[1] mustmatch ` sv/:bigfiles,/:asc k:key bigfiles;
 
@@ -37,7 +38,7 @@
     25 musteq count k where (k:key manyfiles) like "*.tar.gz";
     smallfilelist[1] mustmatch ` sv/:manyfiles,/:asc k where not (k:key manyfiles) like "*.tar.gz";
     system "touch -d '20 days ago' ", " " sv 1_/:string ` sv/:manyfiles,/:asc k where (k:key manyfiles) like "*.tar.gz"
-    .hk.p.processAllTasks[.hk.taskList];
+    .hk.processAllTasks[.hk.taskList];
     25 musteq count k where (k:key manyfiles) like "*.tar.gz";
     0 musteq count k where (k:key manyfiles) like "*.tar.gz.tar.gz";
     };
