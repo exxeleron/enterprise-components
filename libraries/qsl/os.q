@@ -32,7 +32,14 @@
   system "rmdir /S /Q ",.os.p.q dirname;
   };
   
-  
+/F/ removes a file - Linux version
+/P/ path:STRING - path to file
+.os.p.L.rm:{[path] system "rm ",path};
+
+/F/ removes a file - Linux version
+/P/ path:STRING - path to file
+.os.p.W.rm:{[path] "del /Q ",path};
+
 /F/ copies directory with contents - Linux version
 /P/ dir1:STRING - source dir
 /P/ dir2:STRING - target dir
@@ -91,6 +98,34 @@
 /F/ converts slashes to the correct ones for Linux. Makes it easier to use literal paths 
 /P/ p:STRING - a path
 .os.p.W.slash:{[p] p[where p="/"]:"\\";:p};
+
+/F/ finds old files - Linux version
+/P/ dir:SYMBOL - directory to look into
+/P/ age:LONG - age of the files in days
+/P/ pattern:SYMBOL - pattern for the file path
+.os.p.L.find:{[dir;age;pattern] "find -L ",1_(string dir)," -mtime +",(string age), " -name \"",string[pattern],"\" -prune"};
+
+/F/ finds old files - Windows version. Note: on Windows the pattern applies to files only
+/P/ dir:SYMBOL - directory to look into
+/P/ age:LONG - age of the files in days
+/P/ pattern:SYMBOL - pattern for the files
+.os.p.W.find:{[dir;age;pattern] "forfiles /m ",(string pattern)," /p ",(.os.p.W.slash string path)," /d -",(string age)," /c \"cmd /c echp @path\"" };
+
+/F/ Compresses a directory - Linux version
+/P/ path:STRING - path to the directory to compress
+.os.p.L.compress:{[path] 
+	system "tar -czvf ",path,".tar.gz ",path," --remove-files --absolute-names"
+	};
+
+/F/ Compresses a directory - Windows version
+/P/ path:STRING - path to the directory to compress
+.os.p.W.compress:{[path]
+	path:.os.p.W.slash path;
+	system "zip -q -r ",path,".zip ",path;
+	// remove, calling the right function for a directory or file
+	$[0<type key hsym path;.os.p.W.rmdir path;.os.p.W.rm path];
+	};
+
 
 /F/ surrounds a string with quotation marks
 /P/ s:STRING
