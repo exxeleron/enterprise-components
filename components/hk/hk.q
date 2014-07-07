@@ -155,7 +155,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   if[path like "*.zip";.log.info[`hk] "compressing: file" ,string[path], " already compressed - skipping";:(::);];
   .log.info[`hk] "compressing: ",string[path];
   //cmd:"tar -czvf ",string[path],".tar.gz ",string[path]," --remove-files --absolute-names"; 
-  .os.p.compress string path;
+  .os.compress string path;
   system cmd;
   };
 
