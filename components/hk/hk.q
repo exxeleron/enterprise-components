@@ -121,6 +121,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 /---------------------------------------------------------------------------------/
 
 .sl.lib["cfgRdr/cfgRdr"];
+.sl.lib["qsl/os"]
 
 /---------------------------------------------------------------------------------/
 
@@ -134,7 +135,8 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 
 .hk.p.processOneTask:{[taskDef]
   plugin:` sv (`.hk.plug;taskDef[`action]);
-  findCmd:"find -L ",1_string[taskDef[`dir]]," -mtime +",string[taskDef[`age]], " -name \"",string[taskDef[`pattern]],"\" -prune";
+  //findCmd:"find -L ",1_string[taskDef[`dir]]," -mtime +",string[taskDef[`age]], " -name \"",string[taskDef[`pattern]],"\" -prune";
+  findCmd:.os.find[taskDef`dir;taskDef`age;taskDef`pattern];
   files:`$.pe.at[system;findCmd;{[cmd;sig] .log.error[`hk] "error while calling \"",cmd,"\". Maybe invalid arguments?"; :()}[findCmd;]];
   .log.info[`hk] "Running ",string[plugin], " for ", string[taskDef[`proc]], " on ",string[count files], " files";
   {[plugin;file] .pe.dot[{x @ y};(plugin;file);{[plugin;file;sig] .log.error[`hk] raze "Signal on plugin: ",string[plugin],", file: ",string[file]," - ",string[sig]}[plugin;file;]]}[plugin;] each files;
@@ -144,19 +146,16 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 .hk.plug.delete:{[path]
   .log.info[`hk] "deleting: ",string[path];
   isDir:0<type key hsym path;
-  cmd:"rm",$[isDir;" -r ";" "],string path;
-  .log.debug[`hk] "cmd: ",cmd;
-  system cmd;
+  $[isDir;.os.rmdir string path;.os.rm string path];
   };
 
 
 .hk.plug.compress:{[path]
   if[path like "*.tar.gz";.log.info[`hk] "compressing: file" ,string[path], " already compressed - skipping";:(::);];
+  if[path like "*.zip";.log.info[`hk] "compressing: file" ,string[path], " already compressed - skipping";:(::);];
   .log.info[`hk] "compressing: ",string[path];
-
-  cmd:"tar -czvf ",string[path],".tar.gz ",string[path]," --remove-files --absolute-names"; 
-
-  .log.debug[`hk] "cmd: ",cmd;
+  //cmd:"tar -czvf ",string[path],".tar.gz ",string[path]," --remove-files --absolute-names"; 
+  .os.p.compress string path;
   system cmd;
   };
 
