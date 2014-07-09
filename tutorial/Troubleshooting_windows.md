@@ -15,8 +15,8 @@ functionalities that are known not to work. These include:
 
 1. [**eodMng/hdbSync**](../components/eodMng/hdbSync.q) component (hdb synchronization) is currently not working on Windows 
    (core functionality is originally based on `rsync`).
-2. [**hk**](../components/hk) component (housekeeping) is currently not working on Windows 
-   (core functionality is originally based on `find`).
+2. [**hk**](../components/hk) component (housekeeping): the OS prints an error message on the console when the pattern specified in the pattern column of the housekeeping table does not match any files. 
+This does not affect the functionality of the component.
 3. [**Monitor**](../components/monitor) component - checking of disk usage and free disk space is currently 
    not working on Windows. (this functionality is originally based on `du` and `df`)
    The rest of the `monitor`'s functionality is working on Windows.
