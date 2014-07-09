@@ -2,10 +2,20 @@
 
 \l lib/qspec/qspec.q
 \l lib/qsl/sl.q
+\l lib/qsl/os.q
 
 .sl.init[`test];
 
-.tst.desc["test initialization"]{
+/------------ creates a date string tha is acceptable for touch on Linux and UnxUtil's touch on Windows
+.tst.p.daysAgo:{[n]
+    d:"." vs string .z.d-n;
+    :2_d[0],d[1],d[2]
+    };
+
+/F/ os dependent zip extension
+.tst.p.zipExt:$["w"~first string .z.o;".zip";".tar.gz"];
+
+.tst.desc["deleting and compressing"]{
   before{
     .sl.noinit:1b;
     @[system;"l hk.q";0N];
@@ -21,28 +31,30 @@
     bigfilelist set\:\: bigdata;
     smallfilelist set\:\: smalldata;
     //alter timestamps
-    system "touch -d '5 days ago' "," " sv 1_/:string bigfilelist[0];
-    system "touch -d '10 days ago' "," " sv 1_/:string smallfilelist[0];
+    system .os.slash "touch -d ",(.tst.p.daysAgo 5)," "," " sv 1_/:string bigfilelist[0];
+    system .os.slash "touch -d ",(.tst.p.daysAgo 10)," "," "sv 1_/:string smallfilelist[0];
     };
   after{
     .tst.rm `:test/datadir;
     };
-  should["perform full housekeepeing"]{
+  should["perform full housekeeping"]{
     big:key bigfiles;
     many:key manyfiles;
     .hk.processAllTasks[.hk.taskList];
     count[big] mustgt count[key bigfiles];
     bigfilelist[1] mustmatch ` sv/:bigfiles,/:asc k:key bigfiles;
 
-    count[many] musteq count[key manyfiles];
-    25 musteq count k where (k:key manyfiles) like "*.tar.gz";
-    smallfilelist[1] mustmatch ` sv/:manyfiles,/:asc k where not (k:key manyfiles) like "*.tar.gz";
-    system "touch -d '20 days ago' ", " " sv 1_/:string ` sv/:manyfiles,/:asc k where (k:key manyfiles) like "*.tar.gz"
+    count[many] musteq count[key manyfiles]; // fails
+	
+    25 musteq count k where (k:key manyfiles) like "*",.tst.p.zipExt;
+    smallfilelist[1] mustmatch ` sv/:manyfiles,/:asc k where not (k:key manyfiles) like "*",.tst.p.zipExt;
+    //system "touch -d '20 days ago' ", " " sv 1_/:string ` sv/:manyfiles,/:asc k where (k:key manyfiles) like "*",.tst.p.zipExt;
+	system "touch -d ",(.tst.p.daysAgo 20)," "," " sv 1_/:string ` sv/:manyfiles,/:asc k where (k:key manyfiles) like "*",.tst.p.zipExt;
     .hk.processAllTasks[.hk.taskList];
-    25 musteq count k where (k:key manyfiles) like "*.tar.gz";
-    0 musteq count k where (k:key manyfiles) like "*.tar.gz.tar.gz";
+    25 musteq count k where (k:key manyfiles) like "*",.tst.p.zipExt;
+    0 musteq count k where (k:key manyfiles) like "*",.tst.p.zipExt,.tst.p.zipExt;
     };
-  }
+  };
 \
 .hk.p.processOneTask:{[taskDef]
   plugin:` sv (`.hk.plug;taskDef[`action]);
