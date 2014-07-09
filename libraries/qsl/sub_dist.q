@@ -67,7 +67,7 @@
 /P/ jrnI:INT - number of entries that should be replayed from the current journal
 /E/ .sub.dist.replayData[(1;`:jrn)]
 .sub.dist.replayDirData:{[jrnDir;jrn;jrnI]
-  .log.info[`sub] "Replaying journals from dir ",string[jrnDir], ". Last jrn will be :",string[jrn], " with ", string[jrnI] " messages";
+  .log.info[`sub] "Replaying journals from dir ",string[jrnDir], ". Last jrn will be :",string[jrn], " with ", string[jrnI], " messages";
   jrns:asc key jrnDir;
   fullReplay:` sv/: jrnDir,/:jrns til jrns?last` vs jrn;
   -11!/: fullReplay;

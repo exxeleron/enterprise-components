@@ -68,7 +68,7 @@
 /P/eTime:TIME - end time
 /P/binSize:LONG - number of seconds
 /E/syms: exec sym from .hnd.h[`core.hdb]("2#select from trade");    
-/E/.example.ohlcVwap2[`instr0;(.z.d-2;.z.d); 08:00:00; 20:00:00; 600]    
+/E/.example.ohlcVwap2[syms;(.z.d-2;.z.d); 08:00:00; 20:00:00; 600]    
 .example.ohlcVwap2:{[sym;d;sTime;eTime;binSize]
   aggrs: `open`high`low`close`size`vwap!("first price";"max price";"min price";"last price";"sum size";"size wavg price");
   bys:(`sym`time)!(`sym;(xbar;binSize;`time.second));

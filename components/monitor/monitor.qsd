@@ -25,14 +25,14 @@
   #/C/ 
   #/C/ -- time:TIME        - timestamp of published information
   #/C/ -- sym:SYMBOL       - component name
-    #/C/ -- pid:INT          - process pid
-    #/C/ -- port:INT         - process port used on startup
-    #/C/ -- command:SYMBOL   - command line for process startup
-    #/C/ -- status:SYMBOL    - current status of the process
-    #/C/ -- started:DATETIME - timestamp when process was started
-    #/C/ -- startedBy:SYMBOL - user that started the process
-    #/C/ -- stopped:DATETIME - timestamp when process was stopped
-    model = <type(TABLE), col1(SYMBOL), col2(SYMBOL), default(time(TIME), sym(SYMBOL), pid(INT), port(INT), command(SYMBOL), status(SYMBOL), started(DATETIME), startedBy(SYMBOL), stopped(DATETIME)), final()>
+  #/C/ -- pid:INT          - process pid
+  #/C/ -- port:INT         - process port used on startup
+  #/C/ -- command:SYMBOL   - command line for process startup
+  #/C/ -- status:SYMBOL    - current status of the process
+  #/C/ -- started:DATETIME - timestamp when process was started
+  #/C/ -- startedBy:SYMBOL - user that started the process
+  #/C/ -- stopped:DATETIME - timestamp when process was stopped
+  model = <type(TABLE), col1(SYMBOL), col2(SYMBOL), default(time(TIME), sym(SYMBOL), pid(INT), port(INT), command(SYMBOL), status(SYMBOL), started(DATETIME), startedBy(SYMBOL), stopped(DATETIME)), final()>
   
 #/C/ Table describing resources usage based on information provided by operating system.
 [sysTable:sysResUsageFromOs]
@@ -41,15 +41,15 @@
   
   #/C/ sysResUsageFromOs data model.
   #/C/ 
-    #/C/ -- time:TIME      - timestamp of published information
-    #/C/ -- sym:SYMBOL     - component name
-    #/C/ -- cpuUser:FLOAT  - cpu time in user mode
-    #/C/ -- cpuSys:FLOAT   - cpu time in system mode
-    #/C/ -- cpuUsage:FLOAT - cpu usage percentage (NOT YET IMPLEMENTED!)
-    #/C/ -- memRss:FLOAT   - memory used by the process
-    #/C/ -- memVms:FLOAT   - virtual memory used by the process
-    #/C/ -- memUsage:FLOAT - memory usage percentage
-    model = <type(TABLE), col1(SYMBOL), col2(SYMBOL), default(time(TIME), sym(SYMBOL), cpuUser(FLOAT), cpuSys(FLOAT), cpuUsage(FLOAT), memRss(FLOAT), memVms(LONG), memUsage(FLOAT)), final()>
+  #/C/ -- time:TIME      - timestamp of published information
+  #/C/ -- sym:SYMBOL     - component name
+  #/C/ -- cpuUser:FLOAT  - cpu time in user mode
+  #/C/ -- cpuSys:FLOAT   - cpu time in system mode
+  #/C/ -- cpuUsage:FLOAT - cpu usage percentage (NOT YET IMPLEMENTED!)
+  #/C/ -- memRss:FLOAT   - memory used by the process
+  #/C/ -- memVms:FLOAT   - virtual memory used by the process
+  #/C/ -- memUsage:FLOAT - memory usage percentage
+  model = <type(TABLE), col1(SYMBOL), col2(SYMBOL), default(time(TIME), sym(SYMBOL), cpuUser(FLOAT), cpuSys(FLOAT), cpuUsage(FLOAT), memRss(FLOAT), memVms(LONG), memUsage(FLOAT)), final()>
 
 #/C/ Table describing connection status, one row describe the status of all connections that are initiated from the component
 [sysTable:sysConnStatus]
@@ -58,14 +58,14 @@
 
   #/C/ sysConnStatus data model.
   #/C/ 
-    #/C/ -- time:TIME                  - timestamp of published information
-    #/C/ -- sym:SYMBOL                 - component name
-    #/C/ -- connRegistered:LIST SYMBOL - list of connections that are registered
-    #/C/ -- connOpen:LIST SYMBOL       - list of connections that are opened
-    #/C/ -- connClosed:LIST SYMBOL     - list of connections that are closed
-    #/C/ -- connLost:LIST SYMBOL       - list of connections that are lost
-    #/C/ -- connFailed:LIST SYMBOL     - list of connections that failed
-    model = <type(TABLE), col1(SYMBOL), col2(SYMBOL), default(time(TIME), sym(SYMBOL), connRegistered(LIST SYMBOL), connOpen(LIST SYMBOL), connClosed(LIST SYMBOL), connLost(LIST SYMBOL), connFailed(LIST SYMBOL)), final()>
+  #/C/ -- time:TIME                  - timestamp of published information
+  #/C/ -- sym:SYMBOL                 - component name
+  #/C/ -- connRegistered:LIST SYMBOL - list of connections that are registered
+  #/C/ -- connOpen:LIST SYMBOL       - list of connections that are opened
+  #/C/ -- connClosed:LIST SYMBOL     - list of connections that are closed
+  #/C/ -- connLost:LIST SYMBOL       - list of connections that are lost
+  #/C/ -- connFailed:LIST SYMBOL     - list of connections that failed
+  model = <type(TABLE), col1(SYMBOL), col2(SYMBOL), default(time(TIME), sym(SYMBOL), connRegistered(LIST SYMBOL), connOpen(LIST SYMBOL), connClosed(LIST SYMBOL), connLost(LIST SYMBOL), connFailed(LIST SYMBOL)), final()>
 
 #/C/ Table describing resources usage based on information provided by internal q mechanisms.
 [sysTable:sysResUsageFromQ]
@@ -74,13 +74,13 @@
 
   #/C/ sysResUsageFromQ data model.
   #/C/ 
-    #/C/ -- time:TIME     - timestamp of published information
-    #/C/ -- sym:SYMBOL    - component name
-    #/C/ -- memPeak:INT   - memory peak [in kilobytes]
-    #/C/ -- memUsed:INT   - memory used by the process [in kilobytes]
-    #/C/ -- memSyms:INT   - number of internalized symbols in the process
-    #/C/ -- memSymw:INT   - memory used for internalization of symbols [in kilobytes]
-    model = <type(TABLE), col1(SYMBOL), col2(SYMBOL), default(time(TIME), sym(SYMBOL), memPeak(LONG), memUsed(LONG), memSyms(LONG), memSymw(LONG)), final()>
+  #/C/ -- time:TIME     - timestamp of published information
+  #/C/ -- sym:SYMBOL    - component name
+  #/C/ -- memPeak:INT   - memory peak [in kilobytes]
+  #/C/ -- memUsed:INT   - memory used by the process [in kilobytes]
+  #/C/ -- memSyms:INT   - number of internalized symbols in the process
+  #/C/ -- memSymw:INT   - memory used for internalization of symbols [in kilobytes]
+  model = <type(TABLE), col1(SYMBOL), col2(SYMBOL), default(time(TIME), sym(SYMBOL), memPeak(LONG), memUsed(LONG), memSyms(LONG), memSymw(LONG)), final()>
 
 #/C/ Table describing number of warn/error/fatal log messages from the startup of component
 [sysTable:sysLogStatus]
@@ -89,12 +89,12 @@
 
   #/C/ sysLogStatus data model.
   #/C/ 
-    #/C/ -- time:TIME     - timestamp of published information
-    #/C/ -- sym:SYMBOL    - component name
-    #/C/ -- logFatal:INT  - number of log messages with level `fatal since component was started
-    #/C/ -- logError:INT  - number of log messages with level `error since component was started
-    #/C/ -- logWarn:INT   - number of log messages with level `warn since component was started
-    model = <type(TABLE), col1(SYMBOL), col2(SYMBOL), default(time(TIME), sym(SYMBOL), logFatal(INT), logError(INT), logWarn(INT)), final()>
+  #/C/ -- time:TIME     - timestamp of published information
+  #/C/ -- sym:SYMBOL    - component name
+  #/C/ -- logFatal:INT  - number of log messages with level `fatal since component was started
+  #/C/ -- logError:INT  - number of log messages with level `error since component was started
+  #/C/ -- logWarn:INT   - number of log messages with level `warn since component was started
+  model = <type(TABLE), col1(SYMBOL), col2(SYMBOL), default(time(TIME), sym(SYMBOL), logFatal(INT), logError(INT), logWarn(INT)), final()>
 
 #/C/ Table with system events generated using qsl/event.q interface.  
 [sysTable:sysEvent]
@@ -103,17 +103,17 @@
 
   #/C/ sysEvent data model.
   #/C/ 
-    #/C/ -- time:TIME         - timestamp of published information
-    #/C/ -- sym:SYMBOL        - component name
-    #/C/ -- module:SYMBOL     - module that generated the event (e.g. rdb, store, hdb)
-    #/C/ -- eventLevel:SYMBOL - importance of the event
-    #/C/ -- tsId:TIMESTAMP    - timestamp Id of the event
-    #/C/ -- funcName:SYMBOL   - event function 
-    #/C/ -- descr:STRING      - description of the event
-    #/C/ -- status:SYMBOL     - current status of the event
-    #/C/ -- progress:INT      - progress of the event (0 == 0%, 100 == 100%)
-    #/C/ -- timeLeft:TIME     - estimated time left for the event completion
-    model = <type(TABLE), col1(SYMBOL), col2(SYMBOL), default(time(TIME), sym(SYMBOL), module(SYMBOL), eventLevel(SYMBOL), tsId(TIMESTAMP), funcName(SYMBOL), descr(STRING), status(SYMBOL), progress(INT), timeLeft(TIME)), final()>
+  #/C/ -- time:TIME         - timestamp of published information
+  #/C/ -- sym:SYMBOL        - component name
+  #/C/ -- module:SYMBOL     - module that generated the event (e.g. rdb, store, hdb)
+  #/C/ -- eventLevel:SYMBOL - importance of the event
+  #/C/ -- tsId:TIMESTAMP    - timestamp Id of the event
+  #/C/ -- funcName:SYMBOL   - event function 
+  #/C/ -- descr:STRING      - description of the event
+  #/C/ -- status:SYMBOL     - current status of the event
+  #/C/ -- progress:INT      - progress of the event (0 == 0%, 100 == 100%)
+  #/C/ -- timeLeft:TIME     - estimated time left for the event completion
+  model = <type(TABLE), col1(SYMBOL), col2(SYMBOL), default(time(TIME), sym(SYMBOL), module(SYMBOL), eventLevel(SYMBOL), tsId(TIMESTAMP), funcName(SYMBOL), descr(STRING), status(SYMBOL), progress(INT), timeLeft(TIME)), final()>
 
 #/C/ Table describing actual monitoring status published to the subscribers.
 #/C/ One row contains information about state of check on each server.
@@ -125,20 +125,20 @@
   
   #/C/ sysMonitorStatus data model.
   #/C/ 
-    #/C/ -- time:TIME               - timestamp of published information
-    #/C/ -- sym:SYMBOL              - component name
-    #/C/ -- hndStatus:SYMBOL        - component handle status
-    #/C/ -- request:SYMBOL          - request id
-    #/C/ -- check:SYMBOL            - request name
-    #/C/ -- code:STRING             - request code
-    #/C/ -- ts0_req:TIMESTAMP       - timestamp of sent request
-    #/C/ -- ts1_befExec:TIMESTAMP   - beginning of request execution
-    #/C/ -- ts2_afterExec:TIMESTAMP - end of request execution
-    #/C/ -- ts3_res:TIMESTAMP       - timestamp of result retrieving
-    #/C/ -- status:SYMBOL           - status of the check
-    #/C/ -- interval:INT            - interval of check execution
-    #/C/ -- requestId:LONG          - current request id
-    model = <type(TABLE), col1(SYMBOL), col2(SYMBOL), default(time(TIME), sym(SYMBOL), hndStatus(SYMBOL), request(SYMBOL), check(SYMBOL), code:(STRING), ts0_req(TIMESTAMP), ts1_befExec(TIMESTAMP), ts2_afterExec(TIMESTAMP), ts3_res(TIMESTAMP), status(SYMBOL), interval(INT), requestId(LONG)), final()>
+  #/C/ -- time:TIME               - timestamp of published information
+  #/C/ -- sym:SYMBOL              - component name
+  #/C/ -- hndStatus:SYMBOL        - component handle status
+  #/C/ -- request:SYMBOL          - request id
+  #/C/ -- check:SYMBOL            - request name
+  #/C/ -- code:STRING             - request code
+  #/C/ -- ts0_req:TIMESTAMP       - timestamp of sent request
+  #/C/ -- ts1_befExec:TIMESTAMP   - beginning of request execution
+  #/C/ -- ts2_afterExec:TIMESTAMP - end of request execution
+  #/C/ -- ts3_res:TIMESTAMP       - timestamp of result retrieving
+  #/C/ -- status:SYMBOL           - status of the check
+  #/C/ -- interval:INT            - interval of check execution
+  #/C/ -- requestId:LONG          - current request id
+  model = <type(TABLE), col1(SYMBOL), col2(SYMBOL), default(time(TIME), sym(SYMBOL), hndStatus(SYMBOL), request(SYMBOL), check(SYMBOL), code:(STRING), ts0_req(TIMESTAMP), ts1_befExec(TIMESTAMP), ts2_afterExec(TIMESTAMP), ts3_res(TIMESTAMP), status(SYMBOL), interval(INT), requestId(LONG)), final()>
 
 #/C/ Table summarizing hdb sizes.
 [sysTable:sysHdbSummary]
@@ -150,13 +150,13 @@
   
   #/C/ sysHdbSummary data model.
   #/C/ 
-    #/C/ -- time:TIME               - timestamp of published information
-    #/C/ -- sym:SYMBOL              - component name
-    #/C/ -- path:SYMBOL             - hdb main directory location
-    #/C/ -- hdbSizeMB:LONG          - hdb size in MB
-    #/C/ -- hdbTabCnt:LONG          - count of tables in the hdb
-    #/C/ -- tabList:SYMBOL LIST     - list of table names in the hdb
-    model = <type(TABLE), col1(SYMBOL), col2(SYMBOL), default(time(TIME), sym(SYMBOL), path(SYMBOL), hdbSizeMB(LONG),hdbTabCnt(LONG) ,tabList(STRING)), final()>
+  #/C/ -- time:TIME               - timestamp of published information
+  #/C/ -- sym:SYMBOL              - component name
+  #/C/ -- path:SYMBOL             - hdb main directory location
+  #/C/ -- hdbSizeMB:LONG          - hdb size in MB
+  #/C/ -- hdbTabCnt:LONG          - count of tables in the hdb
+  #/C/ -- tabList:SYMBOL LIST     - list of table names in the hdb
+  model = <type(TABLE), col1(SYMBOL), col2(SYMBOL), default(time(TIME), sym(SYMBOL), path(SYMBOL), hdbSizeMB(LONG),hdbTabCnt(LONG) ,tabList(STRING)), final()>
 
 #/C/ Table with statistics for data volumes in hdb. 
 [sysTable:sysHdbStats]
@@ -168,18 +168,18 @@
   
   #/C/ sysStatus data model.
   #/C/ 
-    #/C/ -- time:TIME               - timestamp of published information
-    #/C/ -- sym:SYMBOL              - component name
-    #/C/ -- hdbDate:DATE            - partition's date
-    #/C/ -- hour:TIME               - hour (based on time column)
-    #/C/ -- table:SYMBOL            - table name
-    #/C/ -- totalRowsCnt:LONG       - total number of rows within the hour
-    #/C/ -- minRowsPerSec:LONG      - minimum of rows count per second within the hour
-    #/C/ -- avgRowsPerSec:LONG      - average of rows count per second within the hour
-    #/C/ -- medRowsPerSec:LONG      - median of rows count per second within the hour
-    #/C/ -- maxRowsPerSec:LONG      - maximum of rows count per second within the hour
-    #/C/ -- dailyMedRowsPerSec:LONG - median of rows count per second within the day
-    model = <type(TABLE), col1(SYMBOL), col2(SYMBOL), default(time(TIME), sym(SYMBOL), hdbDate(DATE), hour(TIME), table(SYMBOL), totalRowsCnt(LONG), minRowsPerSec(LONG), avgRowsPerSec(LONG), medRowsPerSec(LONG), maxRowsPerSec(LONG), dailyMedRowsPerSec(LONG)), final()>
+  #/C/ -- time:TIME               - timestamp of published information
+  #/C/ -- sym:SYMBOL              - component name
+  #/C/ -- hdbDate:DATE            - partition's date
+  #/C/ -- hour:TIME               - hour (based on time column)
+  #/C/ -- table:SYMBOL            - table name
+  #/C/ -- totalRowsCnt:LONG       - total number of rows within the hour
+  #/C/ -- minRowsPerSec:LONG      - minimum of rows count per second within the hour
+  #/C/ -- avgRowsPerSec:LONG      - average of rows count per second within the hour
+  #/C/ -- medRowsPerSec:LONG      - median of rows count per second within the hour
+  #/C/ -- maxRowsPerSec:LONG      - maximum of rows count per second within the hour
+  #/C/ -- dailyMedRowsPerSec:LONG - median of rows count per second within the day
+  model = <type(TABLE), col1(SYMBOL), col2(SYMBOL), default(time(TIME), sym(SYMBOL), hdbDate(DATE), hour(TIME), table(SYMBOL), totalRowsCnt(LONG), minRowsPerSec(LONG), avgRowsPerSec(LONG), medRowsPerSec(LONG), maxRowsPerSec(LONG), dailyMedRowsPerSec(LONG)), final()>
 
 #/C/ Table summarizing kdb licenses
 [sysTable:sysKdbLicSummary]
@@ -188,13 +188,13 @@
 
   #/C/ sysKdbLicSummary data model.
   #/C/ 
-    #/C/ -- time:TIME               - timestamp of published information
-    #/C/ -- sym:SYMBOL              - component name
-    #/C/ -- maxCoresAllowed:INT     - number of cores allowed by the license
-    #/C/ -- expiryDate:DATE         - expiration date of the licanse
-    #/C/ -- updateDate:DATE         - maximum date of the kdb+ release that can be used with the q license
-    #/C/ -- cfgCoreCnt:INT          - number of cores used in the q instance
-    model = <type(TABLE), col1(SYMBOL), col2(SYMBOL), default(time(TIME), sym(SYMBOL), maxCoresAllowed(INT), expiryDate(DATE), updateDate(DATE), cfgCoreCnt(INT)), final()>
+  #/C/ -- time:TIME               - timestamp of published information
+  #/C/ -- sym:SYMBOL              - component name
+  #/C/ -- maxCoresAllowed:INT     - number of cores allowed by the license
+  #/C/ -- expiryDate:DATE         - expiration date of the licanse
+  #/C/ -- updateDate:DATE         - maximum date of the kdb+ release that can be used with the q license
+  #/C/ -- cfgCoreCnt:INT          - number of cores used in the q instance
+  model = <type(TABLE), col1(SYMBOL), col2(SYMBOL), default(time(TIME), sym(SYMBOL), maxCoresAllowed(INT), expiryDate(DATE), updateDate(DATE), cfgCoreCnt(INT)), final()>
 
 #/C/ Table summarizing amount of user functions.  
 [sysTable:sysFuncSummary]
@@ -209,26 +209,29 @@
   
   #/C/ sysFuncSummary data model.
   #/C/ 
-    #/C/ -- time:TIME               - timestamp of published information
-    #/C/ -- sym:SYMBOL              - component name
-    #/C/ -- procNs:SYMBOL           - namespace of functions
-    #/C/ -- funcCnt:INT             - number of functions
-    #/C/ -- func:SYMBOL LIST        - function names
-    model = <type(TABLE), col1(SYMBOL), col2(SYMBOL), default(time(TIME), sym(SYMBOL), procNs(SYMBOL), funcCnt(INT), func(STRING)), final()>
+  #/C/ -- time:TIME               - timestamp of published information
+  #/C/ -- sym:SYMBOL              - component name
+  #/C/ -- procNs:SYMBOL           - namespace of functions
+  #/C/ -- funcCnt:INT             - number of functions
+  #/C/ -- func:SYMBOL LIST        - function names
+  model = <type(TABLE), col1(SYMBOL), col2(SYMBOL), default(time(TIME), sym(SYMBOL), procNs(SYMBOL), funcCnt(INT), func(STRING)), final()>
   
 #/C/ Table describing disk usage statistics.
 [sysTable:sysDiskUsage]
+  #/C/ Frequency of updates, specified in milliseconds
+  frequency = <type(INT), greater(999), default(600000)>
+  
   #/C/ sysDiskUsage data model.
   #/C/ 
-    #/C/ -- time:TIME               - timestamp of published information
-    #/C/ -- sym:SYMBOL              - component name
-    #/C/ -- pathName:SYMBOL         - logical path name, currently one of binPath, etcPath, dataPath, logPath
-    #/C/ -- path:SYMBOL             - absolute path
-    #/C/ -- filesystem:SYMBOL       - filesystem path
-    #/C/ -- mountedOn:SYMBOL        - mountpoint path
-    #/C/ -- blocks1K:LONG           - number of 1K blocks (returned by df)
-    #/C/ -- totalBytesAvailable:LONG- number of bytes available on the moutpoint (returned by df)
-    #/C/ -- totalBytesUsed:LONG     - total number of bytes used on the mountpoint (returned by df)
-    #/C/ -- procBytesUsed:LONG      - number of bytes used by kdb+ system (returned by du)
-    model = <type(TABLE), col1(SYMBOL), col2(SYMBOL), default(time(TIME), sym(SYMBOL), pathName(SYMBOL), path(SYMBOL), filesystem(SYMBOL), mountedOn(SYMBOL), blocks1K(LONG), totalBytesAvailable(LONG), procBytesUsed(LONG)), final()>
+  #/C/ -- time:TIME               - timestamp of published information
+  #/C/ -- sym:SYMBOL              - component name
+  #/C/ -- pathName:SYMBOL         - logical path name, currently one of binPath, etcPath, dataPath, logPath
+  #/C/ -- path:SYMBOL             - absolute path
+  #/C/ -- filesystem:SYMBOL       - filesystem path
+  #/C/ -- mountedOn:SYMBOL        - mountpoint path
+  #/C/ -- blocks1K:LONG           - number of 1K blocks (returned by df)
+  #/C/ -- totalBytesAvailable:LONG- number of bytes available on the moutpoint (returned by df)
+  #/C/ -- totalBytesUsed:LONG     - total number of bytes used on the mountpoint (returned by df)
+  #/C/ -- procBytesUsed:LONG      - number of bytes used by kdb+ system (returned by du)
+  model = <type(TABLE), col1(SYMBOL), col2(SYMBOL), default(time(TIME), sym(SYMBOL), pathName(SYMBOL), path(SYMBOL), filesystem(SYMBOL), mountedOn(SYMBOL), blocks1K(LONG), totalBytesAvailable(LONG), procBytesUsed(LONG)), final()>
   
