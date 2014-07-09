@@ -163,7 +163,6 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 .sl.main:{[flags]
-  if["w"~first string .z.o;.log.fatal[`hk] "hk.q has not been ported to Windows yet";'`$"nyi"];
   .cr.loadCfg[`ALL];
   .hk.taskList:raze exec actions from update actions:proc {update proc:x from y}' housekeeping from .cr.getByProc[enlist `housekeeping];
   startAt:.cr.getCfgField[`THIS;`group;`cfg.startAt];
