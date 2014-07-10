@@ -115,7 +115,9 @@
 /P/ pattern:SYMBOL - pattern for the files
 /R/ :LIST[SYMBOL] - a list of file paths
 .os.p.W.find:{[dir;age;pattern] 
-	findCmd:"forfiles /m ",(string pattern)," /p ",(.os.p.W.slash 1_string dir)," /d -",(string age)," /c \"cmd /c echo @path\"";
+	// construct path to an error file from the log path
+	errFile:$[`FILE in .log.dest;((-3)_1_string .log.p.path),"finderr";"NUL"]
+	findCmd:"forfiles /m ",(string pattern)," /p ",(.os.p.W.slash 1_string dir)," /d -",(string age)," /c \"cmd /c echo @path\" 2>",errFile;
 	:{x where not null x} `$.pe.at[system;findCmd;{[cmd;sig] .log.warn[`hk] "error while calling \"",cmd,"\". This may be caused by the command not finding any matching files, or invalid arguments"; :()}[findCmd;]]
 	};
 

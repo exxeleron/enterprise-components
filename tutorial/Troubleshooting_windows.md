@@ -16,7 +16,7 @@ functionalities that are known not to work. These include:
 1. [**eodMng/hdbSync**](../components/eodMng/hdbSync.q) component (hdb synchronization) is currently not working on Windows 
    (core functionality is originally based on `rsync`).
 2. [**hk**](../components/hk) component (housekeeping): The compress functionality requires the [zip](http://www.info-zip.org/) application to be installed and available on PATH.
-The OS prints an error message on the console when the pattern specified in the pattern column of the housekeeping table does not match any files. 
+When the pattern specified in the pattern column of the housekeeping table does not match any files the forfiles command used to find files on Windows returns an error. In such case the error message from the comand is redirected to a file with extension .finderr in the log directory for the hk component. Also, a message is logged on the WARN level.
 This does not affect the functionality of the component.
 3. [**Monitor**](../components/monitor) component - checking of disk usage and free disk space is currently 
    not working on Windows. (this functionality is originally based on `du` and `df`)
