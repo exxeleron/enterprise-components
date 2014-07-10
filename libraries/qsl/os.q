@@ -93,11 +93,11 @@
 
 /F/ converts slashes to the correct ones for Linux. Makes it easier to use literal paths 
 /P/ p:STRING - a path
-.os.p.L.slash:{[p] p[where p="\\"]:"/";:p};
+.os.p.L.slash:{[p] ssr[p;"\\";"/"]};
 
-/F/ converts slashes to the correct ones for Linux. Makes it easier to use literal paths 
+/F/ converts slashes to the correct ones for Windows. Makes it easier to use literal paths 
 /P/ p:STRING - a path
-.os.p.W.slash:{[p] p[where p="/"]:"\\";:p};
+.os.p.W.slash:{[p] ssr[p;"/";"\\"]};
 
 /F/ finds old files - Linux version
 /P/ dir:SYMBOL - directory to look into
@@ -113,6 +113,7 @@
 /P/ dir:SYMBOL - directory to look into
 /P/ age:LONG - age of the files in days
 /P/ pattern:SYMBOL - pattern for the files
+/R/ :LIST[SYMBOL] - a list of file paths
 .os.p.W.find:{[dir;age;pattern] 
 	findCmd:"forfiles /m ",(string pattern)," /p ",(.os.p.W.slash 1_string dir)," /d -",(string age)," /c \"cmd /c echo @path\"";
 	:{x where not null x} `$.pe.at[system;findCmd;{[cmd;sig] .log.warn[`hk] "error while calling \"",cmd,"\". This may be caused by the command not finding any matching files, or invalid arguments"; :()}[findCmd;]]
