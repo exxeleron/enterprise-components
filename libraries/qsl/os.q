@@ -32,7 +32,14 @@
   system "rmdir /S /Q ",.os.p.q dirname;
   };
   
-  
+/F/ removes a file - Linux version
+/P/ path:STRING - path to file
+.os.p.L.rm:{[path] system "rm ",path};
+
+/F/ removes a file - Linux version
+/P/ path:STRING - path to file
+.os.p.W.rm:{[path] system "del /Q ",path};
+
 /F/ copies directory with contents - Linux version
 /P/ dir1:STRING - source dir
 /P/ dir2:STRING - target dir
@@ -86,11 +93,49 @@
 
 /F/ converts slashes to the correct ones for Linux. Makes it easier to use literal paths 
 /P/ p:STRING - a path
-.os.p.L.slash:{[p] p[where p="\\"]:"/";:p};
+.os.p.L.slash:{[p] ssr[p;"\\";"/"]};
 
-/F/ converts slashes to the correct ones for Linux. Makes it easier to use literal paths 
+/F/ converts slashes to the correct ones for Windows. Makes it easier to use literal paths 
 /P/ p:STRING - a path
-.os.p.W.slash:{[p] p[where p="/"]:"\\";:p};
+.os.p.W.slash:{[p] ssr[p;"/";"\\"]};
+
+/F/ finds old files - Linux version
+/P/ dir:SYMBOL - directory to look into
+/P/ age:LONG - age of the files in days
+/P/ pattern:SYMBOL - pattern for the file path
+/R/ :LIST[SYMBOL] - a list of file paths
+.os.p.L.find:{[dir;age;pattern] 
+	findCmd:"find -L ",1_(string dir)," -mtime +",(string age), " -name \"",string[pattern],"\" -prune";
+	:`$.pe.at[system;findCmd;{[cmd;sig] .log.error[`os] "error while calling \"",cmd,"\". Maybe invalid arguments?"; :`$()}[findCmd;]]
+	};
+
+/F/ finds old files - Windows version. Note: on Windows the pattern applies to files only
+/P/ dir:SYMBOL - directory to look into
+/P/ age:LONG - age of the files in days
+/P/ pattern:SYMBOL - pattern for the files
+/R/ :LIST[SYMBOL] - a list of file paths
+.os.p.W.find:{[dir;age;pattern] 
+	// construct path to an error file from the log path
+	errFile:$[`FILE in .log.dest;((-3)_1_string .log.p.path),"finderr";"NUL"]
+	findCmd:"forfiles /m ",(string pattern)," /p ",(.os.p.W.slash 1_string dir)," /d -",(string age)," /c \"cmd /c echo @path\" 2>",errFile;
+	:{x where not null x} `$.pe.at[system;findCmd;{[cmd;sig] .log.warn[`hk] "error while calling \"",cmd,"\". This may be caused by the command not finding any matching files, or invalid arguments"; :()}[findCmd;]]
+	};
+
+/F/ Compresses a file or directory - Linux version
+/P/ path:STRING - path to the directory to compress
+.os.p.L.compress:{[path] 
+	system "tar -czvf ",path,".tar.gz ",path," --remove-files --absolute-names"
+	};
+
+/F/ Compresses a file or directory - Windows version
+/P/ path:STRING - path to the directory or file to compress
+.os.p.W.compress:{[path]
+	path:.os.p.W.slash path;
+	system "zip -q -r ",path,".zip ",path;
+	// remove, calling the right function for a directory or file
+	$[0<type key hsym `$path;.os.p.W.rmdir path;.os.p.W.rm path];
+	};
+
 
 /F/ surrounds a string with quotation marks
 /P/ s:STRING
@@ -120,6 +165,12 @@
 /P/ p:STRING - a path
 /R/ :STRING - a path with all wrong slashes converted to correct ones
 .os.slash:{[p] };
+
+/F/ returns a command that can be used to find old files
+/P/ dir:SYMBOL - directory to look into
+/P/ age:LONG - age of the files in days
+/P/ pattern:SYMBOL - pattern for the file path
+.os.find:{[dir;age;pattern] };
 
 /--- initialization
 $["w"~first string .z.o;.os,:.os.p.W;.os,:.os.p.L];

@@ -5,7 +5,7 @@ set EC_SYS_PATH=%CD%
 
 REM  ---- q enviroment ----
 set QHOME=%EC_SYS_PATH%\bin\q
-set QLIC=%EC_SYS_PATH#\etc
+set QLIC=%EC_SYS_PATH%\etc
 
 REM ---- yak enviroment ----
 set YAK_PATH=%EC_SYS_PATH%\bin\yak
