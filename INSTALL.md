@@ -6,6 +6,6 @@ Advanced users may wish to assemble the system by themselves, using directly the
 
 > :heavy_exclamation_mark: Note:
   
-> EC releases typically require specific yak releases. The versions of the yak release that work with a given EC release is provided in the EC release notes.
+> EC releases typically require specific yak releases. The versions of the yak releases that work with a given EC release are provided in the EC release notes.
 
-We recommended system layout as in the tutorial's [README](https://github.com/exxeleron/enterprise-components/blob/master/tutorial/README.md) document. However one can define an arbitrary system layout bu setting `QHOME`, `QLIC`, `YAK_PATH`, `YAK_OPTS`, `EC_QSL_PATH`, `EC_ETC_PATH` environment variables in `env.sh` file and `binPath`, `libPath`, `dllPath`, `dataPath`, `logPath` and `eventPath` in `system.cfg` configuration file.
+We recommende system layout as in the tutorial's [README](https://github.com/exxeleron/enterprise-components/blob/master/tutorial/README.md) document. However one can define an arbitrary system layout bu setting `QHOME`, `QLIC`, `YAK_PATH`, `YAK_OPTS`, `EC_QSL_PATH`, `EC_ETC_PATH` environment variables in `env.sh` file and `binPath`, `libPath`, `dllPath`, `dataPath`, `logPath` and `eventPath` in `system.cfg` configuration file.
