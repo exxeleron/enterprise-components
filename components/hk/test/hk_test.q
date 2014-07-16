@@ -9,7 +9,8 @@
 /------------ creates a date string tha is acceptable for touch on Linux and UnxUtil's touch on Windows
 .tst.p.daysAgo:{[n]
     d:"." vs string .z.d-n;
-    :2_d[0],d[1],d[2],"0000"
+	dstr:2_d[0],d[1],d[2];
+    :$["w"~first string .z.o;"-d ",dstr;"-t ",dstr,"0000"];
     };
 
 /F/ os dependent zip extension
@@ -31,8 +32,8 @@
     bigfilelist set\:\: bigdata;
     smallfilelist set\:\: smalldata;
     //alter timestamps
-    system .os.slash "touch -t ",(.tst.p.daysAgo 5)," "," " sv 1_/:string bigfilelist[0];
-    system .os.slash "touch -t ",(.tst.p.daysAgo 10)," "," "sv 1_/:string smallfilelist[0];
+    system .os.slash "touch ",(.tst.p.daysAgo 5)," "," " sv 1_/:string bigfilelist[0];
+    system .os.slash "touch ",(.tst.p.daysAgo 10)," "," "sv 1_/:string smallfilelist[0];
     };
   after{
     .tst.rm `:test/datadir;
@@ -49,7 +50,7 @@
     25 musteq count k where (k:key manyfiles) like "*",.tst.p.zipExt;
     smallfilelist[1] mustmatch ` sv/:manyfiles,/:asc k where not (k:key manyfiles) like "*",.tst.p.zipExt;
     //system "touch -d '20 days ago' ", " " sv 1_/:string ` sv/:manyfiles,/:asc k where (k:key manyfiles) like "*",.tst.p.zipExt;
-	system "touch -t ",(.tst.p.daysAgo 20)," "," " sv 1_/:string ` sv/:manyfiles,/:asc k where (k:key manyfiles) like "*",.tst.p.zipExt;
+	system "touch ",(.tst.p.daysAgo 20)," "," " sv 1_/:string ` sv/:manyfiles,/:asc k where (k:key manyfiles) like "*",.tst.p.zipExt;
     .hk.processAllTasks[.hk.taskList];
     25 musteq count k where (k:key manyfiles) like "*",.tst.p.zipExt;
     0 musteq count k where (k:key manyfiles) like "*",.tst.p.zipExt,.tst.p.zipExt;
