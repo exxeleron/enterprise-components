@@ -127,7 +127,7 @@
 	mac:"m"~first string .z.o;
 	res:system "tar -czvPf ",path,".tar.gz ",path,$[mac;"";" --remove-files"];
 	if[mac;$[0<type key hsym `$path;.os.p.L.rmdir path;.os.p.L.rm path]];
-	
+	:res
 	};
 
 /F/ Compresses a file or directory - Windows version
