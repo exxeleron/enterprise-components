@@ -36,7 +36,7 @@
     system .os.slash "touch ",(.tst.p.daysAgo 10)," "," "sv 1_/:string smallfilelist[0];
     };
   after{
-    .tst.rm `:test/datadir;
+    .os.rmdir "test/datadir";
     };
   should["perform full housekeeping"]{
     big:key bigfiles;

@@ -125,7 +125,7 @@
 /P/ path:STRING - path to the directory or file to compress
 .os.p.L.compress:{[path]
 	mac:"m"~first string .z.o;
-	res:system "tar -czvf ",path,".tar.gz ",path,$[mac;"-P";"--remove-files --absolute-names"];
+	res:system "tar -czvPf ",path,".tar.gz ",path,$[mac;"";" --remove-files"];
 	if[mac;$[0<type key hsym `$path;.os.p.L.rmdir path;.os.p.L.rm path]];
 	
 	};
