@@ -121,10 +121,13 @@
 	:{x where not null x} `$.pe.at[system;findCmd;{[cmd;sig] .log.warn[`hk] "error while calling \"",cmd,"\". This may be caused by the command not finding any matching files, or invalid arguments"; :()}[findCmd;]]
 	};
 
-/F/ Compresses a file or directory - Linux version
-/P/ path:STRING - path to the directory to compress
-.os.p.L.compress:{[path] 
-	system "tar -czvf ",path,".tar.gz ",path," --remove-files --absolute-names"
+/F/ Compresses a file or directory - Linux (and Mac) version
+/P/ path:STRING - path to the directory or file to compress
+.os.p.L.compress:{[path]
+	mac:"m"~first string .z.o;
+	res:system "tar -czvf ",path,".tar.gz ",path,$[mac;"-P";"--remove-files --absolute-names"];
+	if[mac;$[0<type key hsym `$path;.os.p.L.rmdir path;.os.p.L.rm path]];
+	
 	};
 
 /F/ Compresses a file or directory - Windows version
