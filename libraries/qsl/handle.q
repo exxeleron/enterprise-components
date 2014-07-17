@@ -48,7 +48,7 @@
 /                           interface functions                                /
 /------------------------------------------------------------------------------/
 /F/ setup connection details; real connection will be initialized only 
-/F/ after using <.hnd.h> or <.hnd.th> or calling <.hnd.hInitConn[]> or <.hnd.thInitConn[]>
+/F/ after using <.hnd.h> or <.hnd.ah>
 /P/ servers:UNION[(DICTIONARY[SYMBOL;SYMBOL];LIST[SYMBOL]] - either a dictionary
 /P/  mapping server names to their connection strings or a list of servers names
 /P/  to be read from a etc/system.cfg file
