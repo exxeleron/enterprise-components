@@ -21,6 +21,13 @@ working. Specifically these sections should be looked at in more detail:
 - [System startup](../Installation.md#demosystem-startup)
 - [Switching Lessons](../Installation.md#changing-demosystem-lesson)
 
+> Note:
+> 
+> In this lesson additional command must be run before system is started:
+> ```bash
+> DemoSystem> yak console admin.refreshUFiles
+> ```
+
 <!------------------------------------------------------------------------------------------------->
 ## Components used
 
