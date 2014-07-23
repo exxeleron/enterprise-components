@@ -23,3 +23,27 @@ This does not affect the functionality of the component.
    The rest of the `monitor`'s functionality is working on Windows.
 4. The reconnect feature of the [**handle**](../libraries/qsl/handle.q) library may cause a process to be not responsive (busy and not accepting connections) when there are more than two processes to which the process is trying to reconnect.  
 
+<!--------------------------------------------------------------------------------------------------------------------->
+#### Issue 1 - insufficient privileges to run mklink
+```bash
+stderr for component: admin.genPass
+# C:\DemoSystem\log\admin.genPass\admin.genPass_2014.07.18T12.35.16.err
+You do not have sufficient privilege to perform this operation.
+'2014.07.18T14:35:16.349 os
+@
+.,["\\"]
+"mklink \"C:\\DemoSystem\\log\\admin.genPass\\init.log\" admin.genPass.2014.07.18T12.35.16.log"
+```
+
+##### Problem
+mklink on Windows 7 requires more priviliges
+ 
+##### Solution1
+Run 'cmd' as administrator - right clicking and choosing 'run as admin'
+
+##### Solution2
+Another workaround is described here:
+http://superuser.com/questions/124679/how-do-i-create-a-link-in-windows-7-home-premium-as-a-regular-user
+
+
+  
