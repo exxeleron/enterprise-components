@@ -473,15 +473,20 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 /P/ path - path to be checked
 /E/.monitor.p.du`:/home/kdb/devSystem/data/in.tickHF
 .monitor.p.du:{[path]
+  if["w"~first string .z.o;:0Nj]; // return null on Windows
   `long$("J"$first"\t"vs first system"du -sb ",1_string path)%1024
   };
 
 /F/ calculates disk free space using df command from unix
-/P/ path - path to be checked
+/P/ p:SYMBOL - path to be checked
+/R/ :TABLE(`path`filesystem`blocks1K`totalBytesUsed`totalBytesAvailable`totalCapacityPerc`mountedOn!(SYMBOL;SYMBOL;LONG;LONG;LONG;SYMBOL;SYMBOL)) - 1 row table with statistics
 /E/.monitor.p.df `:/home/kdb/devSystem/data/access.ap2
-.monitor.p.df:{[path]
-  flip `path`filesystem`blocks1K`totalBytesUsed`totalBytesAvailable`totalCapacityPerc`mountedOn!
-  enlist[path],"SJJJSS"$flip trim{(0,where -1=deltas " "=x)_x} each 1_system"df -P ",1_string path
+.monitor.p.df:{[p]
+  columns:`path`filesystem`blocks1K`totalBytesUsed`totalBytesAvailable`totalCapacityPerc`mountedOn;
+  if["w"~first string .z.o; // return nulls on Windows
+	:flip columns!(enlist p;enlist `;enlist 0Nj;enlist 0Nj;enlist 0Nj;enlist `;enlist `)
+	]; 
+  flip columns!enlist[p],"SJJJSS"$flip trim{(0,where -1=deltas " "=x)_x} each 1_system"df -P ",1_string p
   };
 
 /F/ calculates disk usage for all paths in the configuration with name `binPath`etcPath`dataPath`logPath
@@ -520,7 +525,9 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 /P/ flags - currently unused
 
 .sl.main:{[flags]
-  
+
+  .cr.loadCfg[`ALL];
+
   .monitor.p.initSysTables[];
   
   .monitor.cfg.procMaskList:  .cr.getCfgField[`THIS;`group;`cfg.procMaskList];
@@ -548,7 +555,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   .sl.libCmd[];
   .monitor.p.init[];
   sysHdbSummaryProcList:raze exec finalValue from .cr.getCfgTab[`THIS;`sysTable;`hdbProcList] where sectionVal=`sysHdbSummary;
-  .monitor.cfg.sysHdbSummaryPathDict:sysHdbSummaryProcList!.cr.getCfgField[;`group;`dataPath] each sysHdbSummaryProcList;
+  .monitor.cfg.sysHdbSummaryPathDict:sysHdbSummaryProcList!.cr.getCfgField[;`group;`cfg.hdbPath] each sysHdbSummaryProcList;
   .monitor.cfg.sysHdbStatsProcList:raze exec finalValue from .cr.getCfgTab[`THIS;`sysTable;`hdbProcList] where sectionVal=`sysHdbStats;
 
   .monitor.cfg.sysFuncSummaryProcList:raze exec finalValue from .cr.getCfgTab[`THIS;`sysTable;`procList] where sectionVal=`sysFuncSummary;

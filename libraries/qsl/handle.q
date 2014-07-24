@@ -48,7 +48,7 @@
 /                           interface functions                                /
 /------------------------------------------------------------------------------/
 /F/ setup connection details; real connection will be initialized only 
-/F/ after using <.hnd.h> or <.hnd.th> or calling <.hnd.hInitConn[]> or <.hnd.thInitConn[]>
+/F/ after using <.hnd.h> or <.hnd.ah>
 /P/ servers:UNION[(DICTIONARY[SYMBOL;SYMBOL];LIST[SYMBOL]] - either a dictionary
 /P/  mapping server names to their connection strings or a list of servers names
 /P/  to be read from a etc/system.cfg file
@@ -334,7 +334,7 @@
   .hnd.status:([server:1#`]timeout:1#0N; state:1#`; connstr:1#`; handle:1#();ashandle:1#(); topen:1#0Np; tclose: 1#0Np; tlost:1#0Np; reconn:1#0N; msg:1#(); remoteHnd:1#0N);
 
   /G/ Timers
-  .hnd.timer:1000;
+  .hnd.timer:$["w"~first string .z.o;2000;1000]; // Windows blocks for 1s on unsuccessful connections
   /G/ Namespace for actions that need to be run on port open
   .hnd.po:enlist[`]!enlist[::];
   /G/ Namespace for actions that need to be run on port close
