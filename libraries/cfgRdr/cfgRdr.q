@@ -626,7 +626,12 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 .cr.p.includeAdditioalQsd:{[path;parentFields;cfg;qsd]
   if[not cfg[`prefix] in key .cr.p.componentToQsd;
     typeValue:enlist last"/" vs cfg[`vars;`type;`cfg];
-    libsValue:(),trim["," vs cfg[`vars;`libs;`cfg]];
+	
+	//read commonLibs field - take subsection field if available, otherwise take section field
+	libsValue:(),trim "," vs $[cfg[`vars;`commonLibs;`cfg]~"";parentFields[`commonLibs;`cfg];cfg[`vars;`commonLibs;`cfg]]; 
+	//read libs field - append to commonLibs
+    libsValue,:(),trim["," vs cfg[`vars;`libs;`cfg]];
+	
     qsdFiles:(typeValue,libsValue) except enlist"";
     if[0=count qsdFiles;
       :cfg;
@@ -1289,6 +1294,12 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   :comps;
   };
 
+.cr.compound.componentTypeList:{[env;qsdInfo;ps]
+  comps:.par.sepBy[.cr.compound.componentType[env;qsdInfo;];.cr.p.trimmingComa] ps;
+  comps[`ast]:raze {$[x in key .cr.p.clones;`$string[x],/:"_",/:string til .cr.p.clones[x];x]} each comps[`ast]; 
+  :comps;
+  };
+
 .cr.compound.port:{[env;qsdInfo;ps] .cr.arith.port[env;ps]};
  
 //qsdInfo:qq
@@ -1317,6 +1328,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 .cr.compound.parsers[`COMPONENT]:.cr.compound.component;
 .cr.compound.parsers[`COMPONENT_TYPE]:.cr.compound.componentType;
 .cr.compound.parsers[`$"LIST COMPONENT"]:.cr.compound.componentList;
+.cr.compound.parsers[`$"LIST COMPONENT_TYPE"]:.cr.compound.componentTypeList;
 .cr.compound.parsers[`PORT]:.cr.compound.port;
 .cr.compound.parsers[`TABLE]:.cr.compound.table;
 .cr.compound.parsers[`ARRAY]:.cr.compound.array;
