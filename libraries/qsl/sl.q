@@ -339,10 +339,6 @@
   if[(string .z.o) like "l*";
     system "ln -f -s ",((1+count string hsym .log.path)_string .log.p.path)," ",1_(string hsym .log.path),"/current.log"
     ];
-  if[(string .z.o) like "w*";
-    system "erase /q ","\"",.sl.p.winsl (1_(string hsym .log.path),"\\current.log\"");
-    system "mklink ",.sl.p.winsl "\"",(1_(string hsym .log.path),"\\current.log\" "),(1+count string hsym .log.path)_string .log.p.path;
-    ];
   };
 
 /F/ Trims the .log.hist buffer, removing a given part of it, starting 
