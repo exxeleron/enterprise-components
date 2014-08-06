@@ -304,12 +304,6 @@
       system "ln -f -s ",((1+count string hsym .log.path)_string .log.p.path)," ",1_(string hsym .log.path),"/init.log";
       system "ln -f -s ",((1+count string hsym .log.path)_string .log.p.path)," ",1_(string hsym .log.path),"/current.log"
     ];
-    if[(string .z.o) like "w*";
-      if[`init.log in key hsym .log.path;system "erase /q \"",.sl.p.winsl (1_(string hsym .log.path),"\\init.log\"")];
-      if[`current.log in key hsym .log.path;system "erase /q \"",.sl.p.winsl (1_(string hsym .log.path),"\\current.log\"")];
-      system "mklink ",.sl.p.winsl "\"",(1_(string hsym .log.path),"\\init.log\" "),(1+count string hsym .log.path)_string .log.p.path;
-      system "mklink ",.sl.p.winsl "\"",(1_(string hsym .log.path),"\\current.log\" "),(1+count string hsym .log.path)_string .log.p.path;
-    ];
     if[not .log.rotate~0Nt;
       .sl.lib["qsl/timer"];
       .tmr.runAt[.log.rotate;`.log.p.rotate;`.log.p.rotate]
@@ -344,10 +338,6 @@
   .log.info[`sl] " log continued from ", 1_string prevpath;
   if[(string .z.o) like "l*";
     system "ln -f -s ",((1+count string hsym .log.path)_string .log.p.path)," ",1_(string hsym .log.path),"/current.log"
-    ];
-  if[(string .z.o) like "w*";
-    system "erase /q ","\"",.sl.p.winsl (1_(string hsym .log.path),"\\current.log\"");
-    system "mklink ",.sl.p.winsl "\"",(1_(string hsym .log.path),"\\current.log\" "),(1+count string hsym .log.path)_string .log.p.path;
     ];
   };
 
