@@ -21,7 +21,8 @@ This does not affect the functionality of the component.
 3. [**Monitor**](../components/monitor) component - checking of disk usage and free disk space is currently 
    not working on Windows. (this functionality is originally based on `du` and `df`)
    The rest of the `monitor`'s functionality is working on Windows.
-4. The reconnect feature of the [**handle**](../libraries/qsl/handle.q) library may cause a process to be not responsive (busy and not accepting connections) when there are more than two processes to which the process is trying to reconnect.  
+4. The reconnect feature of the [**handle**](../libraries/qsl/handle.q) library may cause a process to be not responsive (busy and not accepting connections) when there are more than two processes to which the process is trying to reconnect.
+5. On Linux the Standard Library (sl.q) creates links to the initialization and current logs for a component. Such links are not created on Windows to avoid problems with insufficient privileges (see also Issue 1 below).
 
 <!--------------------------------------------------------------------------------------------------------------------->
 #### Issue 1 - insufficient privileges to run mklink
@@ -36,7 +37,7 @@ You do not have sufficient privilege to perform this operation.
 ```
 
 ##### Problem
-mklink on Windows 7 requires more priviliges
+mklink on Windows 7 requires more privileges
  
 ##### Solution1
 Run 'cmd' as administrator - right clicking and choosing 'run as admin'
