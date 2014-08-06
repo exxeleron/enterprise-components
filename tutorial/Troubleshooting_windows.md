@@ -22,7 +22,7 @@ This does not affect the functionality of the component.
    not working on Windows. (this functionality is originally based on `du` and `df`)
    The rest of the `monitor`'s functionality is working on Windows.
 4. The reconnect feature of the [**handle**](../libraries/qsl/handle.q) library may cause a process to be not responsive (busy and not accepting connections) when there are more than two processes to which the process is trying to reconnect.
-5. On Linux the Standard Library (sl.q) creates links to the initialization and current logs for a component. Such links are not created on Windows to avoid problems with insufficient privileges (see also Issue 1 below).
+5. On Linux the Standard Library (qsl/sl.q) creates links to the initialization and current logs for a component. Such links are not created on Windows to avoid problems with insufficient privileges.
 
 <!--------------------------------------------------------------------------------------------------------------------->
 #### Issue 1 - insufficient privileges to run mklink
