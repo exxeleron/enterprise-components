@@ -230,7 +230,7 @@
 .hnd.p.errHlazy:{[s;e] 
   sig:"can't open connection to ",string[s],", error: ",e;
   .hnd.status[s;`state`msg]:(`failed;sig);
-  .log.error[`handle] sig;
+  .log.warn[`handle] sig;
   // start reconnection only when it is not running (user may call .hnd.h many times)
   if[not (tid:`$".hnd.rec.",.hnd.p.remdot s) in .tmr.status`funid;
     .tmr.start[tid;.hnd.timer;tid]
