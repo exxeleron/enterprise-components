@@ -22,6 +22,10 @@ export PATH
 # ---- ec environment ---- #
 EC_QSL_PATH=${EC_SYS_PATH}/bin/ec/libraries/qsl/
 EC_ETC_PATH=${EC_SYS_PATH}/etc
+# override for Mac OS X
+if [ "$(uname)" == "Darwin" ]; then
+    PATH=$QHOME/m32:$YAK_PATH:$OLDPATH
+fi
 export EC_QSL_PATH EC_ETC_PATH
 
 # ---- cmd prompt decoration ---- #
