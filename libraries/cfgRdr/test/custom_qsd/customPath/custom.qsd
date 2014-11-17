@@ -1,0 +1,8 @@
+[group]
+  cfg.custom1 = <type(STRING), default(defaultCustom1)>
+  cfg.custom2 = <type(STRING)>
+[table]
+  cfg.custom3 = <type(STRING), default(defaultCustom3)>
+[sysTable]
+[user]
+[userGroup]

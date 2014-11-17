@@ -1,0 +1,13 @@
+libPath = <type(LIST PATH), pathExist()>
+commonLibs = <type(LIST COMPONENT_TYPE), default(NULL)>
+
+topField1 = <type(STRING), default(topField1)>
+topField2 = <type(STRING)>
+
+[group:<type(SYMBOL)>]
+  groupField1 = <type(STRING), default(groupField1)>
+  groupField2 = <type(STRING)>
+  
+ [[<type(SYMBOL), isComponent()>]]
+    componentField1 = <type(STRING), default(componentField1)>
+    componentField2 = <type(STRING)>
