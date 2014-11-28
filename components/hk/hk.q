@@ -78,7 +78,7 @@
 /S/ *compress*
 /S/ This plugin performs gzip compression on files/directories. In result original file/directory is deleted and 
 /S/ instead compressed file is created (with extension tar.gz).Already compressed files are not processed (based on
-/S/ the file extension).
+/S/ the file extension). On Windows, the zip utility from the Info-ZIP project needs to be available on PATH.
 /S/ 
 /S/ *Custom plugins*
 /S/ In addition to 'delete' and 'compress' plugins, additional actions can be performed by loading custom plugins.
@@ -154,7 +154,6 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   if[path like "*.tar.gz";.log.info[`hk] "compressing: file" ,string[path], " already compressed - skipping";:(::);];
   if[path like "*.zip";.log.info[`hk] "compressing: file" ,string[path], " already compressed - skipping";:(::);];
   .log.info[`hk] "compressing: ",string[path];
-  //cmd:"tar -czvf ",string[path],".tar.gz ",string[path]," --remove-files --absolute-names"; 
   .os.compress string path;
   };
 
