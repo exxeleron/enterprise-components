@@ -1,0 +1,6 @@
+
+[table:<type(SYMBOL)>]
+  [[<type(SYMBOL), isComponent()>]]
+
+[sysTable:<type(SYMBOL)>]
+  [[<type(SYMBOL), isComponent()>]]

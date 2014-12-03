@@ -1,0 +1,60 @@
+#/S/ Definition for central configuration file access.cfg:
+
+#/C/ Stop words definition. Definition should be put at the top-level of access.cfg file.
+#/E/ stopWords = .z.exit,.z.po,.z.pc,.ap.cfg.serverAux,set,upsert
+stopWords = <type(LIST STRING), default(delete,exit,access,value,save,read0,read1,insert,update,system,upsert,set,.z.pw,.z.pg,.z.ps,.z.pi,.z.ph,.z.pp,.z,parse,eval,.q.parse,.q.eval,.q.system,.z.exit,.z.po,.z.pc,.ap.cfg.serverAux,.ap.cfg.timeout,.ap.cfg.namespaces,.ap.cfg.stopWords,.ap.cfg.usergroups,.ap.stopWords,.ap.users,.ap.usergroups,.ap.status,.ap.user2nm,\\,\)> 
+
+#/C/ Enables auditing view. Auditing view is used to log additional information on open/closed connections and function calls (both synchronous or asynchronous). It can be set on global level and later overridden on userGroup or component level. 
+#/C/Possible values are listed below :
+#/C/ 
+#/C/ NULL - audit is turned off
+#/C/ CONNECTIONS_INFO - view to connections is turned on
+#/C/ SYNC_ACCESS_INFO - view to synchronous messages is turned on
+#/C/ ASYNC_ACCESS_INFO - view to asynchronous messages is turned on
+#/C/ CONNECTIONS_INFO, SYNC_ACCESS_INFO,ASYNC_ACCESS_INFO - turn on all views
+#/E/ auditView = CONNECTIONS_INFO, SYNC_ACCESS_INFO
+auditView = <type(LIST SYMBOL), in(`, CONNECTIONS_INFO, SYNC_ACCESS_INFO, ASYNC_ACCESS_INFO), default(NULL)>
+
+#/C/ Check level for user query (as in <authorization.q>):
+#/C/ NONE - no check is performed (default)
+#/C/ STRICT - check function name for allowed namespaces; check one level of nested arguments (allow tables, lists, dictionaries but block inline function calls); only parse trees arguments with function names given as either symbol or string
+#/C/ FLEX - check function name for allowed namespaces; check all function parameters against stopWords (see <access.qsd>); allow parse trees (as in STRICT mode) or string calls
+#/E/ (`function; arg1; arg2)    / allowed on both STRICT and FLEX levels
+#/E/ ("function"; arg1; arg2)   / allowed on both STRICT and FLEX levels
+#/E/ "function[param1;param2]"  / allowed on FLEX level
+checkLevel = <type(SYMBOL), default(NONE), in(NONE,STRICT,FLEX)>
+
+#/C/ User specification
+#/E/ [user:admin]
+#/E/   pass = 0x50113P455
+#/E/   usergroups = admins
+[user:<type(STRING)>]
+#/C/ Encrypted password
+pass = <type(STRING)>  
+#/C/ User's group assignments
+usergroups = <type(LIST SYMBOL)>
+
+#/C/ Technical user specification. Technical user is used for inter-process communication inside Enterprise Components. At least one technical user has to be configured in the system
+#/E/ [technicalUser:superadmin]
+#/E/   pass = 0xS00P3rP455
+#/E/   usergroups = admin
+[technicalUser:<type(STRING)>]
+#/C/ Encrypted password
+pass = <type(STRING)>  
+#/C/ Technical user's group assignments. 
+usergroups = <type(LIST SYMBOL)>
+  
+#/C/ User group permissions
+#/E/ [userGroup:admins]    # example group with full access 
+#/E/   [[ALL]]             # all namespaces on all components, no checks
+#/E/   namespaces = ALL
+#/E/   checkLevel = NONE
+#/E/   [[rtr.feed]]        # restrict access to rtr.feed
+#/E/   namespaces = .admin # only .admin namespace is allowed
+#/E/   checkLevel = STRICT # allow only interface calls in parse tree form
+[userGroup:<type(SYMBOL)>]
+  [[<type(SYMBOL), isComponent()>]]
+  EC_COMPONENT_INSTANCE = <type(STRING), default("")>
+  #/C/ List of allowed namespaces which can be accessed by this group's users.
+  namespaces = <type(LIST SYMBOL),default(ALL)>
+

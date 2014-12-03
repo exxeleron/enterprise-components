@@ -255,14 +255,14 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
  
 .cr.p.auxQsdFiles:enlist[`]!enlist[::];
  
-.cr.p.auxQsdVars:enlist[`]!enlist[::];
+.cr.p.auxQsdVars:enlist[`.]!enlist[::];
  
 .cr.p.auxQsdMapping:enlist[enlist `]!enlist[enlist `];
  
 .cr.p.escapedChars:"<>()";
  
 .cr.p.mySpaces:.par.oneOf[" \t"];
- 
+
 //----------------------------------------------------------------------------//
 //                              parser                                        //
 //----------------------------------------------------------------------------//
@@ -608,39 +608,62 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   .cr.p.addAuxQsdVars[name;select  last vars by prefix, suffix from aux];
   };
 
-.cr.p.addAuxQsd:{[path;cfg;qsd;auxVars]
+.cr.p.addAuxQsd:{[cfgType;path;cfg;qsd;auxVars]
   tq:type auxVars;
-  $[-11h~tq;
+  if[101h~tq;
+    :()];
+  if[-11h~tq;
     cfg[`errors],:auxVars;
-    101h~tq;();
-      [
-        res:1!select varName, qsd:varVal, qsdLine:line, qsdCol:col, qsdFile:file, qsdErr:errors from auxVars[(first last path),`][`vars];
-        res:res,1!select varName, qsd:varVal, qsdLine:line, qsdCol:col, qsdFile:file, qsdErr:errors from auxVars[last path][`vars];
-        :res;
-      ]
+    :();
     ];
-  :();
+ 
+  if[path~();
+    sections:group[.cr.section2file][cfgType];
+    allQsd:raze {`section`varName xkey update section:x from y[`vars]}'[sections;auxVars[sections,\:`]];
+    auxQsd:select qsd:last varVal, qsdLine:last line, qsdCol:last col, qsdFile:last file, qsdErr:last errors by varName from allQsd;
+
+    uniqueQsdVars:select first[section], location:(string[first file],":",string[first line],":",string[first col]) by varName, varVal from allQsd;
+    if[count mismatchingDuplicates:select from uniqueQsdVars where 1<(count;i) fby varName;
+      errors:exec first {`$"QSD_MISMATCH: field also declared with different attributes in section [",string[x],"] in ",y, " - ",.Q.s1[z]}'[section;location;varVal] by varName from mismatchingDuplicates;
+      auxQsd:update qsdErr:(qsdErr,'errors[varName]) from auxQsd
+      ];
+    :auxQsd;
+    ];
+
+  res:1!select varName, qsd:varVal, qsdLine:line, qsdCol:col, qsdFile:file, qsdErr:errors from auxVars[(first last path),`][`vars];
+  res:res,1!select varName, qsd:varVal, qsdLine:line, qsdCol:col, qsdFile:file, qsdErr:errors from auxVars[last path][`vars];
+  :res;
   };
 
 .cr.p.componentToQsd:()!();
 .cr.p.includeAdditioalQsd:{[path;parentFields;cfg;qsd]
   if[not cfg[`prefix] in key .cr.p.componentToQsd;
-    typeValue:enlist last"/" vs cfg[`vars;`type;`cfg];
 	
 	//read commonLibs field - take subsection field if available, otherwise take section field
-	libsValue:(),trim "," vs $[cfg[`vars;`commonLibs;`cfg]~"";parentFields[`commonLibs;`cfg];cfg[`vars;`commonLibs;`cfg]]; 
-	//read libs field - append to commonLibs
-    libsValue,:(),trim["," vs cfg[`vars;`libs;`cfg]];
-	
-    qsdFiles:(typeValue,libsValue) except enlist"";
-    if[0=count qsdFiles;
+    commonLibsStr:cfg[`vars;`commonLibs;`cfg]; 
+    parentLibsStr:$[parentFields~();"";parentFields[`commonLibs;`cfg]];
+    libsList:(),trim "," vs $[not(commonLibsStr~"")|(commonLibsStr~());commonLibsStr;parentLibsStr];
+	//read libs field - append to libsList
+    if[not ()~libsStr:cfg[`vars;`libs;`cfg];
+      libsList,:(),trim["," vs libsStr];
+      ];
+	//read type field - append to libsList
+    if[not ()~typeField:cfg[`vars;`type;`cfg];
+      libsList:enlist[last"/" vs typeField],libsList;
+      ];
+
+    libsList:libsList except ("";"NULL");
+    if[0=count libsList;
+      //NOTHING TO LOAD
       :cfg;
       ];
-    qsdFiles:hsym each`$qsdFiles,\:".qsd";
-    .cr.p.componentToQsd[cfg[`prefix]]:qsdFiles;
-    new:update varName:enlist`EC_COMPONENT_PKG, {first "/"vs 2_x}each cfg from select from cfg[`vars] where varName=`type;  
-    new,:update varName:enlist`EC_COMPONENT_TYPE, {last "/"vs 2_x}each cfg from select from cfg[`vars] where varName=`type;
-    cfg[`vars]:new,cfg[`vars];
+
+    .cr.p.componentToQsd[cfg[`prefix]]:hsym each`$libsList,\:".qsd";
+    if[count typeCfg:select from cfg[`vars] where varName=`type;
+      new:update varName:enlist`EC_COMPONENT_PKG, {first "/"vs 2_x}each cfg from typeCfg;
+      new,:update varName:enlist`EC_COMPONENT_TYPE, {last "/"vs 2_x}each cfg from typeCfg;
+      cfg[`vars]:new,cfg[`vars];
+      ];
     ];
 
   paths:(parentFields uj qsd[`vars]) uj cfg[`vars];
@@ -655,14 +678,14 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 .cr.p.alignTrace:();
-.cr.p.align:{[path;parentFields;cfg;qsd;services;isSync]
+.cr.p.align:{[cfgType;path;parentFields;cfg;qsd;services;isSync]
   if[`DEBUG~.log.level;
-    .cr.p.alignTrace,::enlist`path`parentFields`cfg`qsd`services`isSync!(path;parentFields;cfg;qsd;services;isSync); 
+    .cr.p.alignTrace,::enlist`cfgType`path`parentFields`cfg`qsd`services`isSync!(cfgType;path;parentFields;cfg;qsd;services;isSync); 
     ];
   
   cfg[`vars]:1!select varName, cfg:varVal, cfgLine:line, cfgCol:col, cfgFile:file, cfgErr:errors from cfg[`vars];
   qsd[`vars]:1!select varName, qsd:varVal, qsdLine:line, qsdCol:col, qsdFile:file, qsdErr:errors from qsd[`vars];
-  if[((`group~first last path) & (cfg[`prefix] in services));
+  if[(cfgType~`system) & (cfg[`prefix] in `,key[.cr.section2file],services);
     cfg:.cr.p.includeAdditioalQsd[path;parentFields;cfg;qsd];
     ];
   if[1=count path;
@@ -675,9 +698,8 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
                                (`;`type`isComponent!(`SYMBOL;"");`;()!();0N;0N;.cr.p.varModel;();0#`)
       ];
     ];
-  if[2=count path;
-    qsd[`vars],:.cr.p.addAuxQsd[path;cfg;qsd;] .cr.p.auxQsdVars[cfg`prefix];
-    ];
+  qsd[`vars],:.cr.p.addAuxQsd[cfgType;path;cfg;qsd;] .cr.p.auxQsdVars[cfg`prefix];
+
   vars:(parentFields uj qsd[`vars]) uj cfg[`vars];
   vars:update qsd:{[x] ()!()} each qsd  from vars where null qsdLine;
   vars:update defaultUsed:1b,cfg:qsd[;`default] from vars where null cfgLine, `default in' key'[qsd];
@@ -695,7 +717,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
       ];
     mergedGroups:mergedGroups lj([prefix:qsd[`subGroups][`prefix]]qsd:qsd[`subGroups]);
     if[count e:select from mergedGroups where 0=count each qsd;cfg[`errors],:`$"UNSUPPORTED_GROUPS: `","`" sv string distinct e`prefix];
-    cfg[`subGroups]:.cr.p.align[path,enlist cfg`prefix`suffix;vars;;;services]'[mergedGroups`cfg;mergedGroups`qsd;isSync];
+    cfg[`subGroups]:.cr.p.align[cfgType;path,enlist cfg`prefix`suffix;vars;;;services]'[mergedGroups`cfg;mergedGroups`qsd;isSync];
    ];
   cfg[`vars]:vars;
   :cfg;
@@ -1656,7 +1678,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   qsd:.cr.parseCfgFile[qsdPath;1b];
   cfg:.cr.parseCfgFile[cfgPath;0b];
   
-  .cr.cfg[`sync]:.cr.p.align[();();cfg;qsd;.sl.componentId;1b];
+  .cr.cfg[`sync]:.cr.p.align[`system;();();cfg;qsd;.sl.componentId;1b];
   };
  
 /F/ Returns field value from sync.cfg file
@@ -1835,6 +1857,11 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
     .cr.cfgTab[`dataflow;`subGroups]:update {$[count x;raze .cr.p.expandClonesSet each x;x]}each subGroups from .cr.cfgTab[`dataflow;`subGroups];
     .cr.cfgTab[`access;`subGroups]:update {$[count x;raze .cr.p.expandClonesSet each x;x]}each subGroups from .cr.cfgTab[`access;`subGroups];
 
+    .cr.section2file:raze {[t] 
+      sections:exec distinct prefix from .cr.cfgTab[t][`subGroups];
+      :sections!(count sections)#t;
+      } each key .cr.cfgTab;
+ 
     .cr.p.procNames:exec prefix from raze .cr.cfgTab[`system][`subGroups][`subGroups];
     //procDefs:exec prefix(,)'suffix from raze .cr.cfgTab[`system][`subGroups][`subGroups];
     //.cr.p.procNames:raze {if[x[1]~`;:x[0]];:`$string[x 0],/:"_",/:string til "I"$string[x 1];} each procDefs;
@@ -1851,17 +1878,10 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   .cr.cfg:()!();
   {[services;t] 
     .log.debug[`cr] "Aligning ",string[t], " config files";
-    .pe.dot[{[t;cfg;qsd;services] .cr.cfg[t]:.cr.p.align[();();cfg;qsd;services;0b]};(t;.cr.cfgTab[t];.cr.qsdTab[t];services);{[t;x] .log.fatal[`cr] "Failed to align: ",string[t]," , signal: ",x}[t;]]}[services;] each key .cr.cfgTab;
- 
-   .cr.section2file:raze {[t] 
-     sections:exec distinct prefix from .cr.cfgTab[t][`subGroups];
-     :sections!(count sections)#t;
-     } each key .cr.cfgTab;
+    .pe.dot[{[t;cfg;qsd;services] .cr.cfg[t]:.cr.p.align[t;();();cfg;qsd;services;0b]};(t;.cr.cfgTab[t];.cr.qsdTab[t];services);{[t;x] .log.fatal[`cr] "Failed to align: ",string[t]," , signal: ",x}[t;]]}[services;] each key .cr.cfgTab;
  
   // evaluate vars for services - to report errors 
-  {[s] .cr.cfg[`system]:.cr.p.forceEval[.cr.cfg[`system];s;`group]} each services;
-  {[s] .cr.cfg[`dataflow]:.cr.p.forceEval[.cr.cfg[`dataflow];s;`table`sysTable]} each services;
-  {[s] .cr.cfg[`access]:.cr.p.forceEval[.cr.cfg[`access];s;`user`technicalUser`userGroup]} each services;
+  {[s] {[s;k;v] .cr.cfg[k]:.cr.p.forceEval[.cr.cfg[k];s;v]}[s]'[key group .cr.section2file;value group .cr.section2file]}each services;
   };
 
 /F/ Loads configuration for given service(s). 

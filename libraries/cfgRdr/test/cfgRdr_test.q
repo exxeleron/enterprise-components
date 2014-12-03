@@ -331,6 +331,77 @@
     };
 
 //----------------------------------------------------------------------------//
+.tst.desc["custom global qsd fields"]{
+    before{
+        .tst.loadLib[`cfgRdr.q];
+        `EC_QSL_PATH setenv "test/custom_qsd/";
+        `EC_ETC_PATH setenv "test/custom_qsd/";
+        delete cfg from `.cr;
+        };
+    after{
+        };
+    should["load configuration for gr1.rdb"]{
+        .sl.componentId:`gr1.rdb;
+        .cr.loadCfg[`THIS];
+        "testTopField1" mustmatch .cr.getCfgField[`THIS;`group;`topField1];
+        "testTopField2" mustmatch .cr.getCfgField[`THIS;`group;`topField2];
+        "testGrField1" mustmatch .cr.getCfgField[`THIS;`group;`groupField1];
+        "testGrField2" mustmatch .cr.getCfgField[`THIS;`group;`groupField2];
+        "testComponentField1" mustmatch .cr.getCfgField[`THIS;`group;`componentField1];
+        "testComponentField2" mustmatch .cr.getCfgField[`THIS;`group;`componentField2];
+
+        "defaultCustom1" mustmatch .cr.getCfgField[`THIS;`group;`cfg.custom1];
+        "topCustom2" mustmatch .cr.getCfgField[`THIS;`group;`cfg.custom2];
+        "defaultCustom3" mustmatch .cr.getCfgField[`THIS;`table;`cfg.custom3];
+        };
+    should["load configuration for gr2.rdb"]{
+        .sl.componentId:`gr2.rdb;
+        .cr.loadCfg[`THIS];
+        "testTopField1" mustmatch .cr.getCfgField[`THIS;`group;`topField1];
+        "testTopField2" mustmatch .cr.getCfgField[`THIS;`group;`topField2];
+        "testGrField1Override" mustmatch .cr.getCfgField[`THIS;`group;`groupField1];
+        "testGr2Field2" mustmatch .cr.getCfgField[`THIS;`group;`groupField2];
+        "testGr2ComponentField1" mustmatch .cr.getCfgField[`THIS;`group;`componentField1];
+        "testGr2ComponentField2" mustmatch .cr.getCfgField[`THIS;`group;`componentField2];
+
+        "defaultCustom1" mustmatch .cr.getCfgField[`THIS;`group;`cfg.custom1];
+        "groupCustom2" mustmatch .cr.getCfgField[`THIS;`group;`cfg.custom2];
+        "custom3_tab1" mustmatch .cr.getCfgField[`THIS;`table;`cfg.custom3];
+        };
+    should["load configuration for gr3.rdb"]{
+        .sl.componentId:`gr3.rdb;
+        .cr.loadCfg[`THIS];
+        "testTopField1" mustmatch .cr.getCfgField[`THIS;`group;`topField1];
+        "testTopField2" mustmatch .cr.getCfgField[`THIS;`group;`topField2];
+        "testComponentField1" mustmatch .cr.getCfgField[`THIS;`group;`groupField1];
+        "testGr3Field2" mustmatch .cr.getCfgField[`THIS;`group;`groupField2];
+        "testComponentField1" mustmatch .cr.getCfgField[`THIS;`group;`componentField1];
+        "testComponentField2" mustmatch .cr.getCfgField[`THIS;`group;`componentField2];
+
+        "componentCustom1" mustmatch .cr.getCfgField[`THIS;`group;`cfg.custom1];
+        "topCustom2" mustmatch .cr.getCfgField[`THIS;`group;`cfg.custom2];
+        mustthrow["Field `cfg.custom3 for componentId `THIS for sectionType `table is missing in file dataflow.cfg";
+          {.cr.getCfgField[`THIS;`table;`cfg.custom3]}];
+        };
+    should["load configuration for gr3.rdb, with .sl.componentId set to gr1.rdb"]{
+        .sl.componentId:`gr1.rdb;
+        .cr.loadCfg[`gr3.rdb];
+        "testTopField1" mustmatch .cr.getCfgField[`gr3.rdb;`group;`topField1];
+        "testTopField2" mustmatch .cr.getCfgField[`gr3.rdb;`group;`topField2];
+        "testComponentField1" mustmatch .cr.getCfgField[`gr3.rdb;`group;`groupField1];
+        "testGr3Field2" mustmatch .cr.getCfgField[`gr3.rdb;`group;`groupField2];
+        "testComponentField1" mustmatch .cr.getCfgField[`gr3.rdb;`group;`componentField1];
+        "testComponentField2" mustmatch .cr.getCfgField[`gr3.rdb;`group;`componentField2];
+
+        "componentCustom1" mustmatch .cr.getCfgField[`gr3.rdb;`group;`cfg.custom1];
+        "topCustom2" mustmatch .cr.getCfgField[`gr3.rdb;`group;`cfg.custom2];
+        mustthrow["Field `cfg.custom3 for componentId `gr3.rdb for sectionType `table is missing in file dataflow.cfg";
+          {.cr.getCfgField[`gr3.rdb;`table;`cfg.custom3]}];
+        };
+    };
+
+//----------------------------------------------------------------------------//
+
 /
 .tst.desc["test error reporting"]{
     before{
