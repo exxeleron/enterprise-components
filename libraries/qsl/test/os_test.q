@@ -48,15 +48,22 @@ system"l lib/qsl/os.q";
   before{
     .os.mkdir "test/dir2cp";
     `:./test/dir2cp/test.txt 0: enlist "This is a test.";
-    .os.cpdir["test/dir2cp";"test/dir2cpCopy"];	
+    .os.cpdir["test/dir2cp";"test/dir2cpCopy"];
+    .os.mkdir "test/dir2";
+    .os.cpdir["test/dir2cp";"test/dir2"]; // copy to existing directory
+    
     };
   after{
     .os.rmdir "test/dir2cp";
     .os.rmdir "test/dir2cpCopy";
+    .os.rmdir "test/dir2"
     };
   should["copy a directory"]{
     1b mustmatch `dir2cpCopy in key `:./test;
     1b mustmatch `test.txt in key `:./test/dir2cpCopy;
+    };
+  should["copy contents to existing directory"]{
+    1b mustmatch `test.txt in key `:./test/dir2;
     };
   };
   

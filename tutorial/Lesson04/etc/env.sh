@@ -17,6 +17,10 @@ export YAK_PATH YAK_OPTS
 # ---- path ---- #
 export OLDPATH=${OLDPATH:-$PATH}
 PATH=$QHOME/l32:$YAK_PATH:$OLDPATH
+# override for Mac OS X
+if [ "$(uname)" == "Darwin" ]; then
+    PATH=$QHOME/m32:$YAK_PATH:$OLDPATH
+fi
 export PATH
 
 # ---- ec environment ---- #
