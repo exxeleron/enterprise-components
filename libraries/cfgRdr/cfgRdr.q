@@ -1881,7 +1881,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
     .pe.dot[{[t;cfg;qsd;services] .cr.cfg[t]:.cr.p.align[t;();();cfg;qsd;services;0b]};(t;.cr.cfgTab[t];.cr.qsdTab[t];services);{[t;x] .log.fatal[`cr] "Failed to align: ",string[t]," , signal: ",x}[t;]]}[services;] each key .cr.cfgTab;
  
   // evaluate vars for services - to report errors 
-  {[s] {[s;k;v] .cr.cfg[k]:.cr.p.forceEval[.cr.cfg[k];s;v]}[s]'[key group .cr.section2file;value group .cr.section2file]}each services;
+  {[s] sect:group `template _ .cr.section2file; {[s;k;v] .cr.cfg[k]:.cr.p.forceEval[.cr.cfg[k];s;v]}[s]'[key sect;value sect]}each services;
   };
 
 /F/ Loads configuration for given service(s). 
