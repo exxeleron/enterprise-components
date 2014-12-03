@@ -135,7 +135,6 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 
 .hk.p.processOneTask:{[taskDef]
   plugin:` sv (`.hk.plug;taskDef[`action]);
-  //findCmd:"find -L ",1_string[taskDef[`dir]]," -mtime +",string[taskDef[`age]], " -name \"",string[taskDef[`pattern]],"\" -prune";
   files:.os.find[taskDef `dir;taskDef `age;taskDef `pattern];
   if[0~count files;.log.info[`hk] "no files found matching pattern ",(string taskDef `pattern),", skipping task ",string taskDef `action;:(::)];
   .log.info[`hk] "Running ",string[plugin], " for ", string[taskDef[`proc]], " on ",string[count files], " files";

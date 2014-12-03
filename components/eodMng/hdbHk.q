@@ -210,7 +210,6 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 .hdbHk.p.deleteOneDir:{[date;bckdir]
-  // system["rm -r ",1_string[` sv bckdir,`$string[.hdbHk.cfg.hdbConn],string[date]]];
   .os.rmdir 1_string ` sv bckdir,`$string[.hdbHk.cfg.hdbConn],string[date] ;
   };
 
@@ -239,9 +238,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   columns:cols[tableHnd];
   {[tableHnd;tmpPath;lbs;ca;cl;x] -19!(` sv (tableHnd;x);` sv (tmpPath;x);lbs;ca;cl)}[tableHnd;tmpPath;args`logicalBlockSize;args`compressionAlgorithm;args`compressionLevel;] each columns;
   colDirs:{[tmpDir;date;subDir] ` sv (tmpDir;`$string[date];subDir)}[tmpDir;date;] each key tmpPath;
-  //system "cp -rf ", ("" {[x;y] 1_string[y]," ",x}/ colDirs)," \"",1_string[tableHnd],"\"";
   .os.cpdir["" {[x;y] 1_string[y]," ",x}/ colDirs;1_string[tableHnd]];
-  //system "rm -rf ",1_string[tmpPath];
   .os.rmdir 1_string tmpPath;
   };
 
