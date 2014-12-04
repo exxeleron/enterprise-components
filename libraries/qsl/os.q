@@ -140,6 +140,19 @@
 	// remove, calling the right function for a directory or file
 	$[0<type key hsym `$path;.os.p.W.rmdir path;.os.p.W.rm path];
 	};
+  
+/F/ Sleeps for given number of milliseconds. Linux version, requires Bash
+/P/ ms:LONG - number of milliseconds to sleep
+.os.p.L.sleep:{[ms]
+  system "sleep ",(string ms%1000),"s";
+  };
+  
+/F/ Sleeps for given number of milliseconds. Windows version. Note the resolution on Windows is 1000ms (1s), rounded UP.
+/P/ ms:LONG - number of milliseconds to sleep
+.os.p.W.sleep:{[ms]
+  s:ceiling ms%1000;
+  system "ping 127.0.0.1 -n ",(string s+1)," > null";
+  };
 
 /F/ Removes the last slash from a string - Windows version
 /P/ path:STRING - directory path
@@ -214,6 +227,10 @@
 /P/ age:LONG - age of the files in days
 /P/ pattern:SYMBOL - pattern for the file path
 .os.find:{[dir;age;pattern] };
+
+/F/ sleeps given number of milliseconds. On Windows, the resolution is 1000ms (1s)
+/P/ t:LONG - time in millisecods. On Windows, this parameter is rounded UP to the nearest multiple of 1000.
+.os.sleep:{[t] };
 
 /--- initialization
 $["w"~first string .z.o;.os,:.os.p.W;.os,:.os.p.L];
