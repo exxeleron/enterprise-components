@@ -1,10 +1,21 @@
 ------------------------------------------------------------------------------
-  enterprise-components 3.1.0-beta1 [2014.06.27]
+  enterprise-components 3.2 [2014.12.05]
 ------------------------------------------------------------------------------
 
-- Libraries: os
-
+  - New: experimental support for OS X (#17)
+  - New: cfgRdr - support global custom configuration fields (on top level) (#25)
+  - New: qsl/os - .os.system[] - wrapper for the system calls with errors thrown as signal
+  - Fix: qsl/handle - now failure of `lazy connection is logged as warn (instead of error)
+  
 ------------------------------------------------------------------------------
+  enterprise-components 3.1 [2014.08.06]
+------------------------------------------------------------------------------
+
+  - New: experimental support for Windows (known limitations listed in Troubleshooting_windows)
+  - New: library with shell commands abstraction - qsl/os
+  - New: tutorial - Lesson 5 - Authentication and authorization
+  - Fix: monitor - [sysHdbSummary] and [sysDiskUsage] configuration handling (#8 and #9)
+  - Fix: (Windows) remove administrator privileges requirement for standard library - qsl/sl
 
 ------------------------------------------------------------------------------
   enterprise-components 3.0 [2014.05.16]
