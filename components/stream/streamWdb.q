@@ -75,7 +75,7 @@
     ];
   .wdb.cfg.dstHdbConn:conns 0;
   .wdb.cfg.dstHdbConn:exec first hdbConn from .wdb.cfg.tables;
-  system "cd ",1_string[.wdb.cfg.data],.os.slash,"tmpdb",.os.slash;
+  system .os.slash "cd ",1_string[.wdb.cfg.data],"/tmpdb/";
 
   //end of day initialization
   eodTabs:select table:tab, hdbPath:eodPath, hdbName:hdbConn, memoryClear:0b, store:1b from (select from .stream.cfg.srcTab where subType=`tickLF)lj `tab xcol .wdb.cfg.tables;

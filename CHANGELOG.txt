@@ -1,15 +1,31 @@
 ------------------------------------------------------------------------------
-  enterprise-components 3.1.0-beta1 [2014.06.27]
+  enterprise-components 3.2 [2014.12.08]
 ------------------------------------------------------------------------------
 
-- Libraries: os
-
+  - New: general - experimental support for OS X (#17)
+  - New: cfgRdr - support global custom configuration fields on the top level (#25)
+  - New: qsl/os - .os.system[] - wrapper for the system calls with errors thrown as signal
+  - New: qsl/os - .os.sleep[] - sleeps for given number of milliseconds
+  - Fix: qsl/handle - now failure of `lazy connection is logged as warn (instead of error)
+  - Fix: dist - .dist.usub[] - optimization of the un-subscription method
+  
 ------------------------------------------------------------------------------
+  enterprise-components 3.1 [2014.08.06]
+------------------------------------------------------------------------------
+
+  - New: general - experimental support for Windows (known limitations listed in Troubleshooting_windows) (#5)
+  - New: qsl/os - new library with shell commands abstraction (#5)
+  - New: dist - .dist.addTable[] - support for ad-hoc tables (#10)
+  - New: cfgRdr - `commonLibs` configuration field for loading common q and/or qsd to a group of processes (#6)
+  - New: tutorial - Lesson 5 - Authentication and authorization
+  - Fix: monitor - [sysHdbSummary] and [sysDiskUsage] configuration handling (#8 and #9)
+  - Fix: qsl/sl (Windows) - remove administrator privileges requirement (#22)
 
 ------------------------------------------------------------------------------
   enterprise-components 3.0 [2014.05.16]
 ------------------------------------------------------------------------------
 
+  - Initial open source version
   - Components: accessPoint, dist, feedCsv, hdb, mock, rdb, tickHF, authentication, eodMng, feedMng, hk, monitor, stream, tickLF
   - Libraries: cfgRdr, qsl
 
