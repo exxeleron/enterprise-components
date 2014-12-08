@@ -122,10 +122,8 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 //.dist.p.usub[`;`;56i]
 //`tab`sec`w set' (`;`;56i);
 //`tab`sec`w set' (`Account;`sector2;56i)
-.dist.p.usub:{[tabName;sec;w]
-  if[tabName~`;:.dist.p.usub[;sec;w] each exec distinct tab from .dist.status];
-  if[sec~`;:.dist.p.usub[tabName;;w] each exec sector from .dist.status where tab=tabName];
-  .dist.status[tabName,sec;`w]:.dist.status[tabName,sec;`w] except w;
+.dist.p.usub:{[tabName;sec;wToRemove]
+  update w:w (except)' wToRemove from `.dist.status where (tab in tabName)or(tabName=`),(sector in sec) or (sec=`);
   .dist.p.refreshW[];
   };
 
