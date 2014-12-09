@@ -32,4 +32,10 @@
    #/C/ eod configuration - hdb name
    #/C/ Note: only one hdbConn within one streamWdb is supported at the moment.
    hdbConn = <type(SYMBOL), isComponent()>
+   #/C/ At the end of the day each table is by default sorted by sym column in order to apply `p# attribute.
+   #/C/ Sorting can be disabled using performSort=FALSE. This might be required for a very large tables
+   #/C/ as sorting is time and resources consuming.
+   #/C/ Note that with the sorting disabled the `p# attribute will not be applied in the destination hdb.
+   performSort = <type(BOOLEAN), default(TRUE)>
+
    

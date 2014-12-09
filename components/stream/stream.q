@@ -142,6 +142,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 
 /------------------------------------------------------------------------------/
 .stream.p.TickLFPo:{[src]
+  .sub.initCallbacks`PROTOCOL_TICKLF;
   .sub.tickLF.subscribe[src;exec tab from .stream.cfg.srcTab where server=src;`];
   };
 
@@ -153,6 +154,13 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
       .hnd.hopen[.stream.srcServers;.stream.cfg.timeout;`eager];
       ];
     ];
+    
+  if[count .stream.tickLFServers;
+    if[.stream.p.srcSubscriptionOn;
+      .hnd.hopen[.stream.tickLFServers;.stream.cfg.timeout;`eager];
+      ];
+    ];
+
   .hnd.hopen[.stream.cfg.serverAux;.stream.cfg.timeout;`lazy];
   };
 

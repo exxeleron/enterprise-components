@@ -1,4 +1,16 @@
 ------------------------------------------------------------------------------
+  enterprise-components 3.2.1 [2014.12.18]
+------------------------------------------------------------------------------
+
+  - New: stream/streamWdb – add new field performSort in streamWdb.q plugin (#32)
+  - New: eodMng/hdbHk - add new field performBackup to enable/disable backup of hdb partition before housekeeping
+  - New: monitor - proper handling not existing functions in sysFuncSummary statistics (#36)
+  - Fix: feedMng - fix subscription using sub.q library (#27)
+  - Fix: eodMng/hdbHk - fix compression plugin (#34)
+  - Fix: qsl/os - fix a double cast bug in .os.find (#31)
+  - Fix: rdb/replay - fix in starting replay.q (#32)
+
+------------------------------------------------------------------------------
   enterprise-components 3.2 [2014.12.08]
 ------------------------------------------------------------------------------
 

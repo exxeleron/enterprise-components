@@ -1,9 +1,9 @@
 #/E/ [table:referenceData]
 #/E/    [[kdb.feedMng]]
-#/E/    serverSrc = kdb.tickLF
+#/E/    subSrc = kdb.tickLF
 #/E/ [sysTable:sysUniverse]
 #/E/    [[kdb.feedMng]]
-#/E/    serverSrc = kdb.tickLF
+#/E/    subSrc = kdb.tickLF
 
 [group]
   #/C/ connection timeout   
@@ -14,12 +14,12 @@
   cfg.serverAux = <type(LIST SYMBOL), isComponent(), default()>
 [table]
   #/C/ connection settings to subscription
-  #/E/ serverSrc = kdb.tickLF
-  serverSrc = <type(SYMBOL), isComponent()>
+  #/E/ subSrc = kdb.tickLF
+  subSrc = <type(SYMBOL), isComponent()>
 [sysTable]
   #/C/ connection settings to subscription
-  #/E/ serverSrc = kdb.tickLF
-  serverSrc = <type(SYMBOL), isComponent()>
+  #/E/ subSrc = kdb.tickLF
+  subSrc = <type(SYMBOL), isComponent()>
   
 [sysTable:sysUniverse]
   #/C/ data model of sysUniverse table

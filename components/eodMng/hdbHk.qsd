@@ -21,6 +21,9 @@
   #/E/ hdbHousekeeping=((action(compress), dayInPast(1), param1(17), param2(2), param3(6)),
   #/E/                  (action(delete), dayInPast(720)))
   hdbHousekeeping = <type(ARRAY), model(action(SYMBOL), dayInPast(INT), param1(SYMBOL), param2(SYMBOL), param3(SYMBOL), param4(SYMBOL), param5(SYMBOL), param6(SYMBOL))>
+  #/C/ backup hdb partition before performing hdb housekeeping
+  #/E/ performBackup = TRUE
+  performBackup = <type(BOOLEAN), default(TRUE)>
 
 [sysTable]
   #/C/ description of hdb housekeeping tasks; 
@@ -30,6 +33,9 @@
   #/E/ hdbHousekeeping=((action(compress),dayInPast(1),param1(17),param2(2),param3(6)),
   #/E/                  (action(delete),dayInPast(720)))
   hdbHousekeeping = <type(ARRAY), model(action(SYMBOL), dayInPast(INT), param1(SYMBOL), param2(SYMBOL), param3(SYMBOL), param4(SYMBOL), param5(SYMBOL), param6(SYMBOL))>
+  #/C/ backup hdb partition before performing hdb housekeeping
+  #/E/ performBackup = TRUE
+  performBackup = <type(BOOLEAN), default(TRUE)>
 
 [user]
 [userGroup]

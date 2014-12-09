@@ -53,7 +53,7 @@
 /F/ - initialization of eod settings
 /F/ - initialization and load of on-disk splayed tables
 .stream.plug.init:{[]
-  .wdb.cfg.tables:            .cr.getCfgPivot[`THIS;`table`sysTable;`hdbConn];
+  .wdb.cfg.tables:            .cr.getCfgPivot[`THIS;`table`sysTable;`hdbConn`performSort];
   hdbConns:(exec distinct hdbConn from .wdb.cfg.tables) except `;
   .wdb.cfg.tables:.wdb.cfg.tables lj ([hdbConn:hdbConns] eodPath:.cr.getCfgField[;`group;`dataPath]each hdbConns);
   
@@ -178,7 +178,7 @@
   status:(::);
   {[t]delete from .stream.cacheNames[t]} each exec tab from .stream.cfg.srcTab where subType=`tickHF;
   //disksort new partition
-  status:status,{[day;x].event.dot[`wdb;`.wdb.p.sortTab;(day;x);`error;`info`info`error;"Sorting wdb partition for table ", string x]}[day] each exec tab from .stream.cfg.srcTab where subType=`tickHF;
+  status:status,{[day;x].event.dot[`wdb;`.wdb.p.sortTab;(day;x);`error;`info`info`error;"Sorting wdb partition for table ", string x]}[day] each exec tab from .stream.cfg.srcTab where subType=`tickHF, tab in exec sectionVal from .wdb.cfg.tables where performSort;
   //switch tmp hdb to new date
   status:status,.event.at[`wdb;`.wdb.p.initWdb;day+1;`error;`info`info`error;"Creating new wdb partition dir"];
   .wdb.lastDumpTs:00:00:00.000000;
