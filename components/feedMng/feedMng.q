@@ -137,12 +137,12 @@ sysUniverse:([]  time:`time$(); sym:`symbol$(); instrumentGroup:`symbol$(); inst
 // .hnd.hclose[enlist `kdb.tickLF]
 
 .feedMng.p.init:{[]
-  .feedMng.serverDst:.feedMng.cfg.tables[`sysUniverse][`serverSrc];
+  .feedMng.serverDst:.feedMng.cfg.tables[`sysUniverse][`subSrc];
   //TODO: decide on columns
-  .feedMng.cfg.sub:select tab:sectionVal, subSrc:serverSrc, subNs:`, subCols:count[i]#enlist`symbol$(), subList:`ALL, subPredefineCallbacks:0b from .feedMng.cfg.tables;
+  .feedMng.cfg.sub:select tab:sectionVal, subSrc, subNs:`, subCols:count[i]#enlist`symbol$(), subList:`ALL, subPredefineCallbacks:0b from .feedMng.cfg.tables;
   .sub.init[.feedMng.cfg.sub];
 
-  server2conn:exec distinct serverSrc from .feedMng.cfg.tables;
+  server2conn:exec distinct subSrc from .feedMng.cfg.tables;
   .hnd.poAdd'[server2conn;`.feedMng.p.poPlugin];
   server2conn:distinct (server2conn, .feedMng.cfg.serverAux,.feedMng.serverDst) except `;
   .hnd.hopen[server2conn;.feedMng.cfg.timeout;`eager];
@@ -230,7 +230,7 @@ sysUniverse:([]  time:`time$(); sym:`symbol$(); instrumentGroup:`symbol$(); inst
 
 /==============================================================================/
 .sl.main:{[flags]
-  .feedMng.cfg.tables:             .cr.getCfgPivot[`THIS;`table`sysTable;enlist`serverSrc];
+  .feedMng.cfg.tables:             .cr.getCfgPivot[`THIS;`table`sysTable;enlist`subSrc];
   .feedMng.cfg.timeout:            .cr.getCfgField[`THIS;`group;`cfg.timeout];
   .feedMng.cfg.serverAux:          .cr.getCfgField[`THIS;`group;`cfg.serverAux];
   .sl.libCmd[];
