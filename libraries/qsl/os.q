@@ -108,7 +108,7 @@
 /R/ :LIST[SYMBOL] - a list of file paths
 .os.p.L.find:{[dir;age;pattern] 
 	findCmd:"find -L ",1_(string dir)," -mtime +",(string age), " -name \"",string[pattern],"\" -prune";
-	:`$.pe.at[system;findCmd;{[cmd;sig] .log.error[`os] "error while calling \"",cmd,"\". Maybe invalid arguments?"; :`$()}[findCmd;]]
+	:`$.pe.at[system;findCmd;{[cmd;sig] .log.error[`os] "error while calling \"",cmd,"\". Maybe invalid arguments?"; :()}[findCmd;]]
 	};
 
 /F/ finds old files - Windows version. Note: on Windows the pattern applies to files only
