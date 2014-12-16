@@ -232,13 +232,22 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   if[not args[`logicalBlockSize] within (12;20); '"Given logicalBlockSize is",string[args[`logicalBlockSize]], ". logicalBlockSize - is a power of 2 between 12 and 20"];
   if[not args[`compressionAlgorithm] in (0;1;2); '"Given compressionAlgorithm is",string[args[`compressionAlgorithm]], ". compressionAlgorithm - is one of the following, 0 (none), 1 (kdb+ ipc), 2 (gzip)"];
   if[not args[`compressionLevel] within (0;9); '"Given compressionLevel is",string[args[`compressionLevel]], ". compressionLevel - is between 0 and 9 (valid only for gzip, use 0 for other algorithms)"];
-
   tmpDir:.hdbHk.cfg.dataPath;
   tmpPath:` sv (tmpDir;`$string[date];`);
   columns:cols[tableHnd];
-  {[tableHnd;tmpPath;lbs;ca;cl;x] -19!(` sv (tableHnd;x);` sv (tmpPath;x);lbs;ca;cl)}[tableHnd;tmpPath;args`logicalBlockSize;args`compressionAlgorithm;args`compressionLevel;] each columns;
-  colDirs:{[tmpDir;date;subDir] ` sv (tmpDir;`$string[date];subDir)}[tmpDir;date;] each key tmpPath;
-  .os.cpdir["" {[x;y] 1_string[y]," ",x}/ colDirs;1_string[tableHnd]];
+  {[tableHnd;tmpPath;lbs;ca;cl;x] 
+     src:` sv (tableHnd;x);
+     dest:` sv (tmpPath;x);
+     .log.info[`compress] "compressing ",string[src]," to ",string[dest];
+      -19!(src;dest;lbs;ca;cl)
+  }[tableHnd;tmpPath;args`logicalBlockSize;args`compressionAlgorithm;args`compressionLevel;] each columns;
+
+  colFiles:{[tmpDir;date;subDir] ` sv (tmpDir;`$string[date];subDir)}[tmpDir;date;] each key tmpPath;
+
+  .log.info[`compress] "moving compressed files to ",string[tableHnd];
+  .os.move[;1_string[tableHnd]] each 1 _/: string[colFiles];
+
+  .log.info[`compress] "removing temp dir ",string[tmpPath];
   .os.rmdir 1_string tmpPath;
   };
 
