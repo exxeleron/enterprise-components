@@ -504,7 +504,7 @@
     };
   should["get func summary - .monitor.p.getFuncSummary[]"]{
     res:.monitor.p.getFuncSummary[enlist`ap1;`.ns`.ns2`.ns3];
-    (delete time from res)mustmatch ([]sym:`ap1;procNs:`.ns`.ns2`.ns3;funcCnt:1 2 0Ni; func:(enlist `.ns.func1;`.ns2.func1`.ns2.func2;`symbol$()));
+    (delete time from res)mustmatch ([]sym:`ap1;procNs:`.ns`.ns2`.ns3;funcCnt:1 2 0i; func:(enlist `.ns.func1;`.ns2.func1`.ns2.func2;`symbol$()));
     };
   should[".monitor.p.dailyExec.sysFuncSummary[]"]{
     `.monitor.cfg.sysFuncSummaryProcList mock enlist`ap1;
