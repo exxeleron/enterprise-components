@@ -263,11 +263,10 @@
 /E/ cmd:.auth.p.cmdpt[(".demo.test1";`param1;2012.01.01)]
 /E/ cmd:.auth.p.cmdpt[(".demo.test1";`param1;2012.01.01)]
 .auth.p.tokenize:{
-  :raze (raze each)over {
-    $[0h=type x;
-      $[(not 0h=type fx)&1=count $[10h=type fx:first x;fx:`$fx;fx];fx;()],.z.s each x where 0h=type each x;()]
-      }x
-  };
+   if[(not 0h~type x) or x~();:()];
+   if[1~count x;:.z.s first x];
+   (enlist {$[10h=type x;`$x;x]} first x),raze .z.s each x where 0h=type each x
+   };
 
 /-------------------------------- Checks logic --------------------------------/
 / Func / No check on supplied command for given user.

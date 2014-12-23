@@ -27,7 +27,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 /G/ All of them take one parameter (number of requested elements)
 .gen.generate:()!();
 .gen.generate[`BOOLEAN]:{`boolean$x?2};
-.gen.generate[`GUID]:?[;0Ng];
+if[3<=.z.K;.gen.generate[`GUID]:?[;value "0Ng"]];
 .gen.generate[`BYTE]:?[;0xFF];
 .gen.generate[`SHORT]:?[;100h];
 .gen.generate[`INT]:?[;1000i];
@@ -55,7 +55,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 /F/ - loading of custom code
 /F/ - initialization of the connection to destination server
 .gen.init:{[]
-  .gen.uni:`$"instr",/: string til .gen.cfg.uniSize;
+  .gen.uni:`$"instr",/: string til `int$.gen.cfg.uniSize;
 
   //tables generatos
   {x set value "{[ts] .gen.pubTabTrigger[`",string[x],";ts]}"}each key .gen.cfg.models;
