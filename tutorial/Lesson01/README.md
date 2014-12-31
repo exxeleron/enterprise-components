@@ -189,7 +189,6 @@ DemoSystem> ls -l data
   core.gen
   core.rdb
   core.tick
-  shared
   yak
 ```
 
