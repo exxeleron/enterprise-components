@@ -437,6 +437,20 @@ sepBy1:{[pa;sep;ps]
     ];
   :(`s`cp`errp`errs`ast)!(s;k;0N;();res)
   };
+  
+/F/ parses a list of parsers sequentially. Fails if any of the parsers fails.
+/P/ lpars:LIST[FUNCTION} - a list of parsers
+/R/ :LIST[ANY] - list of results returned by lpars
+sequence:{[lpars;ps]
+    if[0N<>ps`errp;:ps];
+    if[0~count lpars;ps[`ast]:();:ps];
+    ps1:(first lpars) ps;
+    if[0N<>ps1`errp;:ps1];
+    ps2:sequence[1_lpars] ps1;
+    if[0N<>ps2`errp;:ps2];
+    ps2[`ast]:(enlist ps1`ast),ps2`ast;
+    :ps2
+    };
 
 /F/ Parses zero or more occurrences of a pattern, seperated and ended by a separator. Always succeeds.
 /P/ pa - the parser to be applied repeatedly
