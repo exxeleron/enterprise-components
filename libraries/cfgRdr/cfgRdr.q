@@ -641,7 +641,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 	
 	//read commonLibs field - take subsection field if available, otherwise take section field
     commonLibsStr:cfg[`vars;`commonLibs;`cfg]; 
-    parentLibsStr:$[parentFields~();"";parentFields[`commonLibs;`cfg]];
+    parentLibsStr:$[parentFields~();"";$[()~pComLibs:parentFields[`commonLibs;`cfg];"";pComLibs]];
     libsList:(),trim "," vs $[not(commonLibsStr~"")|(commonLibsStr~());commonLibsStr;parentLibsStr];
 	//read libs field - append to libsList
     if[not ()~libsStr:cfg[`vars;`libs;`cfg];
