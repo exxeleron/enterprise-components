@@ -1,4 +1,12 @@
 ------------------------------------------------------------------------------
+  enterprise-components 3.2.2 [2015.01.14]
+------------------------------------------------------------------------------
+
+  - New: qsl/parseq - new parser combinator - `sequence` (#42)
+  - Fix: rdb/replay - replaying data from journals fixed (#40)
+  - Fix: cfgRdr - corner case of loading qsd files corrected (now eodMng works correctly with sync.cfg) (#41)
+
+------------------------------------------------------------------------------
   enterprise-components 3.2.1 [2014.12.18]
 ------------------------------------------------------------------------------
 
