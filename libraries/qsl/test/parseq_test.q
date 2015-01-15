@@ -85,9 +85,12 @@ system "l lib/qspec/qspec.q";
     parseTest[{notFollowedBy[eof] pstring["abc"] x}; "abc"] mustmatch ("error at position 3";"notFollowedBy:excluded end pattern encountered");
     // oneChar and empty string
     (parseTest[butNot[anyChar;char")"]] "") mustmatch ("error at position 0";"unexpected end of input");
-  (parseTest[.par.anyChar] "") mustmatch ("error at position 0";"unexpected end of input");
-  (parseTest[{.par.between[.par.pstring["${"];.par.char["}"];digit] x }] "test") mustmatch ("error at position 0";"expected ${");
+    (parseTest[.par.anyChar] "") mustmatch ("error at position 0";"unexpected end of input");
+    (parseTest[{.par.between[.par.pstring["${"];.par.char["}"];digit] x }] "test") mustmatch ("error at position 0";"expected ${");
     (parseTest[{.par.between[.par.pstring["${"];.par.char["}"];digit] x }] "${3}") mustmatch "3";
+    (parseTest[sequence(digit;pstring" is a digit")] "3 is a digit") mustmatch ("3";" is a digit");
+    (parseTest[sequence(char"(";pstring"abc";char")")] "(abc)") mustmatch ("(";"abc";")");
+ 
     };
   };
 

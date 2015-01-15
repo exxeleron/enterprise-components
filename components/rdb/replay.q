@@ -46,7 +46,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 /------------------------------------------------------------------------------/
 //.replay.cfg.date:.z.d-1;
 //.replay.cfg.rdb:`core.rdb;
-//cfg:.replay.cfg
+// cfg:.replay.cfg
 .replay.p.run:{[cfg]
   rdb:cfg[`rdb];
   date:cfg[`date];
@@ -60,24 +60,22 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   .replay.cfg.dataPath:           .cr.getCfgField[`THIS;`group;`dataPath];
 
   repTabs:exec subSrc!sectionVal from select sectionVal by subSrc from .replay.cfg.tables where subSrc<>`; 
-  processTypes:.cr.getCfgField[;`group;`type] each key repTabs;
+  processTypes:key[repTabs]!.cr.getCfgField[;`group;`type] each key repTabs;
   if[any w:0b in/: processTypes in `$("q:tickLF/tickLF";"q:tickHF/tickHF");
-    .log.warn"Tables from process/processType will not be replayed: ", .Q.s1[flip (where w;processTypes[where w];repTabs[where w])];
+    .log.warn[`replay]"Tables from process/processType will not be replayed: ", .Q.s1[flip (where w;processTypes[where w];repTabs[where w])];
     /exclude from repTabs and processTypes
     repTabs:(where w) _ repTabs;
     processTypes:(where w) _ processTypes;
     ];
-  jrns:();
-  if[count processLF:(key repTabs) where processTypes in `$("q:tickLF/tickLF");
-    jrns,:.replay.p.findJournaLF[date;;]'[processLF;repTabs[processLF]];
+  jrns:()!();
+  if[count processLF:where processTypes in `$("q:tickLF/tickLF");
+    jrns[processLF]:.replay.p.findJournaLF[date;;]'[processLF;repTabs[processLF]];
     ];
-  if[count processHF:(key repTabs) where processTypes in `$("q:tickHF/tickHF");
-    jrns,:.replay.p.findJournaHF[date;;]'[processHF;repTabs[processHF]];
+  if[count processHF:where processTypes in `$("q:tickHF/tickHF");
+    jrns[processHF]:.replay.p.findJournaHF[date;;]'[processHF;repTabs[processHF]];
     ];
   // replay journals except ()
-  jrnsOk:jrns p:where 0<count'[jrns];
-  // set data model for these tabs, add `g attr
-  processModel:(key repTabs)[p];
+  jrnsOk:jrns processModel:where 0<count'[jrns];
   modelsAll:.cr.getModel each processModel;
   .replay.p.restoreData'[jrnsOk;modelsAll];
   .replay.p.initEodParams[];
@@ -131,8 +129,8 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 /------------------------------------------------------------------------------/
-//date:.z.d-1
-//process:`in.tickLF
+//date:.z.d
+//process:`t.tickLF
 //tabs:repTabs[process]
 .replay.p.findJournaLF:{[date;process;tabs]
   jrnDir:.cr.getCfgField[process;`group;`dataPath];
@@ -181,6 +179,8 @@ jUpd:{[t;d]
     t insert d;
     ];
   };
+
+
 /==============================================================================/
 .sl.main:{[flags]
   .cr.loadCfg[`ALL];
@@ -196,6 +196,7 @@ jUpd:{[t;d]
     ];
   
   .sl.libCmd[];
+  .sub.initCallbacks[`PROTOCOL_TICKLF];
   .replay.p.run[.replay.cfg];
   };
 
