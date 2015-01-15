@@ -1,0 +1,14 @@
+[group]
+
+[table]
+  #/C/ minute interval for calculating snapshots
+  #/C/ default set to 5 minutes
+  snapMinuteInterval = <type(INT),greater(0), default(5)>
+  
+[sysTable]
+  #/C/ minute interval for calculating snapshots
+  #/C/ default set to 5 minutes
+  snapMinuteInterval = <type(INT),greater(0), default(5)>
+
+[user]
+[userGroup]
