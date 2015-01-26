@@ -5,7 +5,7 @@
 ## quick start
 `rproc` - Realtime Processing is a component which allows performing calculation on live data streams.
 `rproc` component is subscribing to the realtime `source data stream` (i.e. `tickHF`) and calculates `derived data stream`.
-`rproc` component is located in `ec/components/rproc`   
+`rproc` component is located in `ec/components/rproc`
 
 `rproc` component alone does not provide any useful functionality - it is just a `container`. It requires additional code called `plugin` which defines the logic for calculation of `derived data`.
 
@@ -45,9 +45,9 @@ Example of `system.cfg` configuration entry for the `rproc` component with prede
 ```
 
 1. `libs` field should point to the plugin file.  
- Example config points to the `mrvs`, which results in loading `mrvs.q` plugin. 
+ Example config points to the `mrvs`, which results in loading `mrvs.q` plugin.
 
-2. It is recommended to set `requires` field to the servers used during plugin initialisation. This filed is specifying the order of `yak start` command, 
+2. It is recommended to set `requires` field to the servers used during plugin initialisation. This filed is specifying the order of `yak start` command,
 
 3. Any auxiliary servers required for e.g. initialization should be listed under `cfg.serverAux` field.  
 Example config points to the `t.hdb`, as `mrvs` plugin is using `t.hdb` server to initialize its state.  
@@ -60,7 +60,7 @@ Example config points to the `t.hdb`, as `mrvs` plugin is using `t.hdb` server t
 ```
 
 1. `subSrc` field should point to the `source data stream`.  
- Example config points to the `t.tick`. 
+ Example config points to the `t.tick`.
 
 2. Subsection `[[t.mrvs]]` should be added to each table should be processed by the `t.mrvs` process.  
 
@@ -89,7 +89,7 @@ If component is using tickLF data source, it could also overwrite `tickLF callba
 - `.tickLF.img[]` / `.tickLF.jImg[]`
 - `.tickLF.del[]` / `.tickLF.jDel[]`  
 
-By default those are loaded from `ec/libraries/qsl/sub_tickLF.q`, 
+By default those are loaded from `ec/libraries/qsl/sub_tickLF.q`,
 Default callbacks are also available in memory in `.sub.tickLF.default` global variable.
 
 Note that using tickLF protocol for stream calculation can lead to significant increase of the custom logic complexity, as the plugin should handle correctly all types of actions including upserts and deletes.
@@ -154,7 +154,7 @@ Instructions to start this mini system can be found in `ec/components/rproc/test
   };
 ```
 
-#### upd processing 
+#### upd processing
 Each in-memory table is `upserted` with the latest update from `tickHF` process.
 ```q
 .rp.plug.upd:{[tab;data]
@@ -172,7 +172,63 @@ At the `end of the day` data is deleted from memory.
 
 -------------------------------------------------------------------------------
 
-### use case 2 - most recent values
+### use case 2 - configurable minute snapshots
+`snapX` implements the following functionality:
+- calculation of x-minute snapshots for each symbol and table
+- generic snapshots calculation works for any table with `time` and `sym` columns
+- snapshots are not published but kept in memory for ad-hoc queries
+- snapshots calculated for `today` only, reset at the end of the day
+
+#### configuration
+
+`system.cfg`:
+```cfg
+  [[t.snapX]]
+  command = "q rproc.q"
+  type = q:rproc/rproc
+  port = ${basePort} + 8
+  memCap = 10000
+  requires = t.hdb, t.tick
+  libs = snapX
+```
+`dataflow.cfg`:
+```cfg
+  [[t.snapX]]
+  subSrc = t.tick
+  snapMinuteInterval = 1
+```
+
+#### initialization
+ first `snapMinuteInterval` field is loaded from `dataflow.cfg` and dictionary `.rp.cfg.snapMinuteInterval` with table name and snapshot interval is created.
+ `derived data model` is initialized based on the `source data model` from `.rp.cfg.model` and `.rp.cfg.snapMinuteInterval` dictionaries.
+ `.rp.cfg.srcTabs` contains a list of the tables which are subscribed.
+```q
+.rp.plug.init:{[srv];
+  .rp.cfg.snapMinuteInterval:exec sectionVal!finalValue from .cr.getCfgTab[`THIS;`table`sysTable;`snapMinuteInterval];
+  :{[tab] tab set update`g#sym from select by  .rp.cfg.snapMinuteInterval[tab] xbar time.minute, sym from .rp.cfg.model[tab]}each .rp.cfg.srcTabs;
+  };
+```
+
+#### upd processing
+Each in-memory table is `upserted` with the latest update from `tickHF` process.
+`.rp.cfg.snapMinuteInterval` dictionary is used to calculate different minute snapshots for each table.
+```q
+.rp.plug.upd:{[tab;data]
+  tab upsert select by .rp.cfg.snapMinuteInterval[tab] xbar time.minute, sym from data
+  };
+```
+
+#### end of day
+At the `end of the day` data is deleted from memory.
+```q
+.rp.plug.end:{[day]
+  {update`g#sym from delete from x}each .rp.cfg.srcTabs;
+  };
+```
+
+-------------------------------------------------------------------------------
+
+### use case 3 - most recent values
 `mrvs` implements the following functionality:
 - maintaining the most recent record for each symbol
 - generic snapshots calculation works for any table with `sym` columns
@@ -212,7 +268,7 @@ In this case `mrvs` process will start with the most recent values from `yesterd
   };
 ```
 
-#### upd processing 
+#### upd processing
 Each in-memory table is `upserted` with the latest update from `tickHF` process. as the action is simple `upsert` it can be defined as following:
 ```q
 .rp.plug.upd:upsert;
@@ -223,10 +279,10 @@ No eod action required for the `mrvs`, current values are initializing the next 
 
 -------------------------------------------------------------------------------
 
-### use case 3 - open-high-low-close
+### use case 4 - open-high-low-close
 `ohlc` implements the following functionality:
 - calculating `open-high-low-close` based on the `trade` table
-- `ohlc` records are kept in memory for ad-hoc queries and published to the subscribers. 
+- `ohlc` records are kept in memory for ad-hoc queries and published to the subscribers.
 - users can subscribes for `ohlc` table using classical kx subscription protocol - see `.u.sub[]` function and `ec/libraries/qsl/u.q` publishing library.
 
 #### configuration
@@ -264,7 +320,7 @@ Additionally `ohlc` table model is defined as following:
   model = sym(SYMBOL), open(FLOAT), high(FLOAT), low(FLOAT), close(FLOAT), volume(LONG)
   [[t.ohlc]]
 ```
- 
+
 `ohlc` is a keyed table with the `key` on `sym` column. For each instrument that was processed we will have exactly one record.
 
 ```q
@@ -273,7 +329,7 @@ Additionally `ohlc` table model is defined as following:
   };
 ```
 
-#### upd processing 
+#### upd processing
 In-memory `ohlc` table is updated with the latest `trade` update from `tickHF` process.  
 In a second step the records of `ohlc` table which were affected by the change are being published with the `.u.pub[tabName;data]` function.
 ```q
