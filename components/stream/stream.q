@@ -178,6 +178,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   {x set y} ./: model;         //use the same table names as source data model
   @[;`sym;`g#]each model[;0];
   .u.w:.u.t!(count .u.t::(),model[;0])#();
+  .cb.add[`.z.pc;`.u.pc];
   };
 
 /------------------------------------------------------------------------------/
