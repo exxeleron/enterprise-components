@@ -53,7 +53,6 @@
     config:update attrCol:`sym from config;
     ];
   .store.tabs:config;
-  .log.info[`store;"store initialization completed"];
   };
 
 /------------------------------------------------------------------------------/

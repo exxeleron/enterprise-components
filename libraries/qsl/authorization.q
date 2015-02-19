@@ -240,7 +240,7 @@
 .auth.p.getNs:{[nm] :raze (.auth.p.getVars;.auth.p.getFuns)@\:nm};
 
 /------------------------------------------------------------------------------/
-/F/ Verify if command is permited for execution for user
+/F/ Verify if command is permitted for execution for user
 /P/ u:SYMBOL - user name
 /P/ cmd:STRING - command executed by the user
 .auth.p.validcmd:{[u;cmd]

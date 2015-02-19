@@ -74,7 +74,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   faultyProcs:exec procname!uFile from (perproc lj perfile) where uFile in faultyFiles,pucnt=fucnt;
   .log.warn[`ru] "Some processes (", (", " sv string key faultyProcs), ") provide additional users to a \"shared\" user files ", 
                    "(", (", " sv string value faultyProcs), ").";
-  .log.warn[`ru] "Please provide separate user files for those processes.";
+  .log.info[`ru] "Please provide separate user files for processes: ", .Q.s1 key faultyProcs;
   }
 
 /------------------------------------------------------------------------------/
