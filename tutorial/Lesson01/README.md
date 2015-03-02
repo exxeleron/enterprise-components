@@ -120,7 +120,7 @@ data in the system:
 > Hint:
 
 > If you would like to get a better understanding of how Enterprise Components are configured and
-> used together, please visit [this section](../wiki/Configuration-system-for-Enterprise-Components) of
+> used together, please visit [[this section|wiki/Configuration-system-for-Enterprise-Components]] of
 > our wiki which gives more details on this topic. In future lessons we will cover configuration
 > files and general concepts in more detail.
 

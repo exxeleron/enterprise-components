@@ -139,5 +139,5 @@ Lessons are based on `DemoSystem`. Each Lesson is:
         ```
 
 <!--------------------------------------------------------------------------------------------------------------------->
-[:arrow_forward:](../wiki/Installation)
+[:arrow_forward:](Installation.md)
 

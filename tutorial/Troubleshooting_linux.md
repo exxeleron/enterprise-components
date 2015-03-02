@@ -10,7 +10,7 @@ Components on Linux operating system.
   
 > Please use our [google group](https://groups.google.com/d/forum/exxeleron) 
 or open a [ticket](https://github.com/exxeleron/enterprise-components/issues) 
-in case you enocounter any installation/startup problem which is not covered in this document.
+in case you encounter any installation/startup problem which is not covered in this document.
 
 
 <!--------------------------------------------------------------------------------------------------------------------->
