@@ -23,3 +23,4 @@ This does not affect the functionality of the component.
    The rest of the `monitor`'s functionality is working on Windows.
 4. The reconnect feature of the [**handle**](../libraries/qsl/handle.q) library may cause a process to be not responsive (busy and not accepting connections) when there are more than two processes to which the process is trying to reconnect.
 5. On Linux the Standard Library (qsl/sl.q) creates links to the initialization and current logs for a component. Such links are not created on Windows to avoid problems with insufficient privileges.
+6. The .os.sleep function has 1000ms (1s) resolution on Windows. If the sleep parameter is not a multiple of 1000, it is rounded up to the nearest multiple of 1000. 

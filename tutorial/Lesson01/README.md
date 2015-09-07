@@ -120,8 +120,8 @@ data in the system:
 > Hint:
 
 > If you would like to get a better understanding of how Enterprise Components are configured and
-> used together, please visit [configuration description](https://github.com/exxeleron/enterprise-components/wiki/Configuration-system-for-Enterprise-Components) in
-> our wiki which gives more details on this topic. In future lessons we will cover configuration
+> used together, please visit configuration section in [the documentation](doc) 
+> which gives more details on this topic. In future lessons we will cover configuration
 > files and general concepts in more detail.
 
 <!--------------------------------------------------------------------------------------------------------------------->

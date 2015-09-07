@@ -8,7 +8,7 @@
 
 <!--------------------------------------------------------------------------------------------------------------------->
 ### Operating system
-`DemoSystem` can be run on Linux or Windows operating systems. The Windows support is experimental, tested on Windows 7.
+`DemoSystem` can be run on Linux, Windows or MacOS operating systems. The Windows support is experimental, tested on Windows 7.
 
 <!--------------------------------------------------------------------------------------------------------------------->
 ### Compatibility libraries
@@ -29,17 +29,32 @@ Instructions in Lessons relay on checking data or status of KDB+ processes, ther
 
 <!--------------------------------------------------------------------------------------------------------------------->
 ### KDB+
-`DemoSystem` has self-contained free 32 bit KDB+ v3.1 provided by Kx Systems. However, if needed:
-- most current version of KDB+ can be always downloaded from http://kx.com/software-download.php
-- KDB+ included in `DemoSystem` can be replaced by full (paid) version of 64 bit KDB+, in this case `QHOME` and `PATH`
-  environmental variables have to be adjusted accordingly in `env.sh` (`env.bat` on Windows) file for each Lesson.
+`DemoSystem` package does not contain 'q' binaries. There are following two options for the deployment:
+
+1. Install q binaries in the 'bin/q/' subdirectory [Recommended]
+
+It is recommended to install q binary into 'bin/q/' subdirectory. In this case bin directory will contain entire software set required to run the system.
+It will be independent from other installations on the same server.
+Each ec-based system running on the same machine will have own, independent version of q.
+
+
+1. Use q that is already installed in the system
+
+Second option is to use q that is already installed in the system and available on the `PATH`.
+`QHOME` and `PATH` environmental variables have to be adjusted accordingly in `env.sh` (`env.bat` on Windows) file for each Lesson.
+
 
 > :heavy_exclamation_mark: Note:
-  
-> Please note that we strongly advise to test `DemoSystem` first before making any changes.
+
+> KDB+ binaries can be downloaded from:
+> - current version of FREE 32bit of KDB+ binaries can be downloaded from http://kx.com/software-download.php
+> - users with 64 bit KDB+ license can download binaries from http://downloads.kx.com/
+ 
 
 <!--------------------------------------------------------------------------------------------------------------------->
 ## `DemoSystem` installation
+
+![Overview](../doc/img/Slide1.PNG)
 
 1. [Download](https://github.com/exxeleron/enterprise-components/releases) and unpack 
    package `ec_vX.X.X_DemoSystem_Linux32bit_Lessons_X-X.tgz`
@@ -54,6 +69,46 @@ Instructions in Lessons relay on checking data or status of KDB+ processes, ther
     > unzip ec_vX.X.X_DemoSystem_Windows32bit_Lessons_X-X.zip
     ```
 
+
+1. [Optional step] Download [FREE 32bit KDB+](http://kx.com/software-download.php) or [LICENSED 64bit KDB+](http://downloads.kx.com) 
+   matching the operating system and unpack the package.
+
+    On Linux download and unpack the package `linux.zip` into 'DemoSystem/bin/q/' subdirectory.
+
+    ```bash
+    > cd DemoSystem
+    DemoSystem> unzip linux.zip -d bin
+    ```
+
+    On Windows download and unpack the package `windows.zip` into 'DemoSystem/bin/q/' subdirectory.
+    
+    ```Batchfile
+    > cd DemoSystem
+    DemoSystem> unzip windows.zip -d bin
+    ```
+
+> :heavy_exclamation_mark: Note:
+
+> Downloaded q package normally contains `q/` subdirectory. The unpacking result should be as following:
+
+    ```bash
+    DemoSystem> ls bin/q/
+      l32/
+	  q.q
+	  q.k
+      README.md
+      README.txt
+      [...]
+    ```
+
+    On Windows, use the `dir` command.
+
+
+> :heavy_exclamation_mark: Note:
+
+> Alternatively use own, pre-installed `q` executable that available on the `PATH` with `QHOME` pointing to `q` installation location.
+
+	
 1. Create link to configuration for LessonXX
   
     ```bash
@@ -85,11 +140,12 @@ Instructions in Lessons relay on checking data or status of KDB+ processes, ther
       Installation.md
       README.md
       Troubleshooting_linux.md
+      Troubleshooting_windows.md
     ```
 
 <!--------------------------------------------------------------------------------------------------------------------->
 ### Troubleshooting
-Common installation problems with solutions for [linux](Troubleshooting_linux.md).
+Common installation problems with solutions for [linux](Troubleshooting_linux.md) and for [windows](Troubleshooting_windows.md).
 
 
 <!--------------------------------------------------------------------------------------------------------------------->
@@ -145,6 +201,7 @@ Common installation problems with solutions for [linux](Troubleshooting_linux.md
     
     On Windows, use the `dir` command.
     
+![Overview](img/Slide6.PNG)
     
 <!--------------------------------------------------------------------------------------------------------------------->
 

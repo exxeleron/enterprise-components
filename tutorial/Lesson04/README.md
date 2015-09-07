@@ -152,7 +152,7 @@ trade | PARITIONED | 720     |     | `date `sym `time `price `size
 
 ### Check if library is properly loaded in `access.ap`
 
-All custom queries are defined in the `ec/tutorial/Lesson04/src/demolib/queries.q` file (please compare to the line `48` of `system.cfg` presented above). Code is written according to Exxeleron q [coding conventions](../../../../wiki/Exxeleron-q-coding-conventions).  All queries are written in the `.example` namespace. 
+All custom queries are defined in the `ec/tutorial/Lesson04/src/demolib/queries.q` file (please compare to the line `48` of `system.cfg` presented above). Code is written according to Exxeleron q [coding conventions](../../doc/Exxeleron-q-coding-conventions).  All queries are written in the `.example` namespace. 
 
 To see the full list of queries from q:
 

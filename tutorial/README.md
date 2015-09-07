@@ -28,15 +28,16 @@ Good luck!
 
 - DemoSystem
  - [Installation](Installation.md)
- - Troubleshooting ([Linux](Troubleshooting_linux.md))
+ - Troubleshooting ([Linux](Troubleshooting_linux.md), [Windows](Troubleshooting_windows.md))
 - Lessons
  - [Lesson 1](Lesson01) - basic system
  - [Lesson 2](Lesson02) - adding `quote` table
  - [Lesson 3](Lesson03) - storing data in `hdb`
  - [Lesson 4](Lesson04) - user queries
+ - [Lesson 5](Lesson05) - authentication and authorization
  
 ## DemoSystem
-`DemoSystem` for Linux can be downloaded from 
+`DemoSystem` can be downloaded from 
 [here](https://github.com/exxeleron/enterprise-components/releases).
 
 <!--------------------------------------------------------------------------------------------------------------------->
@@ -46,7 +47,6 @@ Good luck!
 
 - `ec` - Enterprise Components package containing q conponents, libraries and DemoSystem configuration (tutorial)
 - `yak` process manager 32bit binary
-- `q` 32bit binary
 
 The package folder structure is ready for direct usage:
 
