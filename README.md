@@ -1,6 +1,6 @@
 ## [Enterprise Components for kdb+](tutorial)
 
-![Overview](../master/doc/img/Slide1.PNG)
+![Overview](doc/img/Slide1.PNG)
 
 ### Objective
 Enterprise Components have been designed with the goal to provide core functionality to kdb+ installations:
@@ -9,7 +9,7 @@ Enterprise Components have been designed with the goal to provide core functiona
 - making kdb+ development easier as well as faster and infrastructures more robust
 - ensuring efficient operations of kdb+ infrastructures
 
-![Overview](../master/doc/img/Slide2.PNG)
+![Overview](doc/img/Slide2.PNG)
 
 In order to achieve these goals Exxeleron’s solutions follow best practices for robust and efficient IT service delivery and system architecture. Enterprise Components’ development is guided by overall TCO (total cost of ownership) considerations where special attention is given to: 
 - System Vision - new infrastructure should fit naturally into the architectural blueprint, 
@@ -29,23 +29,23 @@ Customers building their kdb+ architectures with Enterprise Components benefit f
 ### Key features
 Enterprise Components provide an optimized set of building blocks that can get quickly assembled into complex kdb+ deployments. 
 
-![Overview](../master/doc/img/Slide3.PNG)
+![Overview](doc/img/Slide3.PNG)
 
 Building blocks are based on common foundation - set of libraries built on top of q. The libraries are unifying and facilitating usage of various q resources. New building blocks can be easily created by using these libraries which enable development process and allow natural integration with the rest of the system.
 
-![Overview](../master/doc/img/Slide4.PNG)
+![Overview](doc/img/Slide4.PNG)
 
 Enterprise Components enable management of the data flow at all levels, starting from high-frequency data capture and stream distribution through on-stream, in-memory, and on-disk data analysis to interface components for applications and programming languages.
 
-![Overview](../master/doc/img/Slide5.PNG)
+![Overview](doc/img/Slide5.PNG)
 
 Enterprise Components’ functionality is driven by real-life needs. It combines DEVnet experience with modular kdb+ installations that harness kdb+’s full power and flexibility. 
 
-![Overview](../master/doc/img/Slide6.PNG)
+![Overview](doc/img/Slide6.PNG)
 
 With scalability, flexibility, robustness, optimization and consistent configuration as design goals it plays well in enterprise deployment.
 
-![Overview](../master/doc/img/Slide7.PNG)
+![Overview](doc/img/Slide7.PNG)
 
 ### Getting started
 #### DemoSystem download
@@ -54,11 +54,12 @@ Most recent DemoSystem for Linux can be downloaded from [here](https://github.co
 #### Tutorial
 
 - [Installation](tutorial/Installation.md)
-- [Troubleshooting](tutorial/Troubleshooting_linux.md)
+- Troubleshooting for [Linux](../tutorial/Troubleshooting_linux.md) and [Windows](../tutorial/Troubleshooting_windows.md)
 - [Lesson 1](tutorial/Lesson01) - basic system
 - [Lesson 2](tutorial/Lesson02) - adding `quote` table 
 - [Lesson 3](tutorial/Lesson03) - storing data in `hdb`
-- [Lesson 4](/tutorial/Lesson04) - user queries
+- [Lesson 4](tutorial/Lesson04) - user queries
+- [Lesson 5](tutorial/Lesson05) - authorization and authentication
 
-#### Wiki
-For more details please visit our [wiki](https://github.com/exxeleron/enterprise-components/wiki).
+#### Doc
+For more details please visit [doc directory](doc).
