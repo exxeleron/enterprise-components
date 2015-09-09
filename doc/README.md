@@ -54,6 +54,7 @@ Components and libraries that are essential part of the ec:
     - store - Store library - data storage in the hdb
     - os - Os library - shell commands abstraction, covers Linux, MacOS and Windows
     - parseq - Parseq library - Parseq is a Q clone of the Haskell's Parsec, a parser combinator library. 
+    - tabs - Data model validation - set of functions facilitating data model validation
 
 #### Articles
 Set of articles describing various aspects of ec usage:
