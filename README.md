@@ -19,7 +19,7 @@ Some basic information can be found below, for more extensive documentation refe
 For list of features, changes and fixes in each release refer to [changelog](CHANGELOG.txt) or [releases page](https://github.com/exxeleron/enterprise-components/releases).
 
 ### Tutorial
-Begginers to kdb+/q and enterprise components should probably start with the [tutorial](tutorial) that covers the essential basics via the set of lessons.
+Begginers to kdb+/q and enterprise components should probably start with the [tutorial](tutorial) that covers the essential basics via set of lessons.
 
 ## General description
 
