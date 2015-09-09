@@ -103,3 +103,9 @@ use a custom plugin to dynamically add this missing column to the output table.
   - facilities for test debugging
   - result export to xml file (compatible with `JUnit` format)
 
+#### [mock](mock) - Set of mock used for various tests
+  - [mock/gen](mock/gen.q) - dummy data-stream generator
+  - [mock/empty](mock/empty.q) - empty process with configuration loaded
+  - [mock/hdbMock](mock/hdbMock.q) - [hdb](hdb) mock
+  - [mock/tickHFMock](mock/tickHFMock.q) - [tickHF](tickHF) mock
+  - [mock/rdbPluginMock](mock/rdbPluginMock.q) - [rdb](rdb) plugin mock

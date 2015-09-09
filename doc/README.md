@@ -39,6 +39,7 @@ Components and libraries that are essential part of the ec:
     -[monitor](../components/monitor) - Server monitoring tool
   - Testing
     -[qtest](../components/qtest) - Test framework
+    -[mock](../components/mock) - Set of mocks
 - [Libraries] (../libraries)
   - [qsl](../libraries/qsl) Q standard library - set of common libraries used across the system
     - sl - Standard library - common `frame` for all ec q scripts
