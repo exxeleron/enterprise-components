@@ -1,5 +1,5 @@
 ## **`qtest` component**
-`qtest` - component for writing unit, functional and integration tests for projects q language with special support for `ec`.
+`qtest` - component for writing unit, functional and integration tests for projects in q programming language with special support for `ec`.
 Component is located in the `ec/components/qtest` directory.
 
 ### Functionality
@@ -93,7 +93,7 @@ Result contains a dictionary containing following tables:
 - `interfaceCoverage` - information about test coverage basing on the interface level function calls
 
 #### Continuous Integration
-Test result can be exported to xml file in the format compatible with the `JUnit` format 
+Test result can be exported to xml file in the format compatible with the `JUnit`  
 which is commonly supported by continuous integration systems (for example Jenkins).
 
 Generation of the report is triggered by adding command line argument `-JUnitExport XML_REPORT_PATH` to the yak command (see below for an example).
@@ -153,7 +153,7 @@ Remote execution of commands from the test code should be executed via `.test.h`
 
 ##### Standard assertions
 Standard assertions have following input parameters:
-- msg:STRING - first argument is always message describing purpose of the assertion
+- msg:STRING - first argument is always a message describing purpose of the assertion
 - actual:ANY - second argument is always actual analyzed value
 - expected:ANY - third argument is an expected value (not all assertions have this arg)
 
