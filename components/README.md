@@ -48,6 +48,11 @@ use a custom plugin to dynamically add this missing column to the output table.
   
 #### [hdb](hdb) - Historical database
 
+#### [hdbWriter](hdbWriter) - writes historical data directly into the hdb
+  - writing data directly to the hdb process
+  - support for writing to multiple different partitions
+  - support for data appending
+
 #### [eodMng](eodMng) - End-of-day processing
   - provides mechanism for hdb data synchronization between different machines
   - allows hdb housekeeping via predefined plugins (deletion, compression, conflation)
