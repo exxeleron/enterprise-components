@@ -21,7 +21,7 @@ Test sources and configuration directory:
 - [`ec/components/hdbWriter/`](../hdbWriter/) - the `hdbWriter` component
 - [`ec/components/hdbWriter/hdbWriter.q`](../hdbWriter/hdbWriter.q) - `hdbWriter` component source
 - [`ec/components/hdbWriter/test/`](../hdbWriter/test/) - `hdbWriter` test directory
-- [`ec/components/hdbWriter/test/hdbWriter_functionalTest.q`](../hdbWriter/test/hdbWriter_functionalTest.q) - functional tests source
+- [`ec/components/hdbWriter/test/hdbWriter_functionalTest.q`](../hdbWriter/test/hdbWriter_functionalTests.q) - functional tests source
 - [`ec/components/hdbWriter/test/etc/`](../hdbWriter/test/etc/) - configuration of the test environment
 
 Recommended test workspace directory structure prepared for test execution:
@@ -238,5 +238,5 @@ q).test.runOneTest`.testHdbWriter.test.invalidOrder_finalizeWithoutOrganize
   
 ### Further reading
 - [qtest example](example) - example of `qtest` usage
-- [`hdbWriter` tests](`../hdbWriter/test/`) - example of functional tests for `hdbWriter` component
-- [`qsl/tabs` tests](`../../libraries/qsl/test/tabs/`) - example of functional tests for `qsl/tabs` library
+- [`hdbWriter` tests](../hdbWriter/test/) - example of functional tests for `hdbWriter` component
+- [`qsl/tabs` tests](../../libraries/qsl/test/tabs/) - example of functional tests for `qsl/tabs` library
