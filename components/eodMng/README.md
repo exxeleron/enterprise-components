@@ -73,10 +73,10 @@ q).eodmng.status
 ### Further reading
 
 Following sections describe end-of-day procedure in more detail:
-- [eodMng implementation details](eodMng-implementation-details)
-- [Testing the end-of-day procedure](doc/Testing-the-end-of-day-procedure)
-- [hdb housekeeping](doc/hdb-housekeeping)
-- [hdb synchronization](doc/hdb-synchronization)
+- [eodMng implementation details](doc/eodMng-implementation-details.md)
+- [Testing the end-of-day procedure](doc/Testing-the-end-of-day-procedure.md)
+- [hdb housekeeping](doc/hdb-housekeeping.md)
+- [hdb synchronization](doc/hdb-synchronization.md)
 
 - [`qsl/store` library](../../libraries/qsl/store.q)
 - [`rdb` component](../rdb)
