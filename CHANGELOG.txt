@@ -1,4 +1,17 @@
 ------------------------------------------------------------------------------
+  enterprise-components 3.3.0 [2015.09.15]
+------------------------------------------------------------------------------
+
+  - New: hdbWriter - new component - writing data to the hdb
+  - New: rproc - new component - realtime processing
+  - New: qtest - ec test framework
+  - New: mock/libs - set of predefined mocks
+  - New: qsl/tabs - new library - data model validation utilities
+  - New: tests - qtest-based tests for rdb, hdbWriter, qsl/tabs, qsl/handle
+  - Change: doc - wiki content moved to main repo - doc directory and README.md files
+  - Change: DemoSystem - packaging and installation instructions reworked
+ 
+ ------------------------------------------------------------------------------
   enterprise-components 3.2.3 [2015.02.11]
 ------------------------------------------------------------------------------
 
