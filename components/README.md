@@ -92,3 +92,14 @@ use a custom plugin to dynamically add this missing column to the output table.
     resources usage
   - publishes data in [tickHF](tickHF) protocol - can be stored in [rdb](rdb) and [hdb](hdb) for later analysis or
     processed in any [tickHF](tickHF) protocol-compatible tool e.g. stream process
+
+### Testing
+
+#### [qtest](qtest) - Test framework
+  - execution of tests organized into test suits
+  - test cases defined as q functions
+  - set of convenient assertions
+  - integration with `enterprise-components` - process management helper functions, remote assertions
+  - facilities for test debugging
+  - result export to xml file (compatible with `JUnit` format)
+

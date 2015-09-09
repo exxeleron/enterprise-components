@@ -37,6 +37,8 @@ Components and libraries that are essential part of the ec:
     - [hk](../components/hk) - Housekeeping
   - Monitor server
     -[monitor](../components/monitor) - Server monitoring tool
+  - Testing
+    -[qtest](../components/qtest) - Test framework
 - [Libraries] (../libraries)
   - [qsl](../libraries/qsl) Q standard library - set of common libraries used across the system
     - sl - Standard library - common `frame` for all ec q scripts
