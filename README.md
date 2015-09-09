@@ -1,13 +1,17 @@
 ## Enterprise Components for kdb+
 
-
-Enterprise Components is a set of building blocks on top of kdb+ allowing you to setup a system for data warehousing and analytics in just a few simple steps. It facilitates building of the professional data system covering:
+Enterprise Components is a set of open source building blocks on top of kdb+ allowing you to setup a system for data warehousing and analytics in just a few simple steps. It facilitates building of the professional data system covering:
 - data import
 - storage
 - quality assurance
 - data analytics
 - data extraction
 - interfacing with other systems
+
+User can fully customize system architecture through configuration files without q knowledge. 
+
+![Overview](doc/img/Slide1.PNG) 
+
 
 ### Download
 
@@ -22,8 +26,6 @@ For list of features, changes and fixes in each release refer to [changelog](CHA
 Begginers to kdb+/q and enterprise components should probably start with the [tutorial](tutorial) that covers the essential basics via set of lessons.
 
 ## General description
-
-![Overview](doc/img/Slide1.PNG)
 
 ### Objective
 Enterprise Components have been designed with the goal to provide core functionality to kdb+ installations:
