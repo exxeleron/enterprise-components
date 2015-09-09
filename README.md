@@ -1,4 +1,27 @@
-## [Enterprise Components for kdb+](tutorial)
+## Enterprise Components for kdb+
+
+
+Enterprise Components is a set of building blocks on top of kdb+ allowing you to setup a system for data warehousing and analytics in just a few simple steps. It facilitates building of the professional data system covering:
+- data import
+- storage
+- quality assurance
+- data analytics
+- data extraction
+- interfacing with other systems
+
+### Download
+
+Most recent DemoSystem can be downloaded from the [releases page](https://github.com/exxeleron/enterprise-components/releases).
+
+### Documentation
+Some basic information can be found below, for more extensive documentation refer to the [documentation folder](doc/README.md)
+
+For list of features, changes and fixes in each release refer to [changelog](CHANGELOG.txt) or [releases page](https://github.com/exxeleron/enterprise-components/releases).
+
+### Tutorial
+Begginers to kdb+/q and enterprise components should probably start with the [tutorial](tutorial) that covers the essential basics via the set of lessons.
+
+## General description
 
 ![Overview](doc/img/Slide1.PNG)
 
@@ -47,19 +70,3 @@ With scalability, flexibility, robustness, optimization and consistent configura
 
 ![Overview](doc/img/Slide7.PNG)
 
-### Getting started
-#### DemoSystem download
-Most recent DemoSystem for Linux can be downloaded from [here](https://github.com/exxeleron/enterprise-components/releases).
-
-#### Tutorial
-
-- [Installation](tutorial/Installation.md)
-- Troubleshooting for [Linux](../tutorial/Troubleshooting_linux.md) and [Windows](../tutorial/Troubleshooting_windows.md)
-- [Lesson 1](tutorial/Lesson01) - basic system
-- [Lesson 2](tutorial/Lesson02) - adding `quote` table 
-- [Lesson 3](tutorial/Lesson03) - storing data in `hdb`
-- [Lesson 4](tutorial/Lesson04) - user queries
-- [Lesson 5](tutorial/Lesson05) - authorization and authentication
-
-#### Doc
-For more details please visit [doc directory](doc).
