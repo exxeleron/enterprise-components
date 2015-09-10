@@ -201,8 +201,8 @@ Common installation problems with solutions for [linux](Troubleshooting_linux.md
     
     On Windows, use the `dir` command.
     
-![Overview](img/Slide6.PNG)
-    
+![Overview](../doc/img/Slide6.PNG)
+
 <!--------------------------------------------------------------------------------------------------------------------->
 
 ## Changing `DemoSystem` Lesson
