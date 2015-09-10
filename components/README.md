@@ -58,6 +58,14 @@ use a custom plugin to dynamically add this missing column to the output table.
   - allows hdb housekeeping via predefined plugins (deletion, compression, conflation)
   - exposes API for defining custom plugins
   
+#### [rproc](rproc) - realtime processing
+  - performing calculation on live data streams
+  - subscribing to the realtime `source data stream` (i.e. `tickHF`) and calculates `derived data stream`
+  - `rproc` component alone does not provide any useful functionality - it is just a `container`
+  - `rproc` requires additional code called `plugin` which defines the logic for calculation of `derived data`
+  - `rproc` package consist of some sample predefined plugins (`snap`, `mrvs`, `ohlc`) which show how a plugin code can be defined. 
+    Those plugins are described in more detail below.
+
 #### [stream](stream) - Stream-based data processing
   - allows on the fly data processing published via [tickHF](tickHF)
   - provides access to derived data via [accessPoint](accessPoint)
