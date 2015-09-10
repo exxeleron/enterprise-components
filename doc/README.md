@@ -30,6 +30,7 @@ Components and libraries that are essential part of the ec:
     - [hdb](../components/hdb) - Historical database
     - [hdbWriter](../components/hdbWriter) - Hdb data upload
     - [eodMng](../components/eodMng) - End-of-day processing
+     -[rproc](../components/rproc) - Realtime processing
     - [stream](../components/stream) - Stream-based data processing
   - Data access
     - [accessPoint](../components/accessPoint) - End users entry point
