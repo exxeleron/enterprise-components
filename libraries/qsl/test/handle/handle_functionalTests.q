@@ -34,7 +34,7 @@
   .assert.remoteFail["signal when quering non-running server in lazy mode";
               `t.process1;
               ".hnd.h[`t.process3] \"2\"";
-              `$"can't open connection to t.process3, erro: ",errstr];
+              `$"can't open connection to t.process3, error: ",errstr];
   };
 
 .testHandle.test.SetupConnectionEagerMode:{[]
