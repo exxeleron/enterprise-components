@@ -455,7 +455,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 //backupDir:.monitor.cfg.eventDir, "/archive/", string[.sl.zd[]],"/";
 .monitor.p.backupEvent:{[eventDir;file;backupDir]
   (hsym`$backupDir,"/lastEvent") set file;
-  system "mv ", eventDir,string[file], " ",backupDir;
+  .os.move[eventDir,string[file]; backupDir];
   };
 
 /------------------------------------------------------------------------------/

@@ -128,7 +128,7 @@
 
   .event.p.monitorEventDumpPath:"";
 
-  eventPath:getenv[`EC_EVENT_PATH];
+  eventPath:ssr[getenv[`EC_EVENT_PATH];"\\";"/"];
   if[not eventPath~"";
     .log.debug "Logging with data transfer to the monitor server";
     .event.dot:.event.p.execWithMonitDump[`dot];
