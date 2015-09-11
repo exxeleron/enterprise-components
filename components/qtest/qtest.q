@@ -295,7 +295,7 @@
 
 //----------------------------------------------------------------------------//
 .test.p.runOne:{[suite;testCase;setUp;test;tearDown]
-  .test.p.logInfo "==========================> testCase ", .Q.s1[testCase];
+  .test.p.logInfo "==========================> testCase ", string[testCase];
   startTs:.z.p;
   (`.test.testSuite`.test.testCase`.test.setUp`.test.test`.test.tearDown) set' (suite;testCase;setUp;test;tearDown);
   .test.setUpErr:.test.testCaseErr:.test.tearDownErr:`;
