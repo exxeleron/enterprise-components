@@ -26,7 +26,8 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
    };
 
 .tickm.pc:{[x]
-   .tickm.w:()!();
+   -1"pc ",string x;
+   .tickm.w _:.tickm.w?x;
    };
 
 .tickm.end:{[date]
@@ -35,6 +36,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
    
 .u.sub:{[tab;sym]
    -1"re-sub", string .z.w;
+   -1 .Q.s1(tab;sym;.z.w);
    .tickm.w[tab]:.z.w;
    :(tab;value tab);
    };
