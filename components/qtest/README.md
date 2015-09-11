@@ -81,7 +81,17 @@ Execute tests:
 ```
 
 #### Test results
-Test result can be accessed via `.test.report[]` on the `t.run` component once the tests are completed:
+
+A quick way to see see if the tests have passed is to look at the end of the `t.run` process log.
+A line similar to the following
+
+```
+INFO  2015.09.11 08:23:43.521 qtest - component qtest initialized with 0 fatals, 0 errors, 0 warnings
+```
+
+indicates that all tests have been successful.
+
+More detailed test results can be accessed via `.test.report[]` on the `t.run` component:
 ```q
 q).test.report[]
 ```
