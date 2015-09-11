@@ -8,6 +8,8 @@
   #/C/ aggregation interval, messages are cached and published on given time interval
   #/E/ cfg.aggrInterval = 100
   cfg.aggrInterval = <type(INT), default(NULL)>
+  #/C/ action to handle corrupted journal
+  cfg.handleBadJrn = <type(SYMBOL), in(ABORT, ARCHIVE_BAD_JRN, TRUNCATE_BAD_TAIL), default(ABORT)>
 [table]
 [sysTable]  
 [user]

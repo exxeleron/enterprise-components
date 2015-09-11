@@ -172,6 +172,21 @@
 /P/ p:STRING - a path
 .os.p.W.slash:{[p] ssr[p;"/";"\\"]};
 
+/F/ cuts a given file at given position, Linux version
+/P/ file:STRING - path to file
+/P/ size:LONG - bytes to take
+.os.p.L.truncate:{[file;size]
+  file:.os.remSlash .os.p.fixPath file;
+  system "truncate -s ",(string size)," ",file;
+  };
+
+/F/ cuts a given file at given position, Windows version - to be implemented
+/P/ file:STRING - path to file
+/P/ size:LONG - bytes to take
+.os.p.W.truncate:{[file;size] 
+  '`$"the truncate function is not implemented on Windows OS";
+  };
+
 /F/ a wrapper for the system calls. The standard error is redirected to a disk file and thrown as signal.
 /P/ cmd:STRING - command string
 .os.system:{[origin;cmd]
@@ -231,6 +246,11 @@
 /F/ sleeps given number of milliseconds. On Windows, the resolution is 1000ms (1s)
 /P/ t:LONG - time in millisecods. On Windows, this parameter is rounded UP to the nearest multiple of 1000.
 .os.sleep:{[t] };
+
+/F/ truncate file to given sie. There is no implementation for Windows
+/P/ file:STRING - path to file
+/P/ size:LONG - bytes to take
+.os.truncate:{[file;size] };
 
 /--- initialization
 $["w"~first string .z.o;.os,:.os.p.W;.os,:.os.p.L];

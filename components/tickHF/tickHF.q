@@ -78,6 +78,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 /------------------------------------------------------------------------------/
 .sl.lib[`$"qsl/u"];
 .sl.lib[`$"qsl/timer"];
+.sl.lib[`$"qsl/os"];
 .sl.lib["cfgRdr/cfgRdr"];
 
 /------------------------------------------------------------------------------/
@@ -92,11 +93,13 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 /F/ Function opens/creates the journal file for specified date and initializes <.u.i> with proper value
 /P/ x - date
 /R/ journal handle
+
 ld:{
   if[not type key L::`$(-10_string L),string x;
     .[L;();:;()]
     ];
   j::i::-11!(-2;L);
+  if[0<=type i;.tickHF.p[.tickHF.cfg.handleBadJrn;.u.L;.u.i;`today]];
   h:hopen L;
   .log.info[`tickHF] "Loading journal file:`",string[L],", handle:",string[h], ", entries:", string[i];
   :h;
@@ -110,6 +113,7 @@ nextday.ld:{
     .[nextday.L;();:;()]
     ];
   nextday.j::nextday.i::-11!(-2;nextday.L);
+  if[0<=type nextday.i;.tickHF.p[.tickHF.cfg.handleBadJrn;.u.nextday.L;.u.nextday.i;`nextday]];
   h:hopen nextday.L;
   .log.info[`tickHF] "Loading journal file:`",string[nextday.L],", handle:",string[h], ", entries:", string[nextday.i];
   :h;
@@ -313,12 +317,41 @@ p.zeroLatencyMode:{[]
   @[;`sym;`g#]each tabs;
   };
 
+// jrnPath:.u.L
+// i:(1;2)
+.tickHF.p.ABORT:{[jrnPath;i;day]
+  .log.error[`tickHF]`errMsg`validChunks`validPartSize`totalJrnSize!("Corrupted journal file ",string[jrnPath],". Process will be stopped";i[0];i[1];hcount jrnPath);
+  .log.info[`tickHF]"Please archive or truncate journal ",string[jrnPath]," to lenght " ,string[i 1] ," bytes manually and restart the process";
+  exit 1;
+  };
+
+.tickHF.p.ARCHIVE_BAD_JRN:{[jrnPath;i;day]
+  archivePath:(1_string jrnPath),"_corrupted_after_",(string i 1);
+  .log.error[`tickHF]`errMsg`validChunks`validPartSize`totalJrnSize!("Corrupted journal file ",string[jrnPath];i[0];i[1];hcount jrnPath);
+  .log.info[`tickHF]"Journal is archived to ",archivePath, " and new one will be created";
+  .log.info[`tickHF]"Please note that messages from the invalid journal will be dropped. Afterwards it can be manually injected into the running system";
+  .os.move[1_string jrnPath;archivePath];
+  .[jrnPath;();:;()];
+  $[`today~day;.u.j::.u.i::-11!(-2;jrnPath);.u.nextday.j::.u.nextday.i::-11!(-2;jrnPath)];
+  };
+
+.tickHF.p.TRUNCATE_BAD_TAIL:{[jrnPath;i;day]
+  archivePath:(1_string jrnPath),"_corrupted_after_",(string i 1);
+  .log.error[`tickHF]`errMsg`validChunks`validPartSize`totalJrnSize!("Corrupted journal file ",string[jrnPath];i[0];i[1];hcount jrnPath);
+  .log.info[`tickHF]"Journal is archived to ",archivePath;
+  .os.cp[1_string jrnPath;archivePath];
+  .log.info[`tickHF]"Journal is truncated to size ",string[i 1]," and new messages will be appened to the existing journal";
+  .os.truncate[1_string jrnPath;i 1];
+  $[`today~day;.u.j::.u.i::-11!(-2;jrnPath);.u.nextday.j::.u.nextday.i::-11!(-2;jrnPath)];
+  };
+
 /==============================================================================/
 .sl.main:{[flags]
   (set) ./:                        model:.cr.getModel[`THIS];
   .tickHF.cfg.dataPath:            1_string .cr.getCfgField[`THIS;`group;`cfg.dataPath];
   .tickHF.cfg.jrnPrefix:           .cr.getCfgField[`THIS;`group;`cfg.jrnPrefix];
   .tickHF.cfg.aggrInterval:       .cr.getCfgField[`THIS;`group;`cfg.aggrInterval];
+  .tickHF.cfg.handleBadJrn:       .cr.getCfgField[`THIS;`group;`cfg.handleBadJrn];
   // if null - zero mode
   $[null .tickHF.cfg.aggrInterval;.u.p.zeroLatencyMode[];.u.p.aggrMode[]];
   .sl.libCmd[];
