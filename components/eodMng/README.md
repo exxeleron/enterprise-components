@@ -11,15 +11,19 @@ storing from real time database [`rdb`](../rdb) to historical database [`hdb`](.
 #### `eodMng` package components:
 End of day management module consists of following components:
 - [eodMng/eodMng](#eodmngeodmng-component) - End of day Manager - [`eodMng.q`](eodMng.q)
-  - core component of the package, it monitors rdb state (regarding eod) and triggers housekeeping and synchronization when needed 
-   (by detecting which hosts should be synchronized and passing necessary parameters to `hdbSync.q`); it also reports warnings and errors
+  - core component of the package, 
+  - monitors eod state of the rdb (single rdb instance)
+  - triggers housekeeping and synchronization when needed 
+    (by detecting which hosts should be synchronized and passing necessary parameters to `hdbSync.q`)
+  - reports warnings and errors
+  - support for `hot` and `cold` slave setup
 - [eodMng/hdbHk](#eodmnghdbhk-component) - Hdb housekeeping script - [`hdbHk.q`](hdbHk.q) 
-  - is a plug-in based process that handles hdb housekeeping (deletion of old partitions, data compression, snapshots etc.); 
-    `hdbHk.q` has its own configuration specifying tasks that need to be performed (see `hdbHk.q` for details)
+  - plug-in based process that handles hdb housekeeping (deletion of old partitions, data compression, snapshots etc.)
+  - `hdbHk.q` has its own configuration specifying tasks that need to be performed (see `hdbHk.q` for details)
 - [eodMng/hdbSync](#eodmnghdbsync-component) - Synchronization script [`hdbSync.q`](hdbSync.q)
   - uses `rsync` to synchronize `hdb` in two cases:
-     1. - slave host pulls data from primary host 
-     2. - primary host pushes data to slave hosts in cold standby for synchronization 
+    - slave host pulls data from primary host 
+    - primary host pushes data to slave hosts in cold standby for synchronization 
 
 -------------------------------------------------------------------------------
 ## **`eodMng/eodMng` component**
@@ -33,7 +37,7 @@ Component is located in the `ec/components/eodMng`.
 - `eodMng` triggers [synchronization](#eodmnghdbsync-component) of the databases across multiple hosts. 
 
 ### Configuration
-> Note: configure port and component name according to your conventions (core.eodMng)
+> **Note:** configure port and component name according to your conventions (core.eodMng)
 
 #### system.cfg example
 ```cfg
@@ -57,7 +61,7 @@ Component is located in the `ec/components/eodMng`.
       cfg.eodOrder = core.eodMng, prod2.eodMng
 ```
 - In the above example, the `core.eodMng` process is considered to be master (as is listed *first*), and `prod2.eodMng` process will synchronize data with it
-- File `sync.cfg` is read by eodMng process before synchronisation and can be used to select *master host* for synchronisation. 
+- File `sync.cfg` is read by eodMng process before synchronisation and is used to select *master host* for synchronisation. 
   For example, consider a case when host of `core.eodMng` malfunctions and can no longer be used as a source of synchronisations, 
   but `prod2.eodMng` works well. Then change in the order will result in `prod2.eodMng` becoming source of data for synchronisation for next end of day process. 
   If host of `core.eodMng` becomes available again, the previous order can be restored
@@ -69,9 +73,9 @@ start eodMng component
 > yak start core.eodMng
 ```
 
-### `eodMng` status
-`eodMng` status can be set to one of the following:
-- `unknown` - initial state (right after process start) changes after first rdb status reading
+### `eodMng` state
+`eodMng` state is an overall process state. `eodMng` state is set to one of the following:
+- `unknown` - initial state (right after process start) changes after first rdb state reading
 - `idle` - end of day processing for the last day finished successfully and database is not performing any activities regarding end of day processing
 - `eod_during` - end of day processing in progress
 - `housekeeping` - performing housekeeping on rdb
@@ -84,41 +88,43 @@ start eodMng component
 - `error` - last end of day processing failed (eg. out of memory, out of disk space etc.), as a result data in hdb might be corrupted; 
   if next end of day is successful, eodMng will be back into idle state; 
 
-> *Notes*
-> * Underlying cause of the error state is logged, please check the monitor or log file for the eodMng
-> * When housekeeping processes are completed on the primary host, the status is switched to idle (with date increased by 1 day)
-> * This state indicates that all secondary hosts can synchronize data with it; please remember that active hosts pull data from primary host, 
-> * while for cold hosts data is pushed by the primary host
+> **Note:**
+> 
+> - Underlying cause of the error state is logged, please check the monitor or log file for the eodMng
+> - When housekeeping processes are completed on the primary host, the state is switched to idle (with date increased by 1 day)
+> - When synchronisation processes is completed on the secondary host, the status is switched to idle (with date increased by 1 day)
+> - This state indicates that all secondary hosts can synchronize data with it; please remember that active hosts pull data from primary host, 
+> - while for cold hosts data is pushed by the primary host
 
-#### Example statuses
-Primary host:
+#### Example states
+##### Primary host:
 
-  Action                                          | `eodMng` status  
+  Action                                          | `eodMng` state  
  -------------------------------------------------|-----------------
   eodMng is waiting for EOD event                 | `idle`           
   rdb starts EOD process                          | `idle`           
-  eodMng reads EOD status file                    | `eod_during`     
+  eodMng reads EOD state file                     | `eod_during`     
   rdb completes EOD process                       | `eod_during`     
-  eodMng reads EOD status file                    | `housekeeping`   
+  eodMng reads EOD state file                     | `housekeeping`   
   eodMng starts housekeeping                      | `housekeeping`   
   housekeeping completed                          | `sync_before`    
   eodMng pushes data to cold hosts                | `sync_with_cold` 
-  secondary hosts sync data with primary host     | `idle`           
+  secondary hosts sync data with primary host     | `idle [date+1]`
 
-Secondary host:
+##### Secondary host:
 
-  Action                                          | `eodMng` status 
+  Action                                          | `eodMng` state 
  -------------------------------------------------|-----------------
   eodMng is waiting for EOD event                 | `idle`          
   rdb starts EOD process                          | `idle`          
-  eodMng reads EOD status file                    | `eod_during`    
+  eodMng reads EOD state file                     | `eod_during`    
   rdb completes EOD process                       | `eod_during`    
-  eodMng reads EOD status file                    | `housekeeping`  
+  eodMng reads EOD state file                     | `housekeeping`  
   eodMng starts housekeeping                      | `housekeeping`  
   housekeeping completed                          | `sync_before`   
   eodMng waits for primary host to finish its EOD | `sync_before`    
   secondary hosts pulls data from primary host    | `sync_during`   
-  synchronisation completed successfully          | `idle`          
+  synchronisation completed successfully          | `idle [date+1]`
 
 #### Status table
 Overall status can be seen in the `.eodmng.status` table
@@ -132,7 +138,7 @@ q).eodmng.status
 - `host` - process name (defined in system configuration file) of the `eodMng` process 
 - `state` - state of `eodMng` process
 - `syncDate` - date of next synchronization / end of day processing
-- `timeStamp` - timestamp of the last status update from given host
+- `timeStamp` - timestamp of the last state update from given host
 - `db` - path to `hdb`
 - `current` [boolean] - true indicates that this host is a current process
 - `cold` [boolean] - true indicates that host is in cold standby (no `eodMng` process running)
@@ -144,12 +150,12 @@ File generated by end of day manager `eodMng` - used only internally to restore 
 
 Status format:
 ```txt
- status next_eod_date last_update_time last_sync_host
+ state next_eod_date last_update_time last_sync_host
 ```
 - `next_eod_date` - date of next end of day expected by eodMng
-- `last_update_time` - time of the last update of the status (file is updated at regular time intervals)
+- `last_update_time` - time of the last update of the state (file is updated in regular time intervals)
 - `last_sync_host` - host with which data was synchronized during last end of day, ‘none’ if no synchronization occurred – for example in case of a primary host)
-- `status` - one of possible statuses
+- `state` - current state of the `eodMng`
 
 Status file example:
 ```txt
@@ -207,8 +213,8 @@ where:
 - `dayInPast` – specifies the date in the past (`EOD` date minus `dayInPast`) 
 
 Given setup will execute:
-- plugin `mrvs` on partition with date `EOD_DATE-30`
-- plugin `delete` on partition with date `EOD_DATE-120`
+- plugin `mrvs` on partition with date `EOD_DATE-30` for table `quote`
+- plugin `delete` on partition with date `EOD_DATE-120` for table `quote`
 
 ### Startup
 `hdbHk` script is invoked from `eodMng` and terminates after completing the task.
@@ -239,6 +245,10 @@ custom plugins can be loaded via `libs` field in `system.cfg`. Predefined versio
   };
 ```
 
+> **Note:**
+> 
+> More plugin examples can be found in the [hdbHk.q](hdbHk.q) source file.
+
 ### Implementation overview
 
 #### Workflow
@@ -246,10 +256,11 @@ custom plugins can be loaded via `libs` field in `system.cfg`. Predefined versio
 2. Tasks from the file are loaded into `.hdbHk.cfg.taskList` table
 3. Tasks are executed based on the order in the configuration file / `.hdbHk.cfg.taskList` table
 
-> **Notes:**
-> 1. Please remember to order the tasks correctly, for example conflation before compression
-> 2. Each plugin call is logged and wrapped in protected evaluation
-> 3. Before modification each table partition is backed up in `cfg.bckDir` directory
+> **Note:**
+> 
+> - Please remember to order the tasks correctly, for example conflation before compression
+> - Each plugin call is logged and wrapped in protected evaluation
+> - Before modification each table partition is backed up in `cfg.bckDir` directory
 
 #### Task list
 Housekeeping script (`hdbHk.q`) is part of the `eodMng` that manages hdb housekeeping and can be extended through plugins. 
@@ -270,11 +281,11 @@ where:
 For the given table, `hdbHk.q` would execute following function calls:
 
 ```q
-q).eodsnc.hk.plugins.compress[date;`tab1;arg1;arg2;arg3];
-q).eodsnc.hk.plugins.compress[date;`tab2;arg1;arg2;arg3];
-q).eodsnc.hk.plugins.compress[date;`tab3;arg1;arg2;arg3];
-q).eodsnc.hk.plugins.delete[date;`tab1;arg`;arg2;arg3];
-q).eodsnc.hk.plugins.delete[date;`tab2;arg`;arg2;arg3];
+q) .eodsnc.hk.plugins.compress[date;`tab1;(arg1;arg2;arg3)];
+q) .eodsnc.hk.plugins.compress[date;`tab2;(arg1;arg2;arg3)];
+q) .eodsnc.hk.plugins.compress[date;`tab3;(arg1;arg2;arg3)];
+q) .eodsnc.hk.plugins.delete[date;`tab1;()];
+q) .eodsnc.hk.plugins.delete[date;`tab2;()];
 ```
 
 #### `hdbHk` status file
@@ -327,7 +338,7 @@ Minimal configuration for synchronization require `eodMng` configuration in `sys
 
   # Configuration of connection to eodMng process on 2nd production
   [[prod2.eodMng]]
-    type = c:eodMng    # Note - c: prefix defines 'connection' in contrast to 'q process' 
+    type = c:eodMng    # Note: `c` prefix defines 'connection' in contrast to 'q process' 
     port = 1234
     host = prod2.internal.eu                         
 
@@ -335,13 +346,19 @@ Minimal configuration for synchronization require `eodMng` configuration in `sys
   [[prod2.hdb]]
      type = c:hdb                       
      port = 12345                       
-     host = prod2.internal.eu             # Note - `host` field required for data synchronization
-     EC_DATA_PATH = /kdb/data/core.hdb    # Note - `EC_DATA_PATH` field required for data synchronization
+     host = prod2.internal.eu             # Note: `host` field required for data synchronization
+     EC_DATA_PATH = /kdb/data/core.hdb    # Note: `EC_DATA_PATH` field required for data synchronization
 ```
 
 #### `rsync` configuration
-`hdbSync` is relaying on `rsync` system tool. In order to use it effectively operating system needs to be configured properly. 
-Such configurations are out of scope of this document, but please refer to on-line manual pages available on your OS (`rsync(1`), `ssh(1)`, `ssh-copy-id(1)`).
+`hdbSync` is relaying on `rsync` system tool, 
+therefore `rsync` must be preinstalled on the OS on which `hdbSync` is being used.
+In order to use it effectively operating system needs to be configured properly. 
+`rsync` configuration is out of scope of this document, please refer to the manual pages (i.e. `man rsync`) available on your OS (`rsync(1)`, `ssh(1)`, `ssh-copy-id(1)`). 
+
+> **Note:**
+> 
+> At the moment `hdbSync` is supported only for Linux.
 
 ### Startup
 `hdbSync` script is invoked from `eodMng` and terminates after completing the task.
