@@ -30,7 +30,7 @@ Components and libraries that are essential part of the ec:
     - [hdb](../components/hdb) - Historical database
     - [hdbWriter](../components/hdbWriter) - Hdb data upload
     - [eodMng](../components/eodMng) - End-of-day processing
-     -[rproc](../components/rproc) - Realtime processing
+    - [rproc](../components/rproc) - Realtime processing
     - [stream](../components/stream) - Stream-based data processing
   - Data access
     - [accessPoint](../components/accessPoint) - End users entry point
@@ -72,6 +72,7 @@ Set of articles describing various aspects of ec usage:
  - [Security model description](Security-model-description.md)
  - [Logging concept](Logging-concept.md)
  - [Setup system in UTC or local time](Setup-system-in-UTC-or-local-time.md)
+ - [Testing the end-of-day procedure](Testing-the-end-of-day-procedure.md)
 - Development:
  - [Exxeleron q coding conventions](Exxeleron-q-coding-conventions.md) - brief introduction to coding guidelines
  - [Documenting q code](Documenting-q-code.md)
