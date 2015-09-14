@@ -38,7 +38,7 @@ Instructions in Lessons relay on checking data or status of kdb+ processes, ther
     It will be independent from other installations on the same server.
     Each `ec`-based system running on the same machine will have own, independent version of q.
 
-2. Use q that is already installed on the system
+1. Use q that is already installed on the system
 
     Second option is to use q that is already installed on the system and available on the `PATH`.
     `QHOME` and `PATH` environmental variables have to be adjusted accordingly in `env.sh` (`env.bat` on Windows) file for each Lesson.
@@ -85,26 +85,26 @@ Instructions in Lessons relay on checking data or status of kdb+ processes, ther
     DemoSystem> unzip windows.zip -d bin
     ```
 
-> :heavy_exclamation_mark: Note:
+    > :heavy_exclamation_mark: Note:
 
-> Downloaded q package normally contains `q/` subdirectory. The result of unpacking should be as follows:
+    > Downloaded q package normally contains `q/` subdirectory. The result of unpacking should be as follows:
 
 
-```bash
-DemoSystem> ls bin/q/
-  l32/
-  q.q
-  q.k
-  README.md
-  README.txt
-  [...]
-```
+    ```bash
+    DemoSystem> ls bin/q/
+      l32/
+      q.q
+      q.k
+      README.md
+      README.txt
+      [...]
+    ```
 
-On Windows, use the `dir` command.
+    On Windows, use the `dir` command.
 
-> :heavy_exclamation_mark: Note:
+    > :heavy_exclamation_mark: Note:
 
-> Alternatively use own, pre-installed `q` executable that is available on the `PATH` with `QHOME` pointing to `q` installation location.
+    > Alternatively use own, pre-installed `q` executable that is available on the `PATH` with `QHOME` pointing to `q`     installation location.
 
 
 1. Create link to configuration for LessonXX
