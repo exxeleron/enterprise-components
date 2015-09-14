@@ -69,6 +69,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 .sl.lib["cfgRdr/cfgRdr"];
 .sl.lib["qsl/handle"];
 .sl.lib["qsl/u"];
+.sl.lib["qsl/os"];
 .sl.lib["monitorStats"];
 
 /------------------------------------------------------------------------------/
