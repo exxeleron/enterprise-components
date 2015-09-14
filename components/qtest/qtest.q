@@ -49,6 +49,8 @@
       `$"expected type ", string[type expected], "h instead of ", string[type actual], "h";
       not count[actual]~count[expected];
       `$"expected #", string[count expected], " elements instead of #", string[count actual];
+      type[actual]=98h;
+      $[`~modelErr:.assert.p.matchModel[actual;expected];`$"data model matching, content different";modelErr];
       `];
     ];
   :.assert.p.insert[`$msg;`MATCH;res;info;expected;actual];
