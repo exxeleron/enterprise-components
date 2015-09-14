@@ -62,7 +62,7 @@
   .test.stop `t0.tickMock;
    // check sub.status
   .assert.match["subscription status is changed to lost";rdb".sub.status[]`srcConn";`lost`lost]; 
-  .assert.contains["turn on reconnection on port open callback";raze value flip rdb"key .cb.status[]";`.hnd.po.t_tick]; 
+  .assert.contains["turn on reconnection on port open callback";raze value flip rdb"key .cb.status[]";`.hnd.po.t0_tickMock]; 
   // run tick
   .test.start[`t0.tickMock];
   .assert.remoteWaitUntilTrue["rdb is subscribed to tick";`t0.tickMock;"0<count .tickm.w";10;2000];

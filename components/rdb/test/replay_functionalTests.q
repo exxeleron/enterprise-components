@@ -69,6 +69,7 @@
   system "yak start t1.replay -a \"-date ",string[.z.d], " -rdb t1.rdb1\"";
   .hnd.hopen[`t1.replay;100i;`eager];
   .test.mock[`replay; .test.h[`t1.replay]];
+  .os.sleep[1000];
   logs:system "yak log t1.replay";
   .assert.match["two warnings that tables from non tick process will be excluded from data replay";
     count "WARN" in/:  " "vs/:logs where logs like "*quoteMrvs*";
@@ -88,6 +89,7 @@
   system "yak start t1.replay -a \"-date ",string[.z.d], " -rdb t1.rdb2\"";
   .hnd.hopen[`t1.replay;100i;`eager];
   .test.mock[`replay; .test.h[`t1.replay]];
+  .os.sleep[1000];
   logs:system "yak log t1.replay";
   .assert.match["errors not occur during data recover";any logs like "ERROR*";0b];
   system "yak stop t1.replay";
