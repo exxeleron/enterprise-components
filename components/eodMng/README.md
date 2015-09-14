@@ -1,5 +1,5 @@
-## **`eodMng` package **
-`eodMng` - set of components for handling `hdb` after the `end-of-day` procedure
+## **`eodMng` component**
+`eodMng` - set of components for handling `hdb` after the `end-of-day` procedure.
 Components are located in the `ec/components/eodMng`.
 
 ### Functionality
@@ -23,7 +23,7 @@ End of day management module consists of following components:
 
 -------------------------------------------------------------------------------
 ## **`eodMng/eodMng` component**
-`eodMng` - End-of-day Manager component
+`eodMng` - End-of-day Manager component.
 Component is located in the `ec/components/eodMng`.
 
 ### Functionality
@@ -33,7 +33,7 @@ Component is located in the `ec/components/eodMng`.
 - `eodMng` triggers [synchronization](#eodmnghdbsync-component) of the databases across multiple hosts. 
 
 ### Configuration
-Note: configure port and component name according to your conventions (core.eodMng)
+> Note: configure port and component name according to your conventions (core.eodMng)
 
 #### system.cfg example
 ```cfg
@@ -91,7 +91,8 @@ start eodMng component
 > * while for cold hosts data is pushed by the primary host
 
 #### Example statuses
-- Primary host
+Primary host:
+
   Action                                          | `eodMng` status  
  -------------------------------------------------|-----------------
   eodMng is waiting for EOD event                 | `idle`           
@@ -104,7 +105,8 @@ start eodMng component
   eodMng pushes data to cold hosts                | `sync_with_cold` 
   secondary hosts sync data with primary host     | `idle`           
 
-- Secondary host
+Secondary host:
+
   Action                                          | `eodMng` status 
  -------------------------------------------------|-----------------
   eodMng is waiting for EOD event                 | `idle`          
@@ -206,7 +208,7 @@ where:
 
 Given setup will execute:
 - plugin `mrvs` on partition with date `EOD_DATE-30`
-- plugin delete on partition with date `EOD_DATE-120`
+- plugin `delete` on partition with date `EOD_DATE-120`
 
 ### Startup
 `hdbHk` script is invoked from `eodMng` and terminates after completing the task.
