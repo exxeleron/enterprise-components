@@ -91,7 +91,7 @@
 //----------------------------------------------------------------------------//
 .tabs.p.checkErr:{[tab] @[{count value x;`};tab;`$] };
 //----------------------------------------------------------------------------//
-.tabs.p.format:{((1b;0b;0)!`PARITIONED`SPLAYED`INMEM).Q.qp value x};
+.tabs.p.format:{((1b;0b;0)!`PARTITIONED`SPLAYED`INMEM).Q.qp value x};
 //----------------------------------------------------------------------------//
 .tabs.p.rowsCnt:{[tab] @[{count value x};tab;0N]};
 

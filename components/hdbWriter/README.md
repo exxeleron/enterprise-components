@@ -80,8 +80,8 @@ q)/ execute on core.hdbWriter process
 q) .tabs.status[`];
 tab   | format     | rowsCnt | err |  columns    
 ------+------------+---------+-----+---------------------------------------------
-quote | PARITIONED | 3570    |     | `date `sym `time `bid `bidSize `ask `askSize
-trade | PARITIONED | 720     |     | `date `sym `time `price `size
+quote | PARTITIONED | 3570    |     | `date `sym `time `bid `bidSize `ask `askSize
+trade | PARTITIONED | 720     |     | `date `sym `time `price `size
 
 q) select count i by date from quote
 date       | x

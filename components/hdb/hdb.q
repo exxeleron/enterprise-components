@@ -55,10 +55,10 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 /R/ SYMBOL - error msg or empty symbol
 .hdb.p.checkErr:{[tab] @[{count value x;`};tab;`$] };
 
-/F/ Check table format - one of `PARITIONED`SPLAYED`INMEM
+/F/ Check table format - one of `PARTITIONED`SPLAYED`INMEM
 /P/ tab:SYMBOL - table name
-/R/ SYMBOL - `PARITIONED`SPLAYED or `INMEM
-.hdb.p.format:{((1b;0b;0)!`PARITIONED`SPLAYED`INMEM).Q.qp value x};
+/R/ SYMBOL - `PARTITIONED`SPLAYED or `INMEM
+.hdb.p.format:{((1b;0b;0)!`PARTITIONED`SPLAYED`INMEM).Q.qp value x};
 
 /F/ Total rows count of the table
 /P/ tab:SYMBOL - table name
@@ -69,7 +69,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 /R/ table with following columns:
 /R/ (start code)
 /R/ tab:SYMBOL          - table name
-/R/ format:SYMBOL       - format of the table - one of PARITIONED`SPLAYED`INMEM
+/R/ format:SYMBOL       - format of the table - one of PARTITIONED`SPLAYED`INMEM
 /R/ rowsCnt:LONG        - total rows count of the table, null in case of error
 /R/ err:SYMBOL          - error in case table wasn't loaded properly
 /R/ columns:SYMBOL LIST - list of columns in the table
@@ -86,7 +86,6 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 /R/ (end)
 /E/ .hdb.statusByPar[]
 .hdb.statusByPar:{[]flip {$[count[x];x;0N]}each((.Q.pf;`parDir)!(.Q.PV;.Q.PD)),.Q.pn};
-
 /F/ Retrieve statistics about the data volumes in hdb. Statistics are based on hourly aggregation. Please note that
 /F/ - If there is a "time" column, it will be used for the aggregation.
 /F/ - If there is no "time" column in the table, then the statistics will be calculated per whole day (not per hour).
