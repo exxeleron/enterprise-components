@@ -38,10 +38,10 @@ Components and libraries that are essential part of the ec:
     - [yak](https://github.com/exxeleron/yak/) - Process Management Tool
     - [hk](../components/hk) - Housekeeping
   - Monitor server
-    -[monitor](../components/monitor) - Server monitoring tool
+    - [monitor](../components/monitor) - Server monitoring tool
   - Testing
-    -[qtest](../components/qtest) - Test framework
-    -[mock](../components/mock) - Set of mocks
+    - [qtest](../components/qtest) - Test framework
+    - [mock](../components/mock) - Set of mocks
 - [Libraries] (../libraries)
   - [qsl](../libraries/qsl) Q standard library - set of common libraries used across the system
     - sl - Standard library - common `frame` for all ec q scripts
