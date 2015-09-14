@@ -85,7 +85,11 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 /R/ [tabName]:LONG      - Count of the table within the partition. One column for each partitioned table.
 /R/ (end)
 /E/ .hdb.statusByPar[]
-.hdb.statusByPar:{[]flip {$[count[x];x;0N]}each((.Q.pf;`parDir)!(.Q.PV;.Q.PD)),.Q.pn};
+.hdb.statusByPar:{[]
+  if[not `pf in key `.Q;:([]parDir:`symbol$())];
+  flip {$[count[x];x;0N]}each((.Q.pf;`parDir)!(.Q.PV;.Q.PD)),.Q.pn
+  };
+
 /F/ Retrieve statistics about the data volumes in hdb. Statistics are based on hourly aggregation. Please note that
 /F/ - If there is a "time" column, it will be used for the aggregation.
 /F/ - If there is no "time" column in the table, then the statistics will be calculated per whole day (not per hour).
@@ -104,26 +108,31 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 /R/ dailyMedRowsPerSec:LONG - number of rows within an hour (or in the whole day if there was no "time" column)
 /R/ (end)
 .hdb.dataVolumeHourly:{[tab;day]
-    chunkSize:5000000j;
-    if[`time in cols[tab]; // hourly statistics
-        //day of data will be divided into number of chunks with size up to 5mio rows
-        chunks:ceiling (exec first cnt from select cnt:count i from tab where date=day)%chunkSize;
-        //statistics calculated for each chunk independly -> in order to limit mem usage
-        res0:{[tab;day;chunkSize;x]`time xkey select cnt:`long$count i by time:`time$time.second from tab where date=day, i within (x*chunkSize)+(0;chunkSize-1)}[tab;day;chunkSize]each til chunks;
-        if[0=count res0;res0:enlist ([time:`time$()]cnt:`long$())];
-        //aggregation of statistics from chunks
-        res1:1!`time xasc (asc distinct raze key each res0) pj/ res0;
-        res2:`time xasc ([]time:`time$1000*til 60*60*24; hdbDate:day)lj res1;
-        dailyMed:`long$first exec med cnt from res2;
-        :`hdbDate`hour`table xcols 0!select table:tab,
-        totalRowsCnt:`long$sum cnt, minRowsPerSec:`long$min cnt, avgRowsPerSec:`long$avg cnt, medRowsPerSec:`long$med cnt, maxRowsPerSec:`long$max cnt, dailyMedRowsPerSec:dailyMed
-        by hdbDate, hour:`time$`minute$60*time.hh from res2;
-        ];
- 
-    //daily statistics
-    cnt:count ?[tab;enlist(=;`date;day);0b;(enlist `x)!enlist `i]; // select from tab where date=day
-    : `hdbDate`hour`table xcols ([] table:enlist tab; totalRowsCnt:enlist `long$cnt; minRowsPerSec:enlist 0Nj; avgRowsPerSec:enlist 0Nj; medRowsPerSec:enlist 0Nj; maxRowsPerSec:enlist 0Nj; hdbDate:enlist day; hour:enlist 0Nt; dailyMedRowsPerSec:enlist 0Nj);
-    };
+  if[not -11h=type tab;
+    '"invalid tab type (",.Q.s1[type tab],"), should be SYMBOL type (-11h)";
+    ];
+  if[not -14h=type day;
+    '"invalid day type (",.Q.s1[type day],"), should be DATE type (-14h)";
+    ];
+  chunkSize:5000000j;
+  if[`time in cols[tab]; // hourly statistics
+    //day of data will be divided into number of chunks with size up to 5mio rows
+    chunks:ceiling (exec first cnt from select cnt:count i from tab where date=day)%chunkSize;
+    //statistics calculated for each chunk independly -> in order to limit mem usage
+    res0:{[tab;day;chunkSize;x]`time xkey select cnt:`long$count i by time:`time$time.second from tab where date=day, i within (x*chunkSize)+(0;chunkSize-1)}[tab;day;chunkSize]each til chunks;
+    if[0=count res0;res0:enlist ([time:`time$()]cnt:`long$())];
+    //aggregation of statistics from chunks
+    res1:1!`time xasc (asc distinct raze key each res0) pj/ res0;
+    res2:`time xasc ([]time:`time$1000*til 60*60*24; hdbDate:day)lj res1;
+    dailyMed:`long$first exec med cnt from res2;
+    :`hdbDate`hour`table xcols 0!select table:tab,
+    totalRowsCnt:`long$sum cnt, minRowsPerSec:`long$min cnt, avgRowsPerSec:`long$avg cnt, medRowsPerSec:`long$med cnt, maxRowsPerSec:`long$max cnt, dailyMedRowsPerSec:dailyMed
+    by hdbDate, hour:`time$`minute$60*time.hh from res2;
+    ];
+  //daily statistics
+  cnt:count ?[tab;enlist(=;`date;day);0b;(enlist `x)!enlist `i]; // select from tab where date=day
+  : `hdbDate`hour`table xcols ([] table:enlist tab; totalRowsCnt:enlist `long$cnt; minRowsPerSec:enlist 0Nj; avgRowsPerSec:enlist 0Nj; medRowsPerSec:enlist 0Nj; maxRowsPerSec:enlist 0Nj; hdbDate:enlist day; hour:enlist 0Nt; dailyMedRowsPerSec:enlist 0Nj);
+  };
 
 /------------------------------------------------------------------------------/
 /F/ initialization and reload
