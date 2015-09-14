@@ -10,6 +10,8 @@
   - New: tests - qtest-based tests for rdb, hdbWriter, qsl/tabs, qsl/handle
   - Change: doc - wiki content moved to main repo - doc directory and README.md files
   - Change: DemoSystem - packaging and installation instructions reworked
+  - Fix: authentication - add logic handling some misconfigurations in configuration files (#47)
+  - Fix: qsl/event monitor - fix processing events on Windows OS (#46)
  
  ------------------------------------------------------------------------------
   enterprise-components 3.2.3 [2015.02.11]
