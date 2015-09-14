@@ -19,6 +19,9 @@
     ];
   };
 
+
+
+
 .tst.desc["test initialization"]{
   before{
     `.q.hopen mock {[x] 0};
@@ -28,13 +31,13 @@
     .sl.relib[`$"qsl/handle"];
     .sl.relib[`$"pluginExample.q"];
     `.cr.p.cfgTable mock ([]sectionType:`group;varName:`host`port`kdb_user`kdb_password;finalValue:("";0;"";"");errType:`;subsection:`in.tickLF);
-    `.feedMng.cfg.tables mock ([sectionVal:`sysUniverse`universe]; serverSrc:2#`in.tickLF);
+    `.feedMng.cfg.tables mock ([sectionVal:`sysUniverse`universe]; subSrc:2#`in.tickLF);
     `.feedMng.cfg.serverAux mock `;
     `.feedMng.cfg.timeout mock 100i;
     `.data.universe mock ([] time:2#.z.t;sym:`a`b;flag:`instrClass1`instrClass2;instrGroup:`group1`group2);
     `.data.sysUniverse mock ([]  time:2#.z.t; sym:`kdb.feedRtr`kdb.feedRtr; instrumentGroup:`group1`group2; instrument:`a`b;subItem:`a`b);
     //TODO: use new qsl/sub library
-    `.sub.sub mock {[x;y;z] `sysUniverse set 0#.data.sysUniverse; `universe set .data.universe};
+    `.sub.p.sub mock {[x;y] `sysUniverse set 0#.data.sysUniverse; `universe set .data.universe};
     `.data.pubUpd mock 0#.data.sysUniverse;
     `.tickLF.pubUpd mock {[x;y] `.data.pubUpd insert y};
     `.tickLF.pubDel mock {[x;c;b;a] ![x;c;b;a]};
@@ -74,20 +77,22 @@
     mustthrow["Meta of the created .feedMng.plug.jrn is not matching sysUniverse";{.feedMng.p.recreateSysUniFromJrn[]}];
     };
   should["test .feedMng.p.poPlugin with sysUniverse update"]{
-    .feedMng.p.poPlugin[`sysUniverse`universe;``;`in.tickLF];
+    `universe mock .data.universe;
+    .feedMng.p.poPlugin[];
     (delete time from .data.sysUniverse) mustmatch delete time from sysUniverse;
     };
   should["test .feedMng.p.poPlugin with error"]{
     `.feedMng.p.recreateSysUniFromJrn mock {'test};
-    .feedMng.p.poPlugin[`sysUniverse`universe;``;`in.tickLF];
-    "test"~.event.lastsig;
+    .feedMng.p.poPlugin[];
+    ;
     };
   should["test initilization"]{
+    `universe mock .data.universe;
+    .hnd.hclose enlist `in.tickLF;
     .feedMng.p.init[];
     (delete time from .data.sysUniverse) mustmatch delete time from sysUniverse;
     };
   };
-
 
 .tst.desc["test upd and del functions"]{
   before{
@@ -192,7 +197,7 @@
     `.q.hopen mock {[x] 0};
     `flagMap mock `a`b`c!(`feed1`feed1`feed2);
     .feedMng.plug.jrn:{[] select time, sym:flagMap[flag], instrumentGroup:`, instrument:sym, subItem:sym from universe};
-    .feedMng.p.poPlugin[`sysUniverse`universe;``; `in.tickLF];
+   .feedMng.p.poPlugin[];
     new:.feedMng.plug.jrn[];
     res:.feedMng.compareUni[sysUniverse;new];
     0 mustmatch/: count each res;
@@ -212,7 +217,7 @@
     `.q.hopen mock {[x] 0};
     `flagMap mock `a`b`c!(`feed1`feed1`feed2);
     .feedMng.plug.jrn:{[] select time, sym:flagMap[flag], instrumentGroup:`, instrument:sym, subItem:sym from universe};
-    .feedMng.p.poPlugin[tabs:`sysUniverse`universe;uni:``;server: `in.tickLF];
+    .feedMng.p.poPlugin[];
     new:.feedMng.plug.jrn[];
     res:.feedMng.compareUni[sysUniverse;new];
     0 mustmatch/: count each res;
@@ -231,13 +236,14 @@
     .sl.relib[`$"pluginExample.q"];
     `.cr.p.cfgTable mock ([]sectionType:`group;varName:`host`port`kdb_user`kdb_password;finalValue:("";0;"";"");errType:`;subsection:`in.tickLF);
     .hnd.p.getTechnicalUser:{([] proc:enlist `in.tickLF;host:enlist "";port:0;kdb_user:enlist"";kdb_password:enlist"")};
-    `.feedMng.cfg.tables mock ([sectionVal:`sysUniverse`universe]; serverSrc:2#`in.tickLF);
+    `.feedMng.cfg.tables mock ([sectionVal:`sysUniverse`universe]; subSrc:2#`in.tickLF);
     `.feedMng.cfg.serverAux mock `;
     `.feedMng.cfg.timeout mock 100i;
     `.data.universe mock ([] time:2#.z.t;sym:`a`b;flag:`instrClass1`instrClass2;instrGroup:`group1`group2);
     `.data.sysUniverse mock ([]  time:2#.z.t; sym:`kdb.feedRtr`kdb.feedRtr; instrumentGroup:`group1`group2; instrument:`a`b;subItem:`a`b);
     //TODO: use new qsl/sub library
-    `.sub.sub mock {[x;y;z] `sysUniverse set 0#.data.sysUniverse; `universe set .data.universe};
+    `.sub.p.sub mock {[x;y;z] `sysUniverse set 0#.data.sysUniverse; `universe set .data.universe};
+     `universe set .data.universe;`sysUniverse set 0#.data.sysUniverse;
     `.data.pubUpd mock 0#.data.sysUniverse;
     `.tickLF.pubUpd mock {[x;y] `.data.pubUpd insert y};
     `.tickLF.pubDel mock {[x;c;b;a] ![x;c;b;a]};
@@ -252,7 +258,7 @@
     .tst.mockFunc[`.feedMng.load.del;4;""];
     };
   should["test upd plugin"]{
-    .tickLF.upd[`universe][`test];
+    .tickLF.upd[`universe;`test];
     `test mustmatch first .tst.trace[`.feedMng.plug.upd.universe];
     1b mustmatch execute;
     `universe`test mustmatch first .tst.trace[`.feedMng.load.upd];
