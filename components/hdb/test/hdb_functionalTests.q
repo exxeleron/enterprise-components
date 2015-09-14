@@ -16,27 +16,24 @@
 /V/ 3.0
 
 // Functional tests of the hdb component
+// See README.md for details
 
 //----------------------------------------------------------------------------//
-//                           hdb fixture                                      //
-//----------------------------------------------------------------------------//
-//.testHdb.setUp[]
+.testHdb.testSuite:"hdb functional tests";
+
 .testHdb.setUp:{
-  .test.start[`t.hdb];
-  .test.mock[`hdb; .test.h[`t.hdb]];
+  .test.start[`t0.hdb];
+  .test.mock[`hdb; .test.h[`t0.hdb]];
 
-  .cr.loadCfg[`t.hdb];  //load hdb specific configuration fields
-  .test.mock[`hdbPath;.cr.getCfgField[`t.hdb;`group;`cfg.hdbPath]]; //extract hdbPath
+  .cr.loadCfg[`t0.hdb];  //load hdb specific configuration fields
+  .test.mock[`hdbPath;.cr.getCfgField[`t0.hdb;`group;`cfg.hdbPath]]; //extract hdbPath
   };
 
-//----------------------------------------------------------------------------//
 .testHdb.tearDown:{
-  .test.stop `t.hdb;
-  .test.clearProcDir `t.hdb;
+  .test.stop `t0.hdb;
+  .test.clearProcDir `t0.hdb;
   };
 
-//----------------------------------------------------------------------------//
-//                         helper functions                                   //
 //----------------------------------------------------------------------------//
 .testHdb.genTrade:{[cnt]
   ([]time:`time$til cnt; sym:cnt#`aaa`bbb;price:`float$til cnt; size:til cnt)
@@ -45,11 +42,6 @@
 .testHdb.genQuote:{[cnt]
   ([] time:`time$til cnt; sym:cnt#`aaa`bbb;bid:`float$til cnt; bidSize:til cnt;ask:`float$til cnt; askSize:til cnt; flag:cnt?("flagA";"flagB"))
   };
-
-//----------------------------------------------------------------------------//
-//                           hdb tests                                        //
-//----------------------------------------------------------------------------//
-.testHdb.testSuite:"hdb functional tests";
 
 //----------------------------------------------------------------------------//
 //                      startup hdb state                                     //
@@ -98,7 +90,7 @@
   //reload hdb process without invoking .hdb.fillMissingTabs[]
   hdb".hdb.reload[]";
   .assert.match["only quote visible before invoking .hdb.fillMissingTabs[]";hdb"tables[]";enlist`quote];
-  .assert.remoteFail["unable to trade table due to missing empty partition";`t.hdb;"select from quote";"./2015.01.01/quote/time: The system cannot find the path specified."];
+  .assert.remoteFail["unable to trade table due to missing empty partition";`t0.hdb;"select from quote";"./2015.01.01/quote/time: The system cannot find the path specified."];
 
   //invoke .hdb.fillMissingTabs[]
   hdb".hdb.fillMissingTabs[]";
@@ -144,9 +136,9 @@
 .testHdb.test.dataVolumeHourly_invalidArgs:{[]
   .Q.par[hdbPath;2015.01.01;`$"trade/"] set .Q.en[hdbPath] tradeChunk:.testHdb.genTrade[10];
   hdb".hdb.reload[]";
-  .assert.remoteFail["signal in case of unknown table name";`t.hdb;(`.hdb.dataVolumeHourly;`tradeXX;2010.01.01);"tradeXX"];
-  .assert.remoteFail["signal in case of unknown table name";`t.hdb;(`.hdb.dataVolumeHourly;"trade";2010.01.01);`$"invalid tab type (10h), should be SYMBOL type (-11h)"];
-  .assert.remoteFail["signal in case of unknown table name";`t.hdb;(`.hdb.dataVolumeHourly;`trade;2010.01m);`$"invalid day type (-13h), should be DATE type (-14h)"];
+  .assert.remoteFail["signal in case of unknown table name";`t0.hdb;(`.hdb.dataVolumeHourly;`tradeXX;2010.01.01);"tradeXX"];
+  .assert.remoteFail["signal in case of unknown table name";`t0.hdb;(`.hdb.dataVolumeHourly;"trade";2010.01.01);`$"invalid tab type (10h), should be SYMBOL type (-11h)"];
+  .assert.remoteFail["signal in case of unknown table name";`t0.hdb;(`.hdb.dataVolumeHourly;`trade;2010.01m);`$"invalid day type (-13h), should be DATE type (-14h)"];
   };
 
 //----------------------------------------------------------------------------//

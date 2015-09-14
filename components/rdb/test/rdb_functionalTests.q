@@ -16,42 +16,23 @@
 /V/ 3.0
 
 // Functional tests of the rdb component
-
-//Executing tests (assuming ec is deployed in the bin direcotory):
-// - prepare env on linux:
-//   KdbSystemDir> source bin/ec/components/rdb/test/etc/env.sh
-// - prepare env on windows:
-//   KdbSystemDir> bin\ec\components\rdb\test\etc\env.bat
-// - start tests:
-//   KdbSystemDir> yak start t.run
-// - check progress:
-//   KdbSystemDir> yak log t.run
-// - inspect results:
-//   inspect .test.report[] on the t.run once the tests are completed
+// See README.md for details
 
 //----------------------------------------------------------------------------//
-//                                libraries                                   //
-//----------------------------------------------------------------------------//
+.testRdb.testSuite:"rdb functional tests";
 
-//----------------------------------------------------------------------------//
-//                           Rdb fixture                                      //
-//----------------------------------------------------------------------------//
-//.testRdb.setUp[]
 .testRdb.setUp:{
-  .test.start[`t.tick`t.rdb`t.hdb];
-  .test.mock[`tick; .test.h[`t.tick]];
-  .test.mock[`rdb; .test.h[`t.rdb]];
-  .test.mock[`hdb; .test.h[`t.hdb]];
+  .test.start[`t0.tickMock`t0.rdb`t0.hdbMock];
+  .test.mock[`tick; .test.h[`t0.tickMock]];
+  .test.mock[`rdb; .test.h[`t0.rdb]];
+  .test.mock[`hdb; .test.h[`t0.hdbMock]];
   };
 
-//----------------------------------------------------------------------------//
 .testRdb.tearDown:{
-  .test.stop procNames:`t.tick`t.rdb`t.hdb;
-  .test.clearProcDir `t.tick`t.rdb`t.hdb;
+  .test.stop procNames:`t0.tickMock`t0.rdb`t0.hdbMock;
+  .test.clearProcDir `t0.tickMock`t0.rdb`t0.hdbMock;
   };
 
-//----------------------------------------------------------------------------//
-//                         helper functions                                   //
 //----------------------------------------------------------------------------//
 .testRdb.genTrade:{[cnt]
   ([]time:`time$til cnt; sym:cnt#`aaa`bbb;price:`float$til cnt; size:til cnt)
@@ -62,11 +43,6 @@
   };
 
 //----------------------------------------------------------------------------//
-//                           rdb tests                                        //
-//----------------------------------------------------------------------------//
-.testRdb.testSuite:"rdb functional tests";
-
-//----------------------------------------------------------------------------//
 //                      startup rdb state                                     //
 //----------------------------------------------------------------------------//
 .testRdb.test.rdb_subscription_while_tick_is_running:{[]
@@ -75,7 +51,7 @@
   .assert.match["data model has `g attribute on sym column";rdb"attr each (trade;quote)@\\:`sym";`g`g];
   // generate data that will be pushed through mock tick
   tick(`.tickm.upd;`trade;.testRdb.genTrade[5]);
-  .assert.remoteWaitUntilTrue["store received data in memory";`t.rdb;"5=count select from trade";10;2000];
+  .assert.remoteWaitUntilTrue["store received data in memory";`t0.rdb;"5=count select from trade";10;2000];
   .assert.match["data model has `g attribute on sym column";rdb"attr each (trade;quote)@\\:`sym";`g`g];
   };
 
@@ -83,19 +59,19 @@
   tick(`.tickm.upd;`trade;.testRdb.genTrade[2]);
    // insert data
    //stop tick
-  .test.stop `t.tick;
+  .test.stop `t0.tickMock;
    // check sub.status
   .assert.match["subscription status is changed to lost";rdb".sub.status[]`srcConn";`lost`lost]; 
   .assert.contains["turn on reconnection on port open callback";raze value flip rdb"key .cb.status[]";`.hnd.po.t_tick]; 
   // run tick
-  .test.start[`t.tick];
-  .assert.remoteWaitUntilTrue["rdb is subscribed to tick";`t.tick;"0<count .tickm.w";10;2000];
+  .test.start[`t0.tickMock];
+  .assert.remoteWaitUntilTrue["rdb is subscribed to tick";`t0.tickMock;"0<count .tickm.w";10;2000];
   .assert.match["subscription status is changed to open";rdb".sub.status[]`srcConn";`open`open];
   .assert.match["store received data in memory";rdb"count select from trade";2];
   .assert.match["data model has `g attribute on sym column";rdb"attr each (trade;quote)@\\:`sym";`g`g];
   // insert new data
   tick(`.tickm.upd;`trade;.testRdb.genTrade[5]);
-  .assert.remoteWaitUntilTrue["store received data in memory";`t.rdb;"count[select from trade]=7";10;2000];
+  .assert.remoteWaitUntilTrue["store received data in memory";`t0.rdb;"count[select from trade]=7";10;2000];
   };
 
 .testRdb.test.rdb_performs_eod:{[]
@@ -105,8 +81,8 @@
   .assert.match["switch to next day";rdb".rdb.date";.z.d+1];
   .assert.contains["perform before eod callback";rdb".mock.trace[`$\".rdb.plug.beforeEod[`beforeEod]\"][`args]";.z.d]; 
   .assert.contains["perform afterEod eod callback";rdb".mock.trace[`$\".rdb.plug.afterEod[`afterEod]\"][`args]";.z.d];
-  .cr.loadCfg[`t.hdb];
-  hdbPath:.cr.getCfgField[`t.hdb;`group;`cfg.hdbPath];
+  .cr.loadCfg[`t0.hdbMock];
+  hdbPath:.cr.getCfgField[`t0.hdbMock;`group;`cfg.hdbPath];
   .assert.match["store data on the disk";key hdbPath;(`$string .z.d;`sym)];
   .assert.match["realod hdb";hdb".mock.trace[`.hdb.reload][`w]>0";enlist 1b];
   .assert.match["quote table available on hdb";hdb"count select from quote where date=last date";10];
@@ -115,3 +91,4 @@
   .assert.match["leave configured tables in memory";rdb"count trade";10];
   };
    
+//----------------------------------------------------------------------------//

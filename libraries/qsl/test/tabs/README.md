@@ -1,18 +1,14 @@
-### `qsl/handle` functional tests
+### `qsl/tabs` functional tests
 
 #### Test environment
 
 ```txt
-              <t.run>
-               18000
-                 .
-		 .
-             [t0.proc1]
-                18001
-             /         \
-            /           \
-   [t0.proc2] ---------- [t0.proc3]
-     18002                 18003
+  <t.run>
+   18000
+     .
+     .
+ [t0.tabs]
+   18001
 ```
 
 #### Test execution
@@ -20,13 +16,13 @@
 
 Prepare env on and start tests on linux:
 ```bash
-KdbSystemDir> source bin/ec/libraries/qsl/test/handle/etc/env.sh
+KdbSystemDir> source bin/ec/libraries/qsl/test/tabs/etc/env.sh
 KdbSystemDir> yak start t.run
 ```
 
 Prepare env on and start tests on windows:
 ```bash
-KdbSystemDir> bin\ec\libraries\qsl\test\handle\etc\env.bat
+KdbSystemDir> bin\ec\libraries\qsl\test\tabs\etc\env.bat
 KdbSystemDir> yak start t.run
 ```
   

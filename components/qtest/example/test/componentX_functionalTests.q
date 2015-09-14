@@ -30,11 +30,11 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 .componentXTest.testSuite:"componentX functional tests";
 //----------------------------------------------------------------------------//
 .componentXTest.setUp:{
-  .test.start[`t.componentX`t.hdb];
+  .test.start[`t0.componentX`t0.hdbMock];
   };
 
 .componentXTest.tearDown:{
-  .test.stop[`t.componentX`t.hdb];
+  .test.stop[`t0.componentX`t0.hdbMock];
   };
 
 //----------------------------------------------------------------------------//
@@ -49,7 +49,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   tradeChunk:.componentXTest.genTrade[10;2014.01.01];
   
   // Act
-  res:.test.h[`t.componentX](`.componentX.getCols;tradeChunk);
+  res:.test.h[`t0.componentX](`.componentX.getCols;tradeChunk);
   
   // Assert
   .assert.match["return list of columns"; res; cols tradeChunk];
@@ -57,7 +57,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 
 //----------------------------------------------------------------------------//
 .componentXTest.test.failWith_NonTableArg:{[]
-  .assert.remoteFail["support only table"; `t.componentX; (`.componentX.getCols;5); `$"expecting type 98h"];
+  .assert.remoteFail["support only table"; `t0.componentX; (`.componentX.getCols;5); `$"expecting type 98h"];
   };
   
 //----------------------------------------------------------------------------//

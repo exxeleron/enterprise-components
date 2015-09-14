@@ -1,18 +1,33 @@
-### `qsl/handle` functional tests
+### `rdb` tests
 
-#### Test environment
+#### `rdb/rdb` test environment
 
 ```txt
-              <t.run>
-               18000
-                 .
-		 .
-             [t0.proc1]
-                18001
-             /         \
-            /           \
-   [t0.proc2] ---------- [t0.proc3]
-     18002                 18003
+               (t0.tickMock)  
+             .    18002
+          .         |
+       .            |
+  <t.run> . . . [t0.rdb]          
+   18000          18001 
+       .            |
+          .         |
+             . (t0.hdbMock)
+                  18003
+```
+
+#### `rdb/replay` test environment
+
+```txt
+            [t1.stream] [t1.tick1] [t1.tickLF] [t1.tick2]
+              . 18018     18013     / 18012     18014
+           .         \     /      /      \      /  
+        .             \   /     /         \    /    
+   <t.run>   .  .  .  [t1.rdb1]         [t1.rdb2]
+    18000               18015             18016  .
+             .                \        /           .  <using t1.rdb1 or t1.rdb2 cfg>               
+                   .           \      /              .   
+                         .   (t1.hdbMock) <------ [t1.replay]
+                                 18017    <write>   18011
 ```
 
 #### Test execution
@@ -20,13 +35,13 @@
 
 Prepare env on and start tests on linux:
 ```bash
-KdbSystemDir> source bin/ec/libraries/qsl/test/handle/etc/env.sh
+KdbSystemDir> source bin/ec/components/rdb/test/etc/env.sh
 KdbSystemDir> yak start t.run
 ```
 
 Prepare env on and start tests on windows:
 ```bash
-KdbSystemDir> bin\ec\libraries\qsl\test\handle\etc\env.bat
+KdbSystemDir> bin\ec\components\rdb\test\etc\env.bat
 KdbSystemDir> yak start t.run
 ```
   
