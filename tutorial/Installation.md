@@ -89,21 +89,22 @@ Instructions in Lessons relay on checking data or status of kdb+ processes, ther
 
 > Downloaded q package normally contains `q/` subdirectory. The result of unpacking should be as follows:
 
-    ```bash
-    DemoSystem> ls bin/q/
-      l32/
-      q.q
-      q.k
-      README.md
-      README.txt
-      [...]
-    ```
 
-    On Windows, use the `dir` command.
+```bash
+DemoSystem> ls bin/q/
+  l32/
+  q.q
+  q.k
+  README.md
+  README.txt
+  [...]
+```
+
+On Windows, use the `dir` command.
 
 > :heavy_exclamation_mark: Note:
 
-> Alternatively use own, pre-installed `q` executable that available on the `PATH` with `QHOME` pointing to `q` installation location.
+> Alternatively use own, pre-installed `q` executable that is available on the `PATH` with `QHOME` pointing to `q` installation location.
 
 
 1. Create link to configuration for LessonXX
