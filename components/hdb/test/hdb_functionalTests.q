@@ -90,7 +90,12 @@
   //reload hdb process without invoking .hdb.fillMissingTabs[]
   hdb".hdb.reload[]";
   .assert.match["only quote visible before invoking .hdb.fillMissingTabs[]";hdb"tables[]";enlist`quote];
-  .assert.remoteFail["unable to trade table due to missing empty partition";`t0.hdb;"select from quote";"./2015.01.01/quote/time: The system cannot find the path specified."];
+  if[.z.o like "w*";
+    .assert.remoteFail["unable to trade table due to missing empty partition";`t0.hdb;"select from quote";`$"./2015.01.01/quote/time: The system cannot find the path specified."];
+    ];
+  if[not .z.o like "w*";
+    .assert.remoteFail["unable to trade table due to missing empty partition";`t0.hdb;"select from quote";`$"./2015.01.01/quote/time: No such file or directory"];
+    ];
 
   //invoke .hdb.fillMissingTabs[]
   hdb".hdb.fillMissingTabs[]";
@@ -149,7 +154,12 @@
   .assert.match["all column-files in 2015.01.01/trade/ dir";key pathA;`.d`price`size`sym`time];
   .assert.match["all column-files in 2015.01.02/quote/ dir";asc key pathB;asc cols[quoteChunk],`.d,(`$"flag#")];
   hdb".hdb.reload[]";
-  .assert.match[".hdb.status[] discovers missing quote partition";hdb"exec first err from .hdb.status[] where tab=`quote";`$"./2015.01.01/quote: The system cannot find the path specified."];
+  if[.z.o like "w*";
+    .assert.match[".hdb.status[] discovers missing quote partition";hdb"exec first err from .hdb.status[] where tab=`quote";`$"./2015.01.01/quote: The system cannot find the path specified."];
+    ];
+  if[not .z.o like "w*";
+    .assert.match[".hdb.status[] discovers missing quote partition";hdb"exec first err from .hdb.status[] where tab=`quote";`$"./2015.01.01/quote: No such file or directory"];
+    ];
   .assert.match[".hdb.status[] does not discover missing trade partition as table list is based on the most recent par, i.e. 2015.01.02";hdb"exec first err from .hdb.status[] where tab=`trade";`];
   };
  
