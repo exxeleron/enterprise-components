@@ -3,7 +3,7 @@
 The simplest and recommended method of installation is to download one of the released binaries from the project's 
 [releases](https://github.com/exxeleron/enterprise-components/releases) page. 
 
-The [tutorial](https://github.com/exxeleron/enterprise-components/tree/master/tutorial) of the project's repository (included in the 
+The [tutorial](/tutorial) of the project's repository (included in the 
 release binaries) provides a number of predefined configuration files that allow to quickly set up basic types of systems.
 
 Advanced users may wish to assemble the system by themselves, using directly the source hosted on `GitHub`. 
@@ -15,7 +15,9 @@ management tool that `enterprise-components` use.
 > `enterprise-components` releases typically require specific `yak` releases. The versions of the `yak` releases that work with a given 
 `enterprise-components` release are listed in the `ec` release notes.
 
-We recommend system layout as in the tutorial's [README](https://github.com/exxeleron/enterprise-components/blob/master/tutorial/README.md) 
+We recommend system layout as in the tutorial's [README](tutorial/README.md) 
 document. However, one can define an arbitrary system layout by setting `QHOME`, `QLIC`, `YAK_PATH`, `YAK_OPTS`, `EC_QSL_PATH`, 
 `EC_ETC_PATH` environment variables in `env.sh` file and `binPath`, `libPath`, `dllPath`, `dataPath`, `logPath` and `eventPath` variables 
 in `system.cfg` configuration file.
+
+For more details please visit [Demo System Installation](tutorial/Installation.md).
