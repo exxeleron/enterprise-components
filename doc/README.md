@@ -1,5 +1,5 @@
-# **ec general documentation**
-To start with Enterprise Components, we recommend going through following materials:
+# **`enterprise-components` general documentation**
+To start with `enterprise-components`, we recommend going through following materials:
 
 #### Tutorial
 - [Installation](../tutorial/Installation.md)
@@ -10,18 +10,18 @@ To start with Enterprise Components, we recommend going through following materi
 - [Lesson 4](../tutorial/Lesson04) - user queries
 - [Lesson 5](../tutorial/Lesson05) - authorization and authentication
 
-#### DemoSystem
-The tutorial is based on the DemoSystem.
-Most recent DemoSystem package can be downloaded from [releases section](https://github.com/exxeleron/enterprise-components/releases).
+#### `DemoSystem`
+The tutorial is based on the `DemoSystem`.
+Most recent `DemoSystem` package can be downloaded from [releases section](https://github.com/exxeleron/enterprise-components/releases).
 The package for the system deployment consists of fully prepared:
-  - `bin` directory with all the components, libraries and yak binaries
+  - `bin` directory with all the components, libraries and `yak` binaries
   - `etc` directory with configuration for the system and `env.sh` (and `env.bat` for Windows) script with environmental settings
 
-#### Ec elements
-Components and libraries that are essential part of the ec:
-- The [Components](../components) support the efficient construction of kdb+ infrastructure by providing the following functionality 
+#### `ec` elements
+Components and libraries that are essential part of the `ec`:
+- The [components](../components) support the efficient construction of `kdb+` infrastructure by providing the following functionality:
   - Data feeding
-    - [feedCsv](../components/feedCsv) - Generic CSV files reader and publisher
+    - [feedCsv](../components/feedCsv) - generic CSV files reader and publisher
   - Data distribution
     - [tickHF](../components/tickHF) - Publishing and distribution of High Frequency data
     - [tickLF](../components/tickLF) - Distribution of Low Frequency data
@@ -43,23 +43,23 @@ Components and libraries that are essential part of the ec:
     - [qtest](../components/qtest) - Test framework
     - [mock](../components/mock) - Set of mocks
 - [Libraries] (../libraries)
-  - [qsl](../libraries/qsl) Q standard library - set of common libraries used across the system
-    - sl - Standard library - common `frame` for all ec q scripts
-    - pe - Protected evaluation library - wrapper for invoking functions in protected evaluation
-    - event - Event library - execution of q functions as events
-    - callback - Callback library - managing callbacks
-    - timer - Timer library - abstraction layer for timer
-    - handle - Connection management library - abstraction layer for interprocess connections
-    - authorization - Authorization library - access restrictions and auditing
-    - u - u.q library - extension of [u.q from Kx](http://code.kx.com/wsvn/code/kx/kdb%2Btick/tick/u.q)
-    - sub - Subscription management library - abstraction for realtime data subscription
-    - store - Store library - data storage in the hdb
-    - os - Os library - shell commands abstraction, covers Linux, MacOS and Windows
-    - parseq - Parseq library - Parseq is a Q clone of the Haskell's Parsec, a parser combinator library. 
-    - tabs - Data model validation - set of functions facilitating data model validation
+  - [qsl](../libraries/qsl) - `q` standard library - set of common libraries used across the system
+    - `sl` - Standard library - common `frame` for all `ec` `q` scripts
+    - `pe` - Protected evaluation library - wrapper for invoking functions in protected evaluation
+    - `event` - Event library - execution of `q` functions as events
+    - `callback` - Callback library - managing callbacks
+    - `timer` - Timer library - abstraction layer for timer
+    - `handle` - Connection management library - abstraction layer for interprocess connections
+    - `authorization` - Authorization library - access restrictions and auditing
+    - `u` - u.q library - extension of [u.q from Kx](http://code.kx.com/wsvn/code/kx/kdb%2Btick/tick/u.q)
+    - `sub` - Subscription management library - abstraction for realtime data subscription
+    - `store` - Store library - data storage in the hdb
+    - `os` - Os library - shell commands abstraction, covers Linux, MacOS and Windows
+    - `parseq` - Parseq library - Parseq is a Q clone of the Haskell's Parsec, a parser combinator library. 
+    - `tabs` - Data model validation - set of functions facilitating data model validation
 
 #### Articles
-Set of articles describing various aspects of ec usage:
+Set of articles describing various aspects of `ec` usage:
 - Configuration:
  - [General configuration concept](General-configuration-concept.md)
  - [Configuration system.cfg](Configuration-system.cfg.md)
@@ -74,6 +74,6 @@ Set of articles describing various aspects of ec usage:
  - [Setup system in UTC or local time](Setup-system-in-UTC-or-local-time.md)
  - [Testing the end-of-day procedure](Testing-the-end-of-day-procedure.md)
 - Development:
- - [Exxeleron q coding conventions](Exxeleron-q-coding-conventions.md) - brief introduction to coding guidelines
- - [Documenting q code](Documenting-q-code.md)
+ - [Exxeleron `q` coding conventions](Exxeleron-q-coding-conventions.md) - brief introduction to coding guidelines
+ - [Documenting `q` code](Documenting-q-code.md)
  - [Document generation](Document-generation.md)
