@@ -183,8 +183,8 @@ q)/ execute on process core.hdb, port 17012
 q) .hdb.status[] 
 tab   | format     | rowsCnt | err |  columns    
 ------+------------+---------+-----+---------------------------------------------
-quote | PARITIONED | 3570    |     | `date `sym `time `bid `bidSize `ask `askSize
-trade | PARITIONED | 720     |     | `date `sym `time `price `size
+quote | PARTITIONED | 3570    |     | `date `sym `time `bid `bidSize `ask `askSize
+trade | PARTITIONED | 720     |     | `date `sym `time `price `size
 ```
 
 ### Check `hdb` tables after eod

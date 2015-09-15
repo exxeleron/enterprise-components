@@ -98,7 +98,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 
   //end of day
   eodTabs:select table:sectionVal, hdbPath:eodPath, hdbName:hdbConn, memoryClear:eodClear, store:eodPerform from .rdb.cfg.eodTabs;
-  .store.init[eodTabs;.rdb.cfg.reloadHdb;.rdb.cfg.fillMissingTabsHdb;.rdb.cfg.dataPath];
+  .event.dot[`rdb;`.store.init;(eodTabs;.rdb.cfg.reloadHdb;.rdb.cfg.fillMissingTabsHdb;.rdb.cfg.dataPath);();`debug`info`error;"initializing store library"];
 
   //connections
   hdb2conn:exec distinct hdbConn from .rdb.cfg.eodTabs where not hdbConn~'`;

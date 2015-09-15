@@ -43,7 +43,8 @@
   subDetails:.hnd.h[server]"(.u.sub'[`",("`" sv string[tabs]),";`",("`" sv string[(),uni]), "];`.u `i`L)";
   .log.debug[`sub] "Set data model for tables: `","`" sv string[tabs];
   if[1~count tabs;subDetails[0]:enlist subDetails[0]];
-  .event.at[`sub;`.Q.gc;();`;`info`info`error;"garbage collection"];
+  .log.debug[`sub] "Garbage collection";
+  .pe.atLog[`sub;`.Q.gc;();`;`error];
   .event.dot[`sub;`sub;(server;subDetails 0);`;`info`info`error;"sub[x;y] callback"];  //callback
   .sub.subListOfJrnTabs:tabs; //Note: tmp variable used in jUpd to limit loaded tables
   .event.at[`sub;`.sub.tickHF.replayData; subDetails 1;`;`info`info`error;"replaying the data from ", string[server]];

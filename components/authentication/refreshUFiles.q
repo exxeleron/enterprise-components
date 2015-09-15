@@ -44,10 +44,21 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   // define users
   .log.info[`ru] "Refreshing user access files...";
   dx:{[x;y] `char$0b sv/:y<>/:0b vs/:`int$x}[;.sl.p.m];
-  groups:select groupname:sectionVal, procname:subsection from .cr.getCfgTab[`ALL; `userGroup;`namespaces];
+  groups:select ug:sectionVal, procname:subsection from .cr.getCfgTab[`ALL; `userGroup;`namespaces];
+  cfggroups:distinct groups`ug;
   groupsn:(ungroup update procname:count[g]#enlist .cr.p.procNames except `ALL from g:select from groups where procname=`ALL),select from groups where procname<>`ALL;
-  users:ungroup select user:sectionVal,pass:(count'[usergroups])#'enlist each value each pass, usergroups from .cr.getGroupCfgPivot[`user`technicalUser;`pass`usergroups];
-  matched:distinct delete usergroups from ungroup (`usergroups xcol groupsn) lj `usergroups xgroup users;
+  users:ungroup select user:sectionVal,pass:(count'[usergroups])#'enlist each value each pass, ug:usergroups from .cr.getGroupCfgPivot[`user`technicalUser;`pass`usergroups];
+  ugroups:distinct users`ug;
+  /groups that are missing user mappings
+  if[count nousers:cfggroups where not cfggroups in ugroups;
+    .log.warn[`ru] "There are groups without any users assigned: ", .Q.s1[nousers], ". Skipping group configuration.";
+    ];
+  /groups that were assigned to users but do not exist
+  if[count nonexistent:ugroups where not ugroups in cfggroups;
+    .log.warn[`ru] "Users are configured with non-existent groups: ", .Q.s1[nonexistent], ". Skipping group configuration.";
+    ]; 
+  joined:(select from groupsn where not ug in nousers) lj `ug xgroup select from users where not ug in nonexistent;
+  matched:distinct delete usergroups from ungroup joined;
   umatched: matched lj `procname xcol select from .cr.getByProc[enlist `uFile] where not uFile=`$":";
   / fetch only non-empty configurations
   umatched: delete from umatched where null uFile;
@@ -60,7 +71,8 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 /------------------------------------------------------------------------------/
 .ru.p.genUfiles:{[path;u]
  users:distinct u;
- .log.info[`ru]"Create security file in ",string[path]," with #users:",string count users;
+ .log.info[`ru]"Creating security context with #users: ",string[count users], " in file:";
+ .log.info[`ru] 1_string[path];
  path 0:1_":" 0:users;
  };
 
@@ -74,7 +86,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   faultyProcs:exec procname!uFile from (perproc lj perfile) where uFile in faultyFiles,pucnt=fucnt;
   .log.warn[`ru] "Some processes (", (", " sv string key faultyProcs), ") provide additional users to a \"shared\" user files ", 
                    "(", (", " sv string value faultyProcs), ").";
-  .log.warn[`ru] "Please provide separate user files for those processes.";
+  .log.info[`ru] "Please provide separate user files for processes: ", .Q.s1 key faultyProcs;
   }
 
 /------------------------------------------------------------------------------/

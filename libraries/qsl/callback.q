@@ -74,7 +74,7 @@
   if[(cb in key .cb.first) and (not .cb.first[cb]~fun);
     .log.warn[`cb] ".cb.first for callback ",string[cb]," was already set to ",string[.cb.first[cb]], ". It will be overwritten with ", string[fun];
   ];
-  .log.info[`cb] "Plugin ",string[fun]," for callback ",string[cb]," will be always called as first one.";
+  .log.debug[`cb] "Plugin ",string[fun]," for callback ",string[cb]," will be always called as first one.";
   .cb.first[cb]:fun;
   if[fun in .cb.status[cb;`function];
     .cb.status[cb;`function]:fun,(.cb.status[cb;`function] except fun);

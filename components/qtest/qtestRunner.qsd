@@ -1,0 +1,12 @@
+#/S/ Configuration definition for qtestRunner component:
+
+[group]
+  #/C/ path to the test files
+  testFiles = <type(LIST PATH)>
+  testNamespaces = <type(LIST STRING)>
+  JUnitExportPath = <type(PATH), default(NULL)>
+  quitAfterRun = <type(BOOLEAN), default(FALSE)>
+  exportFile = <type(PATH), default(${dataPath}/test.result)>
+
+  #/C/ process manager used for test execution - yak or ecm
+  processManager = <type(STRING), in(yak,ecm), default(yak)>

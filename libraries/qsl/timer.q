@@ -225,7 +225,7 @@
     update tick:`int$tick%factor,period:`int$period%factor from `.tmr.status;
     system "t ",string newt;
     .tmr.p.tt:2000000j*system "t";
-    .log.info[`tmr] "system timer period reset to ",string system "t";
+    .log.debug[`tmr] "system timer period reset to ",string system "t";
     .tmr.p.cleanup:{};
     ];
   };

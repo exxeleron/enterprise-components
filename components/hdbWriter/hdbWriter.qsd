@@ -1,0 +1,11 @@
+[group]
+  #/C/ destination hdb location 
+  #/E/ cfg.dstHdb = core.hdb
+  cfg.dstHdb = <type(COMPONENT), isComponent()>
+  cfg.tmpHdbPath = <type(PATH), default(${dataPath}/tmpHdb/)>
+  cfg.archivePath = <type(PATH), default(${dataPath}/archive/)>
+[table]
+  hdbSortingCols = <type(LIST SYMBOL), default(sym)>
+[sysTable]
+[user]
+[userGroup]

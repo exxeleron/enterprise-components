@@ -1848,9 +1848,9 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
     .cr.cfgFile[`dataflow]:`$":",getenv[`EC_ETC_PATH],"/dataflow.cfg";
     .cr.cfgFile[`access]:`$":",getenv[`EC_ETC_PATH],"/access.cfg";
  
-    .log.info[`cr] "Parsing qsd files";
+    .log.debug[`cr] "Parsing qsd files: ",.Q.s1 value .cr.qsdFile;
     {[t] .cr.qsdTab[t]:.cr.parseCfgFile[.cr.qsdFile[t];1b]} each key .cr.qsdFile;
-    .log.info[`cr] "Parsing cfg files";
+    .log.debug[`cr] "Parsing cfg files: ",.Q.s1 value .cr.cfgFile;
     {[t] .cr.cfgTab[t]:.cr.parseCfgFile[.cr.cfgFile[t];0b]} each key .cr.cfgFile;
  
     .cr.cfgTab[`system;`subGroups]:update {raze .cr.p.expandClonesSet each x}each subGroups from .cr.cfgTab[`system;`subGroups];

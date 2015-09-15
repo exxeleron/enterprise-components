@@ -45,7 +45,8 @@
 .sub.tickLF.initAndReplayTab:{[subDetail]
   .log.debug[`sub] "Set data model for table:", .Q.s1[subDetail[0;0]];
   .[;();:;]. subDetail[0];
-  .event.at[`sub;`.Q.gc;();`;`info`info`error;"garbage collection"];
+  .log.debug[`sub] "Garbage collection";
+  .pe.atLog[`sub;`.Q.gc;();`;`error];
   .event.at[`sub;`.sub.tickLF.replayData; subDetail 1;`;`info`info`error;"replaying the data from journal", string[subDetail[1;1]]];
   };
 

@@ -1,0 +1,29 @@
+[group]
+
+  #/E/ cfg.serverAux = kdb.rdb
+  cfg.serverAux = <type(LIST SYMBOL), isComponent() default()>
+
+  #/E/ cfg.timeout = 100
+  cfg.timeout = <type(INT), greater(0), default(100)>
+  
+  #/C/ display warning if audit for synchronous communication is turned on
+  cfg.warnIfSyncAccess = <type(BOOLEAN), default(1)>
+  
+  #/C/ display warning if audit for asynchronous communication is turned on
+  cfg.warnIfAsyncAccess = <type(BOOLEAN), default(1)>
+  
+  #/C/ display warning if authorization is turned on
+  cfg.warnIfAuthorization = <type(BOOLEAN), default(1)>
+  
+[table]
+  #/C/ overwritten entry from libraries/qsl/dataflow.qsd,
+  #/C/ default set to FALSE
+  subPredefineCallbacks = <type(BOOLEAN), default(FALSE)>
+
+[sysTable]
+  #/C/ overwritten entry from libraries/qsl/dataflow.qsd,
+  #/C/ default set to FALSE
+  subPredefineCallbacks = <type(BOOLEAN), default(FALSE)>
+
+[user]
+[userGroup]

@@ -123,7 +123,7 @@
 /P/ protocol - one of `PROTOCOL_TICKHF`PROTOCOL_TICKLF`PROTOCOL_DIST
 .sub.initCallbacks:{[protocol]
   cb:value .sub.p.protocols[protocol]`callbacks;
-  .log.info[`sub] "Initializing ", string[protocol], "callbacks for :", .Q.s1[key cb];
+  .log.info[`sub] "Initializing ", string[protocol], " callbacks for: ", .Q.s1[key cb];
   key[cb] set' value[cb];  
   };
 
