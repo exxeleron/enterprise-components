@@ -47,6 +47,7 @@
   // down and up - see port open running
   .test.stop `t0.proc2;
   .test.start `t0.proc2;
+  .os.sleep[1000];
   .assert.match["port open has run twice for process2";.hnd.h[`t0.proc1]".tst.hnd.Fun1Run";2];
   errstr:$["w"~first string .z.o;"timeout";"hop: Connection refused"]; // timeout does not take effect on Linux
   .assert.remoteFail["signal when quering non-running server in lazy mode";
