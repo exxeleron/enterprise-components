@@ -13,7 +13,7 @@ management tool that `enterprise-components` use.
 > :heavy_exclamation_mark: Note:
   
 > `enterprise-components` releases typically require specific `yak` releases. The versions of the `yak` releases that work with a given 
-`enterprise-components` release are listed in the EC release notes.
+`enterprise-components` release are listed in the `ec` release notes.
 
 We recommend system layout as in the tutorial's [README](https://github.com/exxeleron/enterprise-components/blob/master/tutorial/README.md) 
 document. However, one can define an arbitrary system layout by setting `QHOME`, `QLIC`, `YAK_PATH`, `YAK_OPTS`, `EC_QSL_PATH`, 
