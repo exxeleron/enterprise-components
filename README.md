@@ -1,6 +1,6 @@
-## `enterprise-components` for kdb+
+## `enterprise-components` for `kdb+`
 
-`enterprise-components` are a set of open source building blocks on top of kdb+ allowing you to setup a system for data warehousing and 
+`enterprise-components` are a set of open source building blocks on top of `kdb+` allowing you to setup a system for data warehousing and 
 analytics in just a few simple steps. It facilitates building of the professional data system covering:
 - data import
 - storage
@@ -9,14 +9,14 @@ analytics in just a few simple steps. It facilitates building of the professiona
 - data extraction
 - interfacing with other systems
 
-User can fully customize system architecture through configuration files without q knowledge. 
+User can fully customize system architecture through configuration files without `q` knowledge. 
 
 ![Overview](doc/img/Slide1.PNG) 
 
 
 ### Download
 
-Most recent DemoSystem can be downloaded from the [releases page](https://github.com/exxeleron/enterprise-components/releases).
+Most recent `DemoSystem` can be downloaded from the [releases page](https://github.com/exxeleron/enterprise-components/releases).
 
 ### Documentation
 Some basic information can be found below, for more extensive documentation refer to the [documentation folder](doc/README.md).
@@ -31,11 +31,11 @@ via set of lessons.
 ## General description
 
 ### Objective
-`enterprise-components` have been designed with the goal to provide core functionality to kdb+ installations:
+`enterprise-components` have been designed with the goal to provide core functionality to `kdb+` installations:
 - complying with well-known IT policies for enterprise infrastructures
-- keeping the performance and flexibility of kdb+
-- making kdb+ development easier as well as faster and infrastructures more robust
-- ensuring efficient operations of kdb+ infrastructures
+- keeping the performance and flexibility of `kdb+`
+- making `kdb+` development easier as well as faster and infrastructures more robust
+- ensuring efficient operations of `kdb+` infrastructures
 
 ![Overview](doc/img/Slide2.PNG)
 
@@ -49,19 +49,19 @@ is given to:
 - Service Orientation - low TCO and well behaved integration functionality silos 
 - Low Maintenance - robustness and automation built-in 
 
-Customers building their kdb+ architectures with `enterprise-components` benefit from:
+Customers building their `kdb+` architectures with `enterprise-components` benefit from:
 - reduced time-to-market cycles due to the wide set of supported features available out-of-the-box
-- efficiently managed operational risks due to proven kdb+ design principles
+- efficiently managed operational risks due to proven `kdb+` design principles
 - simpler architectures due to consistent system design and system operations
-- motivated kdb+ teams focusing on core business requirements rather than basic infrastructure functionality
+- motivated `kdb+` teams focusing on core business requirements rather than basic infrastructure functionality
 
 ### Key features
-`enterprise-components` provide an optimized set of building blocks that can get quickly assembled into complex kdb+ deployments. 
+`enterprise-components` provide an optimized set of building blocks that can get quickly assembled into complex `kdb+` deployments. 
 
 ![Overview](doc/img/Slide3.PNG)
 
-Building blocks are based on common foundation - set of libraries built on top of q. The libraries are unifying and facilitating usage of 
-various q resources. New building blocks can be easily created by using these libraries which enable development process and allow natural 
+Building blocks are based on common foundation - set of libraries built on top of `q`. The libraries are unifying and facilitating usage of 
+various `q` resources. New building blocks can be easily created by using these libraries which enable development process and allow natural 
 integration with the rest of the system.
 
 ![Overview](doc/img/Slide4.PNG)
@@ -71,8 +71,8 @@ through on-stream, in-memory, and on-disk data analysis to interface components 
 
 ![Overview](doc/img/Slide5.PNG)
 
-`enterprise-components` functionality is driven by real-life needs. It combines DEVnet experience with modular kdb+ installations that 
-harness kdb+’s full power and flexibility. 
+`enterprise-components` functionality is driven by real-life needs. It combines DEVnet experience with modular  `kdb+` installations that 
+harness `kdb+'s` full power and flexibility. 
 
 ![Overview](doc/img/Slide6.PNG)
 
