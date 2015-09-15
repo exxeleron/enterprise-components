@@ -18,37 +18,37 @@ In case of 64 bit Linux operating system, 32 bit compatibility libraries might n
   
 > :white_check_mark: Note:
   
-> Our test runs on 'fresh' installation of openSuse 12.3 worked without need for any additional packages
+> Our test runs on 'fresh' installation of openSuse 12.3 worked without need for any additional packages.
 
 <!--------------------------------------------------------------------------------------------------------------------->
-### Kdb+ studio
-Instructions in Lessons relay on checking data or status of kdb+ processes, therefore, IDE for kdb+ is required 
+### `Kdb+` studio
+Instructions in Lessons relay on checking data or status of `kdb+` processes, therefore, IDE for `kdb+` is required 
 (e.g. http://code.kx.com/wiki/StudioForKdb+). Connection might need to be established from `localhost` 
-(e.g. when both kdb+ studio and `enterprise-components` are deployed locally) or over `TCP` 
-(e.g. `enterprise-components` on workstation, kdb+ studio on user’s desktop).
+(e.g. when both `kdb+` studio and `enterprise-components` are deployed locally) or over `TCP` 
+(e.g. `enterprise-components` on workstation, `kdb+` studio on user’s desktop).
 
 <!--------------------------------------------------------------------------------------------------------------------->
-### Kdb+
+### `Kdb+`
 `DemoSystem` package does not contain `q` binaries. There are following two options for the deployment:
 
-1. Install q binaries in the `bin/q/` subdirectory [Recommended]
+1. Install `q` binaries in the `bin/q/` subdirectory [Recommended]
 
-    It is recommended to install q binary into `bin/q/` subdirectory. In this case bin directory will contain entire software set required 
+    It is recommended to install `q` binary into `bin/q/` subdirectory. In this case bin directory will contain entire software set required 
     to run the system.
     It will be independent from other installations on the same server.
-    Each `ec`-based system running on the same machine will have own, independent version of q.
+    Each `ec`-based system running on the same machine will have own, independent version of `q`.
 
-1. Use q that is already installed on the system
+1. Use `q` that is already installed on the system
 
-    Second option is to use q that is already installed on the system and available on the `PATH`.
+    Second option is to use `q` that is already installed on the system and available on the `PATH`.
     `QHOME` and `PATH` environmental variables have to be adjusted accordingly in `env.sh` (`env.bat` on Windows) file for each Lesson.
 
 
 > :heavy_exclamation_mark: Note:
 
-> Kdb+ binaries can be downloaded from:
-> - current version of FREE 32bit of KDB+ binaries can be downloaded from http://kx.com/software-download.php
-> - users with 64 bit KDB+ license can download binaries from http://downloads.kx.com/
+> `Kdb+` binaries can be downloaded from:
+> - current version of FREE 32bit of `KDB+` binaries can be downloaded from http://kx.com/software-download.php
+> - users with 64 bit `KDB+` license can download binaries from http://downloads.kx.com/
  
 
 <!--------------------------------------------------------------------------------------------------------------------->
@@ -68,7 +68,7 @@ Instructions in Lessons relay on checking data or status of kdb+ processes, ther
     ```
 
 
-1. [Optional step] Download [FREE 32bit KDB+](http://kx.com/software-download.php) or [LICENSED 64bit KDB+](http://downloads.kx.com) 
+1. [Optional step] Download [FREE 32bit `KDB+`](http://kx.com/software-download.php) or [LICENSED 64bit `KDB+`](http://downloads.kx.com) 
    matching the operating system and unpack the package.
 
     On Linux download and unpack the package `linux.zip` into `DemoSystem/bin/q/` subdirectory.
@@ -87,7 +87,7 @@ Instructions in Lessons relay on checking data or status of kdb+ processes, ther
 
     > :heavy_exclamation_mark: Note:
 
-    > Downloaded q package normally contains `q/` subdirectory. The result of unpacking should be as follows:
+    > Downloaded `q` package normally contains `q/` subdirectory. The result of unpacking should be as follows:
 
 
     ```bash
