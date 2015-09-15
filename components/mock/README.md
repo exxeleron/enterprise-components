@@ -34,7 +34,7 @@ value - table with function calls ([]timestamp, .z.w of the caller, arguments).
  - args:LIST    - list of the arguments
 
 -------------------------------------------------------------------------------
-## `mock/gen` sub-component**
+## **`mock/gen` sub-component**
 Data-stream generator.
 
 ### Functionality
