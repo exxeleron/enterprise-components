@@ -51,7 +51,7 @@ Components and libraries that are essential part of the `ec`:
     - `timer` - Timer library - abstraction layer for timer
     - `handle` - Connection management library - abstraction layer for interprocess connections
     - `authorization` - Authorization library - access restrictions and auditing
-    - `u` - u.q library - extension of [u.q from Kx](http://code.kx.com/wsvn/code/kx/kdb%2Btick/tick/u.q)
+    - `u` - `u.q` library - extension of [`u.q` from Kx](http://code.kx.com/wsvn/code/kx/kdb%2Btick/tick/u.q)
     - `sub` - Subscription management library - abstraction for realtime data subscription
     - `store` - Store library - data storage in the hdb
     - `os` - Os library - shell commands abstraction, covers Linux, MacOS and Windows
@@ -62,12 +62,12 @@ Components and libraries that are essential part of the `ec`:
 Set of articles describing various aspects of `ec` usage:
 - Configuration:
  - [General configuration concept](General-configuration-concept.md)
- - [Configuration system.cfg](Configuration-system.cfg.md)
- - [Configuration dataflow.cfg](Configuraiton-dataflow.cfg.md)
- - [Configuration access.cfg](Configuration-access.cfg.md)
- - [Configuration sync.cfg](Configuration-sync.cfg.md)
+ - [Configuration `system.cfg`](Configuration-system.cfg.md)
+ - [Configuration `dataflow.cfg`](Configuraiton-dataflow.cfg.md)
+ - [Configuration `access.cfg`](Configuration-access.cfg.md)
+ - [Configuration `sync.cfg`](Configuration-sync.cfg.md)
  - [Elements of the configuration file](Elements-of-the-configuration-file.md)
- - [Understanding cfg and qsd files correlation](Understanding-cfg-and-qsd-files-correlation.md)
+ - [Understanding `cfg` and `qsd` files correlation](Understanding-cfg-and-qsd-files-correlation.md)
 - Misc:
  - [Security model description](Security-model-description.md)
  - [Logging concept](Logging-concept.md)
