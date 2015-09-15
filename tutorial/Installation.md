@@ -71,7 +71,7 @@ Instructions in Lessons relay on checking data or status of kdb+ processes, ther
 1. [Optional step] Download [FREE 32bit KDB+](http://kx.com/software-download.php) or [LICENSED 64bit KDB+](http://downloads.kx.com) 
    matching the operating system and unpack the package.
 
-    On Linux download and unpack the package `linux.zip` into 'DemoSystem/bin/q/' subdirectory.
+    On Linux download and unpack the package `linux.zip` into `DemoSystem/bin/q/` subdirectory.
 
     ```bash
     > cd DemoSystem
