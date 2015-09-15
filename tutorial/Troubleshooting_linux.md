@@ -21,7 +21,7 @@ bash: (...)/DemoSystem/bin/yak/yak: No such file or directory
 ```
 
 ##### Problem
-This is related to Bug #852101 "32-bit applications do not start on 64".
+This is related to Bug [#852101](https://bugs.launchpad.net/ubuntu/+source/ia32-libs/+bug/852101) "32-bit applications do not start on 64".
  
 ##### Solution
 A workaround is to reinstall `libc6-i386`:
@@ -39,7 +39,7 @@ bash: (...)/DemoSystem/bin/yak/yak: /lib/ld-linux.so.2: bad ELF interpreter: No 
 ```
 
 ##### Problem
-Most likely zlib.i686 is missing (please see DemoSystem Prerequisites 0.2.2) 
+Most likely zlib.i686 is missing (please see `DemoSystem` Prerequisites 0.2.2) 
  
 ##### Solution
 `zlib.i686` needs to be installed:
@@ -107,7 +107,7 @@ libz.so.1: cannot open shared object file: No such file or directory zlib
 ```
 
 ##### Problem
-32 bit q requires 32 bit `zlib` installed 
+32 bit `q` requires 32 bit `zlib` installed 
 
 ##### Solution
 Install 32 bit `zlib`, for example in Ubuntu
