@@ -21,29 +21,29 @@ The package for the system deployment consists of fully prepared:
 Components and libraries that are essential part of the `ec`:
 - The [components](../components) support the efficient construction of `kdb+` infrastructure by providing the following functionality:
   - Data feeding
-    - [feedCsv](../components/feedCsv) - generic CSV files reader and publisher
+    - [`feedCsv`](../components/feedCsv) - generic CSV files reader and publisher
   - Data distribution
-    - [tickHF](../components/tickHF) - Publishing and distribution of High Frequency data
-    - [tickLF](../components/tickLF) - Distribution of Low Frequency data
+    - [`tickHF`](../components/tickHF) - Publishing and distribution of High Frequency data
+    - [`tickLF`](../components/tickLF) - Distribution of Low Frequency data
   - Data processing and storage
-    - [rdb](../components/rdb) - In-memory database 
-    - [hdb](../components/hdb) - Historical database
-    - [hdbWriter](../components/hdbWriter) - Hdb data upload
-    - [eodMng](../components/eodMng) - End-of-day processing
-    - [rproc](../components/rproc) - Realtime processing
-    - [stream](../components/stream) - Stream-based data processing
+    - [`rdb`](../components/rdb) - In-memory database 
+    - [`hdb`](../components/hdb) - Historical database
+    - [`hdbWriter`](../components/hdbWriter) - Hdb data upload
+    - [`eodMng`](../components/eodMng) - End-of-day processing
+    - [`rproc`](../components/rproc) - Realtime processing
+    - [`stream`](../components/stream) - Stream-based data processing
   - Data access
-    - [accessPoint](../components/accessPoint) - End users entry point
+    - [`accessPoint`](../components/accessPoint) - End users entry point
   - System maintenance
-    - [yak](https://github.com/exxeleron/yak/) - Process Management Tool
-    - [hk](../components/hk) - Housekeeping
+    - [`yak`](https://github.com/exxeleron/yak/) - Process Management Tool
+    - [`hk`](../components/hk) - Housekeeping
   - Monitor server
-    - [monitor](../components/monitor) - Server monitoring tool
+    - [`monitor`](../components/monitor) - Server monitoring tool
   - Testing
-    - [qtest](../components/qtest) - Test framework
-    - [mock](../components/mock) - Set of mocks
+    - [`qtest`](../components/qtest) - Test framework
+    - [`mock`](../components/mock) - Set of mocks
 - [Libraries] (../libraries)
-  - [qsl](../libraries/qsl) - `q` standard library - set of common libraries used across the system
+  - [`qsl`](../libraries/qsl) - `q` standard library - set of common libraries used across the system
     - `sl` - Standard library - common `frame` for all `ec` `q` scripts
     - `pe` - Protected evaluation library - wrapper for invoking functions in protected evaluation
     - `event` - Event library - execution of `q` functions as events
