@@ -41,8 +41,8 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   .test.p.printErrors each .test.report[]`testCasesFailed;
 
   msg:"==========================> Test Execution ",$[fail;"FAILED";"COMPLETED"]," with:";
-  msg,:" Teat suites: ",string[count[suiteTotal]-count[suiteFail]],"/",string[count suiteTotal];
-  msg,: ", Teat cases: ",string[tcTotal-tcFail],"/",string[tcTotal];
+  msg,:" Test suites: ",string[count[suiteTotal]-count[suiteFail]],"/",string[count suiteTotal];
+  msg,: ", Test cases: ",string[tcTotal-tcFail],"/",string[tcTotal];
   $[fail;.log.error[`test];.log.info[`test]] msg;
   };
 

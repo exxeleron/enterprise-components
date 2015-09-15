@@ -33,13 +33,13 @@ KdbSystemDir> bin\ec\test\runAllTests.bat
 
 Following line at the end of the `log` of the `t.collectResults` process indicates successful test execution:
 
-```INFO  2015.09.15 07:27:03.100 test  - ==========================> Test Execution COMPLETED with: Teat suites: 6/6, Teat cases: 33/33```
+```INFO  2015.09.15 07:27:03.100 test  - ==========================> Test Execution COMPLETED with: Test suites: 6/6, Test cases: 33/33```
 
 Following line in the log of the `t.collectResults` process indicates test failure:
 
-```ERROR 2015.09.15 07:21:17.510 test  - ==========================> Test Execution FAILED with: Teat suites: 5/6, Teat cases: 32/33```
+```ERROR 2015.09.15 07:21:17.510 test  - ==========================> Test Execution FAILED with: Test suites: 5/6, Test cases: 32/33```
  
-> Details of testCase errors and test failures are also printe as errors.
+> Details of testCase errors and test failures are also printed as errors.
 
 Full test results can be inspected directly in q process once the tests are completed:
 ```q
