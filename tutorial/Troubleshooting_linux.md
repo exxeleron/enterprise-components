@@ -39,7 +39,7 @@ bash: (...)/DemoSystem/bin/yak/yak: /lib/ld-linux.so.2: bad ELF interpreter: No 
 ```
 
 ##### Problem
-Most likely zlib.i686 is missing (please see `DemoSystem` Prerequisites 0.2.2) 
+Most likely zlib.i686 is missing.
  
 ##### Solution
 `zlib.i686` needs to be installed:
