@@ -1,60 +1,58 @@
 [:arrow_backward:](README.md) | [:arrow_forward:](Lesson01)
 <!------------- https://github.com/exxeleron/enterprise-components/tree/master/tutorial/Installation.md --------------->
 
-#                                           **Demo System Installation**
+#                                           **`DemoSystem` Installation**
 
 <!--------------------------------------------------------------------------------------------------------------------->
 ## `DemoSystem` prerequisites
 
 <!--------------------------------------------------------------------------------------------------------------------->
 ### Operating system
-`DemoSystem` can be run on Linux, Windows or MacOS operating systems. The Windows support is experimental, tested on Windows 7.
+`DemoSystem` can be run on Linux, Windows or MacOS operating systems.
 
 <!--------------------------------------------------------------------------------------------------------------------->
 ### Compatibility libraries
-In case of 64 bit Linux operating system 32 bit compatibility libraries might need to be installed. For example:
+In case of 64 bit Linux operating system, 32 bit compatibility libraries might need to be installed. For example:
 - `lib32z1` on Ubuntu
 - `zlib.i686` on Fedora
   
 > :white_check_mark: Note:
   
-> Our test runs on 'fresh' installation of openSuse 12.3 worked without need for any additional packages
+> Our test runs on 'fresh' installation of openSuse 12.3 worked without need for any additional packages.
 
 <!--------------------------------------------------------------------------------------------------------------------->
-### Kdb+ studio
-Instructions in Lessons relay on checking data or status of KDB+ processes, therefore, IDE for kdb+ is required 
+### `Kdb+` studio
+Instructions in Lessons relay on checking data or status of `kdb+` processes, therefore, IDE for `kdb+` is required 
 (e.g. http://code.kx.com/wiki/StudioForKdb+). Connection might need to be established from `localhost` 
-(e.g. when both kdb+ studio and Enterprise Components are deployed locally) or over `TCP` 
-(e.g. Enterprise Components on workstation, kdb+ studio on user’s desktop).
+(e.g. when both `kdb+` studio and `enterprise-components` are deployed locally) or over `TCP` 
+(e.g. `enterprise-components` on workstation, `kdb+` studio on user’s desktop).
 
 <!--------------------------------------------------------------------------------------------------------------------->
-### KDB+
-`DemoSystem` package does not contain 'q' binaries. There are following two options for the deployment:
+### `Kdb+`
+`DemoSystem` package does not contain `q` binaries. There are following two options for the deployment:
 
-1. Install q binaries in the 'bin/q/' subdirectory [Recommended]
+1. Install `q` binaries in the `bin/q/` subdirectory [Recommended]
 
-It is recommended to install q binary into 'bin/q/' subdirectory. In this case bin directory will contain entire software set required to run the system.
-It will be independent from other installations on the same server.
-Each ec-based system running on the same machine will have own, independent version of q.
+    It is recommended to install `q` binary into `bin/q/` subdirectory. In this case bin directory will contain entire software set required 
+    to run the system.
+    It will be independent from other installations on the same server.
+    Each `ec`-based system running on the same machine will have own, independent version of `q`.
 
+1. Use `q` that is already installed on the system
 
-1. Use q that is already installed in the system
-
-Second option is to use q that is already installed in the system and available on the `PATH`.
-`QHOME` and `PATH` environmental variables have to be adjusted accordingly in `env.sh` (`env.bat` on Windows) file for each Lesson.
+    Second option is to use `q` that is already installed on the system and available on the `PATH`.
+    `QHOME` and `PATH` environmental variables have to be adjusted accordingly in `env.sh` (`env.bat` on Windows) file for each Lesson.
 
 
 > :heavy_exclamation_mark: Note:
 
-> KDB+ binaries can be downloaded from:
-> - current version of FREE 32bit of KDB+ binaries can be downloaded from http://kx.com/software-download.php
-> - users with 64 bit KDB+ license can download binaries from http://downloads.kx.com/
+> `Kdb+` binaries can be downloaded from:
+> - current version of FREE 32bit of `KDB+` binaries can be downloaded from http://kx.com/software-download.php
+> - users with 64 bit `KDB+` license can download binaries from http://downloads.kx.com/
  
 
 <!--------------------------------------------------------------------------------------------------------------------->
 ## `DemoSystem` installation
-
-![Overview](../doc/img/Slide1.PNG)
 
 1. [Download](https://github.com/exxeleron/enterprise-components/releases) and unpack 
    package `ec_vX.X.X_DemoSystem_Linux32bit_Lessons_X-X.tgz`
@@ -70,32 +68,33 @@ Second option is to use q that is already installed in the system and available 
     ```
 
 
-1. [Optional step] Download [FREE 32bit KDB+](http://kx.com/software-download.php) or [LICENSED 64bit KDB+](http://downloads.kx.com) 
+1. [Optional step] Download [FREE 32bit `KDB+`](http://kx.com/software-download.php) or [LICENSED 64bit `KDB+`](http://downloads.kx.com) 
    matching the operating system and unpack the package.
 
-    On Linux download and unpack the package `linux.zip` into 'DemoSystem/bin/q/' subdirectory.
+    On Linux download and unpack the package `linux.zip` into `DemoSystem/bin/q/` subdirectory.
 
     ```bash
     > cd DemoSystem
     DemoSystem> unzip linux.zip -d bin
     ```
 
-    On Windows download and unpack the package `windows.zip` into 'DemoSystem/bin/q/' subdirectory.
+    On Windows download and unpack the package `windows.zip` into `DemoSystem/bin/q/` subdirectory.
     
     ```Batchfile
     > cd DemoSystem
     DemoSystem> unzip windows.zip -d bin
     ```
 
-> :heavy_exclamation_mark: Note:
+    > :heavy_exclamation_mark: Note:
 
-> Downloaded q package normally contains `q/` subdirectory. The unpacking result should be as following:
+    > Downloaded `q` package normally contains `q/` subdirectory. The result of unpacking should be as follows:
+
 
     ```bash
     DemoSystem> ls bin/q/
       l32/
-	  q.q
-	  q.k
+      q.q
+      q.k
       README.md
       README.txt
       [...]
@@ -103,12 +102,11 @@ Second option is to use q that is already installed in the system and available 
 
     On Windows, use the `dir` command.
 
+    > :heavy_exclamation_mark: Note:
 
-> :heavy_exclamation_mark: Note:
+    > Alternatively use own, pre-installed `q` executable that is available on the `PATH` with `QHOME` pointing to `q`     installation location.
 
-> Alternatively use own, pre-installed `q` executable that available on the `PATH` with `QHOME` pointing to `q` installation location.
 
-	
 1. Create link to configuration for LessonXX
   
     ```bash
@@ -200,8 +198,6 @@ Common installation problems with solutions for [linux](Troubleshooting_linux.md
     ```
     
     On Windows, use the `dir` command.
-    
-![Overview](../doc/img/Slide6.PNG)
 
 <!--------------------------------------------------------------------------------------------------------------------->
 
@@ -215,16 +211,17 @@ stopped.
 
 > :heavy_exclamation_mark: Note:
 
-> Make sure that system is really stopped before deleting these directories, otherwise yak will lose its connection details resulting in error described in [Issue 4](../tutorial/Troubleshooting_linux.md#issue-4---startup-failed-address-already-in-use).
+> Make sure that system is really stopped before deleting these directories, otherwise yak will lose its connection details resulting in 
+error described in [Issue 4](../tutorial/Troubleshooting_linux.md#issue-4---startup-failed-address-already-in-use).
 
 1. Stop the system
 
     ```bash
     DemoSystem> yak stop \*
       Stopping components...
-        core.gen                      	OK
-        core.tick                     	OK
-        core.rdb                      	OK
+        core.gen                        OK
+        core.tick                       OK
+        core.rdb                        OK
     ```
         
 1. Remove link to configuration for LessonXX
@@ -260,9 +257,9 @@ stopped.
     ```bash
     DemoSystem> yak start \*
       Starting components...
-        core.gen                      	OK
-        core.tick                     	OK
-        core.rdb                      	OK
+        core.gen                        OK
+        core.tick                       OK
+        core.rdb                        OK
     ```
 
 <!--------------------------------------------------------------------------------------------------------------------->

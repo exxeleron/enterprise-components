@@ -144,7 +144,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   if[a~`eod;`a`t`s`d set' (a;t;s;d)];
   ts:.sl.zp[];
   //1. validate action
-  if[not a in .dist.actionList; .log.warn[`dist]"unknown action `",string[a]];
+  if[not a in .dist.actionList; .log.warn[`dist]"unknown action `",string[a], ". Only actions: ", .Q.s1[.dist.actionList] , " are supported."];
   action:(a;t;s;d);
   action[0]:.dist.actions[a;`ipc];
   //2. journal action
@@ -166,7 +166,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 .dist.pubBundle:{[actions]
   ts:.sl.zp[];
   //1. validate all actions
-  if[not all actions[;0] in .dist.actionList; .log.warn[`dist]"unknown actions `",.Q.s1[actions[;0]]];
+  if[not all actions[;0] in .dist.actionList; .log.warn[`dist]"unknown actions `",.Q.s1[actions[;0]], ". Only actions: ", .Q.s1[.dist.actionList] , " are supported."];
   act:actions[;0];
   actions[;0]:.dist.actions[act;`ipc];
   //2. journal all actions

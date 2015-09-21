@@ -1,0 +1,4 @@
+[group]
+  cfg.rootTestDataDir = <type(PATH)>
+  cfg.testRunner = <type(SYMBOL), default(t.run)>
+  cfg.exportFile = <type(SYMBOL), default(test.result)>

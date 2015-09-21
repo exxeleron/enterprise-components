@@ -81,7 +81,17 @@ Execute tests:
 ```
 
 #### Test results
-Test result can be accessed via `.test.report[]` on the `t.run` component once the tests are completed:
+
+A quick way to see see if the tests have passed is to look at the end of the `t.run` process log.
+A line similar to the following
+
+```
+INFO  2015.09.11 08:23:43.521 qtest - component qtest initialized with 0 fatals, 0 errors, 0 warnings
+```
+
+indicates that all tests have been successful.
+
+More detailed test results can be accessed via `.test.report[]` on the `t.run` component:
 ```q
 q).test.report[]
 ```
@@ -99,7 +109,7 @@ which is commonly supported by continuous integration systems (for example Jenki
 Generation of the report is triggered by adding command line argument `-JUnitExport XML_REPORT_PATH` to the yak command (see below for an example).
 It activates generation of the xml report at the end of `.test.run` function.
 
-Another command line argument which is useful for test automation is `-runAndQuit` 
+Another command line argument which is useful for test automation is `-quitAfterRun` 
 which triggers termination of the test runner process at the end of `.test.run` function.
 
 Example of commands to execute tests in the ci environment:
@@ -108,7 +118,7 @@ Example of commands to execute tests in the ci environment:
 # 2. source environment
 > source etc/env.sh
 # 3. start tests with proper command line arguments (assuming $WORKSPACE is pointing to the current workspace dir) 
-> yak console t.run -a "-JUnitExport $WORKSPACE/report.xml -runAndQuit"
+> yak console t.run -a "-JUnitExport $WORKSPACE/report.xml -quitAfterRun"
 # 4. use report.xml as the result of the test
 ```
 

@@ -56,7 +56,8 @@
 /F/ Replay the data for one dist directory
 /P/ subDetail - triple (directory with journals; last journal that should be replayed; number of messages that should be replayed from last journal)
 .sub.dist.replayTab:{[subDetail]
-  .event.at[`sub;`.Q.gc;();`;`info`info`error;"garbage collection"];
+  .log.debug[`sub] "Garbage collection";
+  .pe.atLog[`sub;`.Q.gc;();`;`error];
   .event.dot[`sub;`.sub.dist.replayDirData;subDetail;();`info`info`error;"replaying the data from journals from dist ",.Q.s1[subDetail]];
   };
 

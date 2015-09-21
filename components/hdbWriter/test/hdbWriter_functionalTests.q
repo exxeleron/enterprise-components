@@ -16,37 +16,23 @@
 /V/ 3.0
 
 // Functional tests of the hdbWriter component
-
-//Executing tests (assuming ec is deployed in the bin direcotory):
-// - prepare env on linux:
-//   KdbSystemDir> source bin/ec/components/hdbWriter/test/etc/env.sh
-// - prepare env on windows:
-//   KdbSystemDir> bin\ec\components\hdbWriter\test\etc\env.bat
-// - start tests:
-//   KdbSystemDir> yak start t.run
-// - check progress:
-//   KdbSystemDir> yak log t.run
-// - inspect results:
-//   inspect .test.report[] on the t.run once the tests are completed
+// See README.md for details
 
 //----------------------------------------------------------------------------//
-//                           hdbWriter fixture                                //
-//----------------------------------------------------------------------------//
+.testHdbWriter.testSuite:"hdbWriter functional tests";
+
 .testHdbWriter.setUp:{
-  .test.start[`t.hdbw`t.hdb];
-  .test.mock[`hdbw; .test.h[`t.hdbw]];
-  .test.mock[`hdbwp; .test.hp[`t.hdbw]];
-  .test.mock[`hdb; .test.h[`t.hdb]];
+  .test.start[`t0.hdbw`t0.hdbMock];
+  .test.mock[`hdbw; .test.h[`t0.hdbw]];
+  .test.mock[`hdbwp; .test.hp[`t0.hdbw]];
+  .test.mock[`hdb; .test.h[`t0.hdbMock]];
   };
 
-//----------------------------------------------------------------------------//
 .testHdbWriter.tearDown:{
-  .test.stop `t.hdbw`t.hdb;
-  .test.clearProcDir `t.hdbw`t.hdb;
+  .test.stop `t0.hdbw`t0.hdbMock;
+  .test.clearProcDir `t0.hdbw`t0.hdbMock;
   };
 
-//----------------------------------------------------------------------------//
-//                         helper functions                                   //
 //----------------------------------------------------------------------------//
 .testHdbWriter.genTrade:{[cnt;day]
   ([]date:day; time:`time$til cnt; sym:cnt#`aaa`bbb;price:`float$til cnt; size:til cnt)
@@ -57,10 +43,7 @@
   };
 
 //----------------------------------------------------------------------------//
-//                           hdbWriter tests                                  //
-//----------------------------------------------------------------------------//
-.testHdbWriter.testSuite:"hdbWriter functional tests";
-
+//                               test hdbWriter                               //
 //----------------------------------------------------------------------------//
 .testHdbWriter.test.smokeTest_insertTradeDay:{[]
   tradeChunk:.testHdbWriter.genTrade[10;2014.01.01];
@@ -196,7 +179,7 @@
   iRes:hdbw(`.hdbw.insert;`trade;tradeChunk);
 
   //error during finalization
-  .assert.remoteFail["finalize[] without organize[]"; `t.hdbw;(`.hdbw.finalize;`ALL;`ALL);
+  .assert.remoteFail["finalize[] without organize[]"; `t0.hdbw;(`.hdbw.finalize;`ALL;`ALL);
     `$"not all tmpHdb partitions are sorted, make sure to call .hdbw.organize[] before using .hdbw.finalize[]"];
   };
 
@@ -220,30 +203,30 @@
 //----------------------------------------------------------------------------//
 .testHdbWriter.test.invalidArgs_insertWithInvalidTabName:{[]
   tradeChunk:.testHdbWriter.genTrade[10;2014.01.01];
-  .assert.remoteFail["invalid type of tabName"; `t.hdbw; (`.hdbw.insert;"trade";tradeChunk); `$"invalid tabName type (10h), should be SYMBOL type (-11h)"];
-  .assert.remoteFail["unknown tabName"; `t.hdbw; (`.hdbw.insert;`tradeX;tradeChunk); `$"unknown tabName `tradeX, should be one of `quote`trade"];
+  .assert.remoteFail["invalid type of tabName"; `t0.hdbw; (`.hdbw.insert;"trade";tradeChunk); `$"invalid tabName type (10h), should be SYMBOL type (-11h)"];
+  .assert.remoteFail["unknown tabName"; `t0.hdbw; (`.hdbw.insert;`tradeX;tradeChunk); `$"unknown tabName `tradeX, should be one of `quote`trade"];
   };
 
 //----------------------------------------------------------------------------//
 .testHdbWriter.test.invalidArgs_insertWithNonTabFormat:{[]
   tradeChunk:.testHdbWriter.genTrade[10;2014.01.01];
-  .assert.remoteFail["data as keyed table"; `t.hdbw; (`.hdbw.insert;`trade;1!tradeChunk); `$"invalid data type (99h), should be TABLE type (98h) or LIST (0h)"];
+  .assert.remoteFail["data as keyed table"; `t0.hdbw; (`.hdbw.insert;`trade;1!tradeChunk); `$"invalid data type (99h), should be TABLE type (98h) or LIST (0h)"];
   };
 
 //----------------------------------------------------------------------------//
 .testHdbWriter.test.invalidArgs_insertWithInvalidModel:{[]
   properChunk:.testHdbWriter.genTrade[10;2014.01.01];
 
-  .assert.remoteFail["too many cols"; `t.hdbw; (`.hdbw.insert;`trade;update src:`rtr, srcTs:.z.p from properChunk);
+  .assert.remoteFail["too many cols"; `t0.hdbw; (`.hdbw.insert;`trade;update src:`rtr, srcTs:.z.p from properChunk);
     `$"model: col5 \"src(SYMBOL)\" is unexpected, expected model - date(DATE),time(TIME),sym(SYMBOL),price(FLOAT),size(LONG)"];
 
-  .assert.remoteFail["missing cols"; `t.hdbw; (`.hdbw.insert;`trade;delete size from properChunk);
+  .assert.remoteFail["missing cols"; `t0.hdbw; (`.hdbw.insert;`trade;delete size from properChunk);
     `$"model: col4 \"size(LONG)\" is missing, expected model - date(DATE),time(TIME),sym(SYMBOL),price(FLOAT),size(LONG)"];
 
-  .assert.remoteFail["invalid cols types"; `t.hdbw; (`.hdbw.insert;`trade;update time:.z.p, `int$price from properChunk);
+  .assert.remoteFail["invalid cols types"; `t0.hdbw; (`.hdbw.insert;`trade;update time:.z.p, `int$price from properChunk);
     `$"model: col1 \"time(TIMESTAMP)\" should be \"time(TIME)\", expected model - date(DATE),time(TIME),sym(SYMBOL),price(FLOAT),size(LONG)"];
 
-  .assert.remoteFail["invalid cols order"; `t.hdbw; (`.hdbw.insert;`trade;`date`time`sym`size`price xcols properChunk);
+  .assert.remoteFail["invalid cols order"; `t0.hdbw; (`.hdbw.insert;`trade;`date`time`sym`size`price xcols properChunk);
     `$"model: col3 \"size(LONG)\" should be \"price(FLOAT)\", expected model - date(DATE),time(TIME),sym(SYMBOL),price(FLOAT),size(LONG)"];
   };
 

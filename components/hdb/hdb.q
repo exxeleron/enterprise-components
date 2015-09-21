@@ -55,10 +55,10 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 /R/ SYMBOL - error msg or empty symbol
 .hdb.p.checkErr:{[tab] @[{count value x;`};tab;`$] };
 
-/F/ Check table format - one of `PARITIONED`SPLAYED`INMEM
+/F/ Check table format - one of `PARTITIONED`SPLAYED`INMEM
 /P/ tab:SYMBOL - table name
-/R/ SYMBOL - `PARITIONED`SPLAYED or `INMEM
-.hdb.p.format:{((1b;0b;0)!`PARITIONED`SPLAYED`INMEM).Q.qp value x};
+/R/ SYMBOL - `PARTITIONED`SPLAYED or `INMEM
+.hdb.p.format:{((1b;0b;0)!`PARTITIONED`SPLAYED`INMEM).Q.qp value x};
 
 /F/ Total rows count of the table
 /P/ tab:SYMBOL - table name
@@ -69,7 +69,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 /R/ table with following columns:
 /R/ (start code)
 /R/ tab:SYMBOL          - table name
-/R/ format:SYMBOL       - format of the table - one of PARITIONED`SPLAYED`INMEM
+/R/ format:SYMBOL       - format of the table - one of PARTITIONED`SPLAYED`INMEM
 /R/ rowsCnt:LONG        - total rows count of the table, null in case of error
 /R/ err:SYMBOL          - error in case table wasn't loaded properly
 /R/ columns:SYMBOL LIST - list of columns in the table
@@ -85,7 +85,10 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 /R/ [tabName]:LONG      - Count of the table within the partition. One column for each partitioned table.
 /R/ (end)
 /E/ .hdb.statusByPar[]
-.hdb.statusByPar:{[]flip {$[count[x];x;0N]}each((.Q.pf;`parDir)!(.Q.PV;.Q.PD)),.Q.pn};
+.hdb.statusByPar:{[]
+  if[not `pf in key `.Q;:([]parDir:`symbol$())];
+  flip {$[count[x];x;0N]}each((.Q.pf;`parDir)!(.Q.PV;.Q.PD)),.Q.pn
+  };
 
 /F/ Retrieve statistics about the data volumes in hdb. Statistics are based on hourly aggregation. Please note that
 /F/ - If there is a "time" column, it will be used for the aggregation.
@@ -105,26 +108,31 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 /R/ dailyMedRowsPerSec:LONG - number of rows within an hour (or in the whole day if there was no "time" column)
 /R/ (end)
 .hdb.dataVolumeHourly:{[tab;day]
-    chunkSize:5000000j;
-    if[`time in cols[tab]; // hourly statistics
-        //day of data will be divided into number of chunks with size up to 5mio rows
-        chunks:ceiling (exec first cnt from select cnt:count i from tab where date=day)%chunkSize;
-        //statistics calculated for each chunk independly -> in order to limit mem usage
-        res0:{[tab;day;chunkSize;x]`time xkey select cnt:`long$count i by time:`time$time.second from tab where date=day, i within (x*chunkSize)+(0;chunkSize-1)}[tab;day;chunkSize]each til chunks;
-        if[0=count res0;res0:enlist ([time:`time$()]cnt:`long$())];
-        //aggregation of statistics from chunks
-        res1:1!`time xasc (asc distinct raze key each res0) pj/ res0;
-        res2:`time xasc ([]time:`time$1000*til 60*60*24; hdbDate:day)lj res1;
-        dailyMed:`long$first exec med cnt from res2;
-        :`hdbDate`hour`table xcols 0!select table:tab,
-        totalRowsCnt:`long$sum cnt, minRowsPerSec:`long$min cnt, avgRowsPerSec:`long$avg cnt, medRowsPerSec:`long$med cnt, maxRowsPerSec:`long$max cnt, dailyMedRowsPerSec:dailyMed
-        by hdbDate, hour:`time$`minute$60*time.hh from res2;
-        ];
- 
-    //daily statistics
-    cnt:count ?[tab;enlist(=;`date;day);0b;(enlist `x)!enlist `i]; // select from tab where date=day
-    : `hdbDate`hour`table xcols ([] table:enlist tab; totalRowsCnt:enlist `long$cnt; minRowsPerSec:enlist 0Nj; avgRowsPerSec:enlist 0Nj; medRowsPerSec:enlist 0Nj; maxRowsPerSec:enlist 0Nj; hdbDate:enlist day; hour:enlist 0Nt; dailyMedRowsPerSec:enlist 0Nj);
-    };
+  if[not -11h=type tab;
+    '"invalid tab type (",.Q.s1[type tab],"), should be SYMBOL type (-11h)";
+    ];
+  if[not -14h=type day;
+    '"invalid day type (",.Q.s1[type day],"), should be DATE type (-14h)";
+    ];
+  chunkSize:5000000j;
+  if[`time in cols[tab]; // hourly statistics
+    //day of data will be divided into number of chunks with size up to 5mio rows
+    chunks:ceiling (exec first cnt from select cnt:count i from tab where date=day)%chunkSize;
+    //statistics calculated for each chunk independly -> in order to limit mem usage
+    res0:{[tab;day;chunkSize;x]`time xkey select cnt:`long$count i by time:`time$time.second from tab where date=day, i within (x*chunkSize)+(0;chunkSize-1)}[tab;day;chunkSize]each til chunks;
+    if[0=count res0;res0:enlist ([time:`time$()]cnt:`long$())];
+    //aggregation of statistics from chunks
+    res1:1!`time xasc (asc distinct raze key each res0) pj/ res0;
+    res2:`time xasc ([]time:`time$1000*til 60*60*24; hdbDate:day)lj res1;
+    dailyMed:`long$first exec med cnt from res2;
+    :`hdbDate`hour`table xcols 0!select table:tab,
+    totalRowsCnt:`long$sum cnt, minRowsPerSec:`long$min cnt, avgRowsPerSec:`long$avg cnt, medRowsPerSec:`long$med cnt, maxRowsPerSec:`long$max cnt, dailyMedRowsPerSec:dailyMed
+    by hdbDate, hour:`time$`minute$60*time.hh from res2;
+    ];
+  //daily statistics
+  cnt:count ?[tab;enlist(=;`date;day);0b;(enlist `x)!enlist `i]; // select from tab where date=day
+  : `hdbDate`hour`table xcols ([] table:enlist tab; totalRowsCnt:enlist `long$cnt; minRowsPerSec:enlist 0Nj; avgRowsPerSec:enlist 0Nj; medRowsPerSec:enlist 0Nj; maxRowsPerSec:enlist 0Nj; hdbDate:enlist day; hour:enlist 0Nt; dailyMedRowsPerSec:enlist 0Nj);
+  };
 
 /------------------------------------------------------------------------------/
 /F/ initialization and reload

@@ -402,11 +402,11 @@
     (delete time from .tst.trace[`.monitor.pub][0;1]) mustmatch `sym`module`eventLevel xcol flip enlist each eventBase,`status`progress`timeLeft!(`EVENT_COMPLETED;100;00:00:00.000);
     };
   should["backup event file - .monitor.p.backupEvent[]"]{
-    .tst.mockFunc[`.q.system;1;""];
+    .tst.mockFunc[`.os.move;2;""];
     .tst.loadLib[`monitor.q];
     .monitor.p.backupEvent[eventDir:"test/data/";file:`event.started; backupDir:"test/data/archive/"];
     get[`:test/data/archive/lastEvent] mustmatch `event.started;
-    last[.tst.trace[`.q.system]] mustmatch "mv test/data/event.started test/data/archive/";
+    last[.tst.trace[`.os.move]] mustmatch ("test/data/event.started";"test/data/archive/");
     };
   };
 

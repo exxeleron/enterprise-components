@@ -73,7 +73,7 @@
   .event.at[module;initFunc;arg;`;`info`info`fatal;"initializing ",string[module]," component"];
   .auth.init[];
 
-  .event.at[`sub;`.sub.readCfg;();();`debug`info`error;"Reading subscription configuration for dist server"];
+  .event.at[`sub;`.sub.readCfg;();();`debug`info`error;"Reading subscription configuration"];
   if[.sub.cfg.autoSubscribe;
     .event.at[`sub;`.sub.init;.sub.cfg.subCfg;();`debug`info`error;"Auto initialization of subscription basing on dataflow configuration"];
     .event.at[`sub;`.sub.hopenSrc;`;();`debug`info`error;"Auto initialization of connection to subscription sources basing on dataflow configuration"];

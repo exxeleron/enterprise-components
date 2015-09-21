@@ -14,8 +14,8 @@ REM ---- ec enviroment ----
 SET EC_QSL_PATH=%EC_SYS_PATH%/bin/ec/libraries/qsl/
 SET EC_ETC_PATH=%EC_SYS_PATH%/bin/ec/libraries/qsl/test/tabs/etc/
 
-SET EC_SYS_ID="qslTabsTest"
-SET EC_SYS_TYPE="FUNC_TEST"
+SET EC_SYS_ID=qslTabsTest
+SET EC_SYS_TYPE=FUNC_TEST
 
 REM ---- yak enviroment ----
 SET YAK_PATH=%EC_SYS_PATH%\bin\yak

@@ -53,6 +53,8 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
     hsym[JUnitExport] 0: "\n" vs .test.toXml .test.res;
     ];
 
+  .test.cfg.exportFile set .test.report[];
+
   if[.test.cfg.quitAfterRun;
     exit count rep[`testCasesFailed]
     ];
@@ -214,10 +216,18 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 
 /==============================================================================/
 .sl.main:{[flags]
+  .test.cfg.zx:.Q.opt[.z.x];
+
   .test.cfg.testFiles:.cr.getCfgField[`THIS;`group;`testFiles];
   .test.cfg.testNamespaces:.cr.getCfgField[`THIS;`group;`testNamespaces];
+
   .test.cfg.JUnitExportPath:.cr.getCfgField[`THIS;`group;`JUnitExportPath];
+  if[`JUnitExportPath in key .test.cfg.zx;.test.cfg.JUnitExportPath:.test.cfg.zx[`JUnitExportPath]];
+
   .test.cfg.quitAfterRun:.cr.getCfgField[`THIS;`group;`quitAfterRun];
+  if[`quitAfterRun in key .test.cfg.zx;.test.cfg.quitAfterRun:1b];
+  
+  .test.cfg.exportFile:.cr.getCfgField[`THIS;`group;`exportFile];
   
   .test.cfg.processManager:.cr.getCfgField[`THIS;`group;`processManager];
   
@@ -229,9 +239,12 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 
   .qtest.loadTestFiles .test.cfg.testFiles;
 
-  potentialTestCase:$[count .z.x;`$first .z.x;`];
-  execOne:any potentialTestCase like/: .test.cfg.testNamespaces,\:"*";
-  $[execOne;.test.runOneTest potentialTestCase;.qtest.runAll[`$.test.cfg.testNamespaces]]
+  if[`testCase in key .test.cfg.zx;
+    testCase:.test.cfg.zx[`testCase];
+    :.test.runOneTest testCase;
+    ];
+
+  :.qtest.runAll[`$.test.cfg.testNamespaces];
   };
 
 /------------------------------------------------------------------------------/
