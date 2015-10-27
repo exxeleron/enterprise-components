@@ -101,6 +101,24 @@
   .os.system["move"] "move /y ",source," ",target;
   };
 
+/F/ creates symbolic link - Linux version
+/P/ target:STRING - the source directory
+/P/ linkName:STRING - name of the link
+.os.p.L.mklink:{[target;linkName]
+  target:.os.p.fixPath target;
+  .os.system["link"] "ln -s ",(.os.p.q target), " ", linkName;
+  };
+
+/F/ creates symbolic link  - Windows version
+/P/ target:STRING - the source directory
+/P/ linkName:STRING - name of link - directory which should be created
+.os.p.W.mklink:{[target;linkName]
+  target:.os.remSlash .os.p.fixPath target;
+  linkName:.os.remSlash .os.p.fixPath linkName;
+  .os.system["link"] "mklink /J  ",(.os.p.q linkName), " ",.os.p.q target;
+  };
+  
+
 /F/ finds old files - Linux version
 /P/ dir:SYMBOL - directory to look into
 /P/ age:LONG - age of the files in days
@@ -231,6 +249,11 @@
 /F/ sleeps given number of milliseconds. On Windows, the resolution is 1000ms (1s)
 /P/ t:LONG - time in millisecods. On Windows, this parameter is rounded UP to the nearest multiple of 1000.
 .os.sleep:{[t] };
+
+/F/ creates symbolic link  
+/P/ target:STRING - source directry, 
+/P/ linkName:STRING - name of the link
+.os.mklink:{[target;linkName]};
 
 /--- initialization
 $["w"~first string .z.o;.os,:.os.p.W;.os,:.os.p.L];
