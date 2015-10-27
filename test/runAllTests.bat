@@ -31,6 +31,37 @@ CD %EC_ROOT_PATH%
 CALL bin\ec\components\hdbWriter\test\etc\env.bat
 yak console t.run -a " -quitAfterRun"
 
+REM ---- Lesson1 tests ------------------------------------------------------
+CD %EC_ROOT_PATH%
+CALL bin\ec\test\tutorialTest\etc\env.bat
+yak console t.run1 -a " -quitAfterRun"
+
+REM ---- Lesson2 tests ------------------------------------------------------
+CD %EC_ROOT_PATH%
+CALL bin\ec\test\tutorialTest\etc\env.bat
+yak console t.run1 -a " -quitAfterRun"
+
+REM ---- Lesson2 tests ------------------------------------------------------
+CD %EC_ROOT_PATH%
+CALL bin\ec\test\tutorialTest\etc\env.bat
+yak console t.run2 -a " -quitAfterRun"
+
+REM ---- Lesson3 tests ------------------------------------------------------
+CD %EC_ROOT_PATH%
+CALL bin\ec\test\tutorialTest\etc\env.bat
+yak console t.run3 -a " -quitAfterRun"
+
+REM ---- Lesson4 tests ------------------------------------------------------
+CD %EC_ROOT_PATH%
+CALL bin\ec\test\tutorialTest\etc\env.bat
+yak console t.run4 -a " -quitAfterRun"
+
+REM ---- Lesson5 tests ------------------------------------------------------
+CD %EC_ROOT_PATH%
+CALL bin\ec\test\tutorialTest\etc\env.bat
+yak console t.run5 -a " -quitAfterRun"
+
+
 REM ---- collect test results -------------------------------------------------
 CD %EC_ROOT_PATH%
 CALL bin\ec\test\collectTestResults\etc\env.bat

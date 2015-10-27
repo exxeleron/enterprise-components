@@ -31,6 +31,31 @@ cd ${EC_ROOT_PATH}
 source bin/ec/components/hdbWriter/test/etc/env.sh
 yak console t.run -a " -quitAfterRun"
 
+# ------ Lesson1 tests ---------------------------------------------------- #
+cd ${EC_ROOT_PATH}
+source bin/ec/test/tutorialTest/etc/env.sh
+yak console t.run1 -a " -quitAfterRun"
+
+# ------ Lesson2 tests ---------------------------------------------------- #
+cd ${EC_ROOT_PATH}
+source bin/ec/test/tutorialTest/etc/env.sh
+yak console t.run2 -a " -quitAfterRun"
+
+# ------ Lesson3 tests ---------------------------------------------------- #
+cd ${EC_ROOT_PATH}
+source bin/ec/test/tutorialTest/etc/env.sh
+yak console t.run3 -a " -quitAfterRun"
+
+# ------ Lesson4 tests ---------------------------------------------------- #
+cd ${EC_ROOT_PATH}
+source bin/ec/test/tutorialTest/etc/env.sh
+yak console t.run4 -a " -quitAfterRun"
+
+# ------ Lesson5 tests ---------------------------------------------------- #
+cd ${EC_ROOT_PATH}
+source bin/ec/test/tutorialTest/etc/env.sh
+yak console t.run5 -a " -quitAfterRun"
+
 # ------ collect test results ----------------------------------------------- #
 cd ${EC_ROOT_PATH}
 source bin/ec/test/collectTestResults/etc/env.sh
