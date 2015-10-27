@@ -115,12 +115,13 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 //----------------------------------------------------------------------------//
 //                              remote execution                              //
 //----------------------------------------------------------------------------//
-.test.start:{[procNames]
-  procNames:(),procNames;
+.test.start:{[proc]
+  procNames:(),$[99h = type proc; key proc;proc];
   startCmd:.test.cfg.processManager," start ";
   system startCmd," " sv string procNames;
-  .hnd.hopen[procNames;5000i;`eager];
+  .hnd.hopen[proc;5000i;`eager];
   };
+
 
 //----------------------------------------------------------------------------//
 //procNames:`t.run`t.mon
