@@ -29,7 +29,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 /------------------------------------------------------------------------------/
 .test.collect:{[]
   testDirs:.Q.dd[.test.cfg.rootTestDataDir]each  key[.test.cfg.rootTestDataDir];
-  resultFiles:raze key each .Q.dd[;`$string[.test.cfg.testRunner],"/",string[.test.cfg.exportFile]] each testDirs;
+  resultFiles:raze {.Q.dd[x] each `$(f where (f:string key x) like (string[.test.cfg.testRunner]), "*"),\: "/",string[.test.cfg.exportFile]} each testDirs;
   .test.totalResult:get each resultFiles;
 
   suiteFail:exec distinct testSuite from .test.report[][`testCases] where not result=`SUCCESS;
