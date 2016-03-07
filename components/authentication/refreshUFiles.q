@@ -1,28 +1,25 @@
 /L/ Copyright (c) 2011-2014 Exxeleron GmbH
-/L/
-/L/ Licensed under the Apache License, Version 2.0 (the "License");
-/L/ you may not use this file except in compliance with the License.
-/L/ You may obtain a copy of the License at
-/L/
-/L/   http://www.apache.org/licenses/LICENSE-2.0
-/L/
-/L/ Unless required by applicable law or agreed to in writing, software
-/L/ distributed under the License is distributed on an "AS IS" BASIS,
-/L/ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-/L/ See the License for the specific language governing permissions and
-/L/ limitations under the License.
+/-/
+/-/ Licensed under the Apache License, Version 2.0 (the "License");
+/-/ you may not use this file except in compliance with the License.
+/-/ You may obtain a copy of the License at
+/-/
+/-/   http://www.apache.org/licenses/LICENSE-2.0
+/-/
+/-/ Unless required by applicable law or agreed to in writing, software
+/-/ distributed under the License is distributed on an "AS IS" BASIS,
+/-/ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+/-/ See the License for the specific language governing permissions and
+/-/ limitations under the License.
 
 /V/ 3.0
 
 /S/ Refresh permissions component:
-/S/ Responsible for:
-/S/ - regeneration of user access files (used with -u/-U options)
-/S/.
-/S/ Notes:
-/S/ - this script generates one file for each component with permitted users information taken from access.cfg file.
-/S/ - files are generated in cfg.userTxtPath specified directory.
-
-/T/ yak start refreshPerm
+/-/ Responsible for:
+/-/ - regeneration of user access files (used with -u/-U options)
+/-/ Notes:
+/-/ - this script generates one file for each component with permitted users information taken from access.cfg file.
+/-/ - files are generated in cfg.userTxtPath specified directory.
 
 /------------------------------------------------------------------------------/
 /                               lib and etc                                    /
@@ -32,14 +29,17 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 .sl.lib["cfgRdr/cfgRdr"];
 
 /------------------------------------------------------------------------------/
-
-/F/ Initialization function
-.sl.main:{
+/F/ Component initialization entry point.
+/P/ flags:LIST - nyi
+/R/ no return value
+/E/ .sl.main`
+.sl.main:{[flags]
   .cr.loadCfg[`ALL];
   .ru.p.init[];
   exit[0];
   };
 
+/------------------------------------------------------------------------------/
 .ru.p.init:{[params]
   // define users
   .log.info[`ru] "Refreshing user access files...";
@@ -76,6 +76,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
  path 0:1_":" 0:users;
  };
 
+/------------------------------------------------------------------------------/
 .ru.p.verify:{[umatched]
   / check user count per process vs count per distinct u file
   perproc:select pucnt:count i by procname, uFile  from umatched;

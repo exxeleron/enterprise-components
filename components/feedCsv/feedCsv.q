@@ -1,60 +1,61 @@
 /L/ Copyright (c) 2011-2014 Exxeleron GmbH
-/L/
-/L/ Licensed under the Apache License, Version 2.0 (the "License");
-/L/ you may not use this file except in compliance with the License.
-/L/ You may obtain a copy of the License at
-/L/
-/L/   http://www.apache.org/licenses/LICENSE-2.0
-/L/
-/L/ Unless required by applicable law or agreed to in writing, software
-/L/ distributed under the License is distributed on an "AS IS" BASIS,
-/L/ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-/L/ See the License for the specific language governing permissions and
-/L/ limitations under the License.
+/-/
+/-/ Licensed under the Apache License, Version 2.0 (the "License");
+/-/ you may not use this file except in compliance with the License.
+/-/ You may obtain a copy of the License at
+/-/
+/-/   http://www.apache.org/licenses/LICENSE-2.0
+/-/
+/-/ Unless required by applicable law or agreed to in writing, software
+/-/ distributed under the License is distributed on an "AS IS" BASIS,
+/-/ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+/-/ See the License for the specific language governing permissions and
+/-/ limitations under the License.
 
 /A/ DEVnet: Joanna Jarmulska
 /V/ 3.0
-/S/ Csv feed component:
-/S/ Responsible for:
-/S/ - providing fully customizable and configurable CSV file parser
-/S/ - enabling automatic detection of CSV input files in specified locations, matching predefined pattern of the file names
-/S/ - shielding system from corrupted data sets
-/S/ - publishing parsed files to the TickerPlant in tickLF (<tickLF.q>) or tickHF (<tickHF.q>) protocol
-/S/ - archiving processed files (optionally)
-/S/ - parsing pending files - helpful when destination server is inactive and parsed files are marked as pending; in this case reconnecting procedure will try to establish new connection - after it's done pending files will be automatically processed
-/S/ Note:
-/S/ Depending on which component is triggered (*<.tickLF.pubUpd>* or *<.tickLF.pubImg>*), each file name should be preceded by either *upd* or *img* respectively. For example: YYYY.DD.MM.*upd*.table.csv, YYYY.DD.MM.*img*.table.csv.
-/S/ Defining custom plugins:
-/S/ Signature for plugin for data enrichment, returns TABLE
-/S/ (start code)
-/S/ .fcsv.plug.enrich[table(SYMBOL)][data(TABLE);fileName(SYMBOL)]
-/S/ (end)
-/S/ Example
-/S/ (start code)
-/S/ .fcsv.plug.enrich[`universe]:{[data;file] update time:file from data}
-/S/ (end)
-/S/ Signature for plugin for data validation, returns signal in case of failed validation
-/S/ (start code)
-/S/ .fcsv.plug.validate[tableName(SYMBOL)][data(TABLE);fileName(SYMBOL)]
-/S/ (end)
-/S/ Example
-/S/ (start code)
-/S/ .fcsv.plug.validate[`universe]:{[data;file] if[not meta[data]~meta universe;'failed]}
-/S/ (end)
 
-/T/ FeedCsv library doesn't contain any default protocol to publish parsed files, therefore feedCsv component should be started using following modes
-/T/ - mode compatible with *tickLF* protocol
-/T/ (start code)
-/T/ q feedCsv.q -lib tickLFPublisher.q -p 5001
-/T/ (end)
-/T/ - mode compatible with *tickHF* protocol
-/T/ (start code)
-/T/ q feedCsv.q -lib tickHFPublisher.q -p 5001
-/T/ (end)
-/T/ - example of startup command with *plugins*
-/T/ (start code)
-/T/ q feedCsv.q -lib tickHFPublisher.q plugins/feedCsvPlugin.q -p 5001
-/T/ (end)
+/S/ Csv feed component:
+/-/ Responsible for:
+/-/ - providing fully customizable and configurable CSV file parser
+/-/ - enabling automatic detection of CSV input files in specified locations, matching predefined pattern of the file names
+/-/ - shielding system from corrupted data sets
+/-/ - publishing parsed files to the TickerPlant in tickLF (<tickLF.q>) or tickHF (<tickHF.q>) protocol
+/-/ - archiving processed files (optionally)
+/-/ - parsing pending files - helpful when destination server is inactive and parsed files are marked as pending; in this case reconnecting procedure will try to establish new connection - after it's done pending files will be automatically processed
+/-/ Note:
+/-/ Depending on which component is triggered (*<.tickLF.pubUpd>* or *<.tickLF.pubImg>*), each file name should be preceded by either *upd* or *img* respectively. For example: YYYY.DD.MM.*upd*.table.csv, YYYY.DD.MM.*img*.table.csv.
+/-/ Defining custom plugins:
+/-/ Signature for plugin for data enrichment, returns TABLE
+/-/ (start code)
+/-/ .fcsv.plug.enrich[table(SYMBOL)][data(TABLE);fileName(SYMBOL)]
+/-/ (end)
+/-/ Example
+/-/ (start code)
+/-/ .fcsv.plug.enrich[`universe]:{[data;file] update time:file from data}
+/-/ (end)
+/-/ Signature for plugin for data validation, returns signal in case of failed validation
+/-/ (start code)
+/-/ .fcsv.plug.validate[tableName(SYMBOL)][data(TABLE);fileName(SYMBOL)]
+/-/ (end)
+/-/ Example
+/-/ (start code)
+/-/ .fcsv.plug.validate[`universe]:{[data;file] if[not meta[data]~meta universe;'failed]}
+/-/ (end)
+/-/
+/-/ FeedCsv library doesn't contain any default protocol to publish parsed files, therefore feedCsv component should be started using following modes
+/-/ - mode compatible with *tickLF* protocol
+/-/ (start code)
+/-/ q feedCsv.q -lib tickLFPublisher.q -p 5001
+/-/ (end)
+/-/ - mode compatible with *tickHF* protocol
+/-/ (start code)
+/-/ q feedCsv.q -lib tickHFPublisher.q -p 5001
+/-/ (end)
+/-/ - example of startup command with *plugins*
+/-/ (start code)
+/-/ q feedCsv.q -lib tickHFPublisher.q plugins/feedCsvPlugin.q -p 5001
+/-/ (end)
 
 /------------------------------------------------------------------------------/
 system"l ",getenv[`EC_QSL_PATH],"/sl.q";
@@ -66,28 +67,32 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 .sl.lib["qsl/timer"];
 
 /------------------------------------------------------------------------------/
-/G/ initial definition for data enrichment
+/G/ Dictionary with data enrichment plugins.
 .fcsv.plug.enrich:()!();
-/G/ initial definition for data validation
+
+/G/ Dictionary with data validation plugins.
 .fcsv.plug.validate:()!();
-/G/ list of parsed files (used if cfg.filesMoving:0b)
+
+/G/ List of parsed files (used if cfg.filesMoving:0b).
 .fcsv.parsedFiles:();
-/G/ list of pending files (used if cfg.filesMoving:0b)
+
+/G/ List of pending files (used if cfg.filesMoving:0b).
 .fcsv.pendingFiles:();
 
 /------------------------------------------------------------------------------/
-/F/ main function for files processing that is called on timer
-/F/ - files searching
-/F/ - call .fcsv.processData
-/F/ - files archiving
-/P/ configTable - configuration from .fcsv.cfg.files
-/E/ configTable:.fcsv.cfg.files
-/E/ configTable:([] dir:`:test/tmp/universe`:test/tmp/underlying;
-/E/     pattern:("*universe";"*underlying");
-/E/     destTab:`universe`underlying;
-/E/     fileFormat:("TSD"; "TSS");
-/E/     separator:(";");
-/E/     );
+/F/ Main function for files processing that is called on timer.
+/-/  - files searching
+/-/  - call .fcsv.processData
+/-/  - files archiving
+/P/ configTable:TABLE - configuration from .fcsv.cfg.files
+/-/    -- dir:SYMBOL        - full path to the input directory
+/-/    -- pattern:STRING    - like-style regular expression to find files in the input dir
+/-/    -- destTab:SYMBOL    - destination table name
+/-/    -- fileFormat:STRING - file format in form of type-letters
+/-/    -- separator:CHAR    - fields separator
+/E/ .fcsv.p.processFiles .fcsv.cfg.files
+/E/ .fcsv.p.processFiles  ([] dir:`:test/tmp/universe`:test/tmp/underlying; pattern:("*universe";"*underlying");
+/-/     destTab:`universe`underlying; fileFormat:("TSD"; "TSS");separator:(";"));
 .fcsv.p.processFiles:{[configTable]
     if[not count configTable;
       .log.info[`feedCsv] "Empty configTable - nothing to process.";
@@ -104,8 +109,8 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
     };
 
 /------------------------------------------------------------------------------/
-/F/ move files to archive, corrupted directories
-/E/ info:(toRead;corrupted)
+/F/ Moves files to archive, corrupted directories.
+/E/ .fcsv.p.moveFiles (toRead;corrupted)
 .fcsv.p.moveFiles:{[info]
     {[dir;f].pe.dotLog[`fCsv;`.fcsv.p.storeFiles;(f;`archive;dir;`$string`month$.sl.zd[]);();`warn]}./:
         flip value flip ungroup select dirSrc,ok from info[0] where (0<count'[ok]),(not ok~'`);
@@ -116,8 +121,8 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
     };
 
 /------------------------------------------------------------------------------/
-/F/ update txt file (.fcsv.cfg.parsedFiles) with parsed files
-/E/ info:(toRead;corrupted)
+/F/ Updates txt file (.fcsv.cfg.parsedFiles) with parsed files.
+/E/ .fcsv.p.updateParsedFiles (toRead;corrupted)
 .fcsv.p.updateParsedFiles:{[info]
     ok:exec ok from info[0] where (0<count'[ok]),(not ok~'`);
     corrupted:exec corrupted from info[1] where (0<count'[corrupted]),(not corrupted~'`);
@@ -131,9 +136,8 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
     };
 
 /------------------------------------------------------------------------------/
-/F/ files searching
-/E/ dir:`:test/tmp/underlying
-/E/ pattern:"*underlying"
+/F/ Finds files in the directory matching given pattern
+/E/ .fcsv.p.find[`:test/tmp/underlying;"*underlying"]
 .fcsv.p.find:{[dir;pattern]
     .log.debug[`fCsv] "Searching for files in directory ",string[dir], " that are maching the pattern: ", pattern;
     files:f where(f:key dir) like pattern;
@@ -146,16 +150,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
     };
 
 /------------------------------------------------------------------------------/
-/F/ archive parsed files in directories archive and corrupted, 
-/F/ create directories if they are not existing
-/E/ dir/archive/`month$(.z.d)
-/E/ dir/corrupted/`month$(.z.d)
-/E/ files:files`ok
-/E/ fileType:`archive
-/E/ dir:`:test/tmp/universe
-/E/ archiveDir:`$string`month$.z.d
-/E/ archiveDir:`
-// files:pp 0;fileType:pp 1;dir:pp 2
+/F/ Archives parsed files in directories archive and corrupted, create directories if they are not existing.
 .fcsv.p.storeFiles:{[files;fileType;dir;archiveDir]
     // if file type is pending and it's taken already from pending directory, then do nothing
     if[(`pending~fileType) and dir like "*pending*";:()];
@@ -174,8 +169,8 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
     };
 
 /------------------------------------------------------------------------------/
-/F/ create directory for w*,s*,l*
-/E/ dest:`:test/tmp/universe/archive/2011.10
+/F/ Creates directory for w*,s*,l*.
+/E/ .fcsv.p.createDir `:test/tmp/universe/archive/2011.10
 .fcsv.p.createDir:{[dest]
     if["w"~first string .z.o;
           cmd:"mkdir ", ssr[1_string dest;"/";"\\"];
@@ -190,8 +185,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
     };
 
 /------------------------------------------------------------------------------/
-/F/ files moving for w*,s*,l*
-/E/dest:`:test/tmp/universe/archive
+/F/ Moves files.
 .fcsv.p.moveFile:{[file;dest]
     if["w"~first string .z.o;
           mv:(1_string file), " ", 1_string dest;
@@ -207,7 +201,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
     };
 
 /------------------------------------------------------------------------------/
-/F/ parsing data using (format;enlist separator) 0:file
+/F/ Parses data using (format;enlist separator) 0:file.
 .fcsv.p.parse:{[file;format;separator]
     d:(format;separator) 0:file;
     .log.debug[`fCsv] "Read #data:", string count d;
@@ -218,16 +212,9 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 .fcsv.p.simpleDataTypes[`SYMBOL]:`$"S";
 
 /------------------------------------------------------------------------------/
-/F/ parse, enrich and validate read data
-/F/ - call enrich plugin .fcsv.plug.enrich[destTab;d;file]
-/F/ - call validate plugin .fcsv.plug.validate[destTab;d;file]
-//files0:.fcsv.p.find'[configTable`dirSrc;configTable`pattern];
-//configTable:update ii:i from configTable,'files0;
-//toRead:select from configTable where (0<count'[ok]),(not ok~'`);
-//file:first files:(toRead`ok) 6;config: toRead 6;
-// files:raze (toRead`ok)
-
-//config:first .fcsv.cfg.files
+/F/ Parses, enriches and validates the data
+/-/  - call enrich plugin .fcsv.plug.enrich[destTab;d;file]
+/-/  - call validate plugin .fcsv.plug.validate[destTab;d;file]
 .fcsv.p.read2:{[file;config]
     format:config`fileFormat;separator:config`separator;destTab:config`destTab;headerInFile:config`headerInFile;file2Tab:config`file2Tab;fileModel:config`fileModel;
     .log.info[`fCsv]"Read file: ", string[file],", table: ", string[destTab];
@@ -262,22 +249,18 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
     .fcsv.plug.validate[destTab;d;file]; 
     :d;
    };
-   
-    
 
 /------------------------------------------------------------------------------/
-/F/ data publishing to .fcsv.connName
-/E/ func:`.tp.pubImg
-/E/ table:`universe
-/E/ data:(1 2;1 2; 3 4)
+/F/ Publishes data to .fcsv.connName.
+/E/ .fcsv.p.pub[`.tp.pubImg;`universe;(1 2;1 2; 3 4)]
 .fcsv.p.pub:{[func;table;data]
     .log.info[`fCsv]"Publishing data #count: ", string[count first data],", func: ",string[func], ", table: ", string[table];
     .hnd.h[.fcsv.connName](func;table;data);
     };
 
 /------------------------------------------------------------------------------/
-/F/ setup function that is managing parsed files
-/P/ config - dictionary with flag config`filesMoving (01b)
+/F/ Setups function that is managing parsed files.
+/P/ config:DICT - dictionary with flag config`filesMoving (01b)
 .fcsv.p.setupFilesMoving:{[config]
     if[config`filesMoving;
         .fcsv.p.archiveFiles:.fcsv.p.moveFiles;
@@ -294,17 +277,16 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
     }; 
 
 /------------------------------------------------------------------------------/
-/F/ internal timer function that is calling .fcsv.processFiles
+/F/ Internal timer function that is calling .fcsv.processFiles.
 .fcsv.p.ts:{.fcsv.p.processFiles .fcsv.cfg.files};
 
 /------------------------------------------------------------------------------/
-/F/ initialization
-/F/ - setup enrich,validate plugins
-/F/ - setup timer for files processing
-/F/ - open connection to server that is receiving data
-/P/ config - dictionary with variables from .fcsv.cfg
-/E/ config:.fcsv.cfg
-/E/ .fcsv.p.init[config]
+/F/ FeedCsv initialization.
+/-/ - setup enrich,validate plugins
+/-/ - setup timer for files processing
+/-/ - open connection to server that is receiving data
+/P/ config:DICT - dictionary with variables from .fcsv.cfg
+/E/ .fcsv.p.init .fcsv.cfg
 .fcsv.p.init:{[config]
   .sl.libCmd[];
   tabs:exec distinct destTab from config`files;
@@ -336,16 +318,40 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 /==============================================================================/
-.sl.main:{[flags]
+/F/ Component initialization entry point.
+/P/ flags:LIST - nyi
+/R/ no return value
+/E/ .sl.main`
+.sl.main:{[flags]  
+  /G/ Destination server name, loaded from cfg.serverDst field from system.cfg.
   .fcsv.cfg.serverDst:   .cr.getCfgField[`THIS;`group;`cfg.serverDst];
+  /G/ Connection opening timeout, loaded from cfg.timeout field from system.cfg.
   .fcsv.cfg.timeout:     .cr.getCfgField[`THIS;`group;`cfg.timeout];
+  /G/ New files searching timer frequency, loaded from cfg.timer field from system.cfg.
   .fcsv.cfg.timer:       .cr.getCfgField[`THIS;`group;`cfg.timer];
+  /G/ Flag for files archiving, files can be either moved to archive directory or marked as parsed in cfg.parsedFiles.
+  /-/ Loaded from cfg.parsedFiles field from system.cfg
   .fcsv.cfg.filesMoving: .cr.getCfgField[`THIS;`group;`cfg.filesMoving];
+  /G/ Location of txt file with parsed file, loaded from cfg.parsedFiles field from system.cfg
   .fcsv.cfg.parsedFiles: .cr.getCfgField[`THIS;`group;`cfg.parsedFiles];
+  /G/ Location of txt file with pending file, loaded from cfg.parsedFiles field from system.cfg
   .fcsv.cfg.pendingFiles:.cr.getCfgField[`THIS;`group;`cfg.pendingFiles];
+  /G/ Table with csv loading configuration, based on dataflow.cfg
+  /-/  -- table:SYMBOL         - table name
+  /-/  -- dirSrc:SYMBOL        - full path to the input directory
+  /-/  -- pattern:STRING       - like-style regular expression to find files in the input dir
+  /-/  -- fileFormat:STRING    - file format in form of type-letters
+  /-/  -- separator:CHAR       - fields separator
+  /-/  -- headerInFile:BOOLEAN - flag to indicate if csv file contains header
+  /-/  -- file2tab:BOOLEAN     - mapping for columns in data model and csv file as list of pairs
+  /-/                          column name from data model and column from csv file, if default is used, then order is taken from csv file as it is
+  /-/  -- fileModel:BOOLEAN    - format definition of file as list of pairs: column name and format; 
+  /-/                          if default is used, then order is taken from csv file as it is
   .fcsv.cfg.files:       `destTab xcol 0!.cr.getCfgPivot[`THIS;`table`sysTable;`dirSrc`pattern`fileFormat`separator`headerInFile`file2Tab`fileModel];
   
   t:.cr.getModel[`THIS];
+
+  /G/ Dictionary with data model (tabName -> model)
   .fcsv.cfg.models:t[;0]!t[;1];
   .sl.libCmd[];
 

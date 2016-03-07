@@ -1,93 +1,93 @@
 /L/ Copyright (c) 2011-2014 Exxeleron GmbH
-/L/
-/L/ Licensed under the Apache License, Version 2.0 (the "License");
-/L/ you may not use this file except in compliance with the License.
-/L/ You may obtain a copy of the License at
-/L/
-/L/   http://www.apache.org/licenses/LICENSE-2.0
-/L/
-/L/ Unless required by applicable law or agreed to in writing, software
-/L/ distributed under the License is distributed on an "AS IS" BASIS,
-/L/ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-/L/ See the License for the specific language governing permissions and
-/L/ limitations under the License.
+/-/
+/-/ Licensed under the Apache License, Version 2.0 (the "License");
+/-/ you may not use this file except in compliance with the License.
+/-/ You may obtain a copy of the License at
+/-/
+/-/   http://www.apache.org/licenses/LICENSE-2.0
+/-/
+/-/ Unless required by applicable law or agreed to in writing, software
+/-/ distributed under the License is distributed on an "AS IS" BASIS,
+/-/ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+/-/ See the License for the specific language governing permissions and
+/-/ limitations under the License.
 
 /A/ DEVnet: Pawel Hudak
 /V/ 3.0
 
 /S/ Stream component:
-/S/ Responsible for:
-/S/ - facilitating processing on stream of data using tickHF (<tickHF.q>) protocol
-/S/
-/S/ stream.q functionality:
-/S/ - subscription to streaming data source (<tickHF.q>-compatible server)
-/S/ - subscription to additional data sources (<tickLF.q>-compatible server)
-/S/ - calculation of derived data e.g. mrvs, snapshots, etc.
-/S/ - serving derived data in memory
-/S/ - publishing and journalling of derived data
-/S/ - savepoint functionality for faster recovery after component restart
-/S/ - data caching facility
-/S/ - high level plugin interface
+/-/ Responsible for:
+/-/ - facilitating processing on stream of data using tickHF (<tickHF.q>) protocol
+/-/
+/-/ stream.q functionality:
+/-/ - subscription to streaming data source (<tickHF.q>-compatible server)
+/-/ - subscription to additional data sources (<tickLF.q>-compatible server)
+/-/ - calculation of derived data e.g. mrvs, snapshots, etc.
+/-/ - serving derived data in memory
+/-/ - publishing and journalling of derived data
+/-/ - savepoint functionality for faster recovery after component restart
+/-/ - data caching facility
+/-/ - high level plugin interface
 
-/S/ Business logic:
-/S/ - <stream.q> itself does not provide any business logic code for data processing
-/S/ - specific functionality of data processing has to be loaded additionally in a form of a plugin code
-/S/ - plugin code should be defined in a separate file and loaded into <stream.q> using -lib command line option, for example
-/S/ (start code)
-/S/ q stream.q -lib <plugin file>
-/S/ (end)
+/-/ Business logic:
+/-/ - <stream.q> itself does not provide any business logic code for data processing
+/-/ - specific functionality of data processing has to be loaded additionally in a form of a plugin code
+/-/ - plugin code should be defined in a separate file and loaded into <stream.q> using -lib command line option, for example
+/-/ (start code)
+/-/ q stream.q -lib <plugin file>
+/-/ (end)
 
-/S/ Plugins:
-/S/ *Defining plugin in "lowLevel" mode*
-/S/ - provides more flexibility but requires more implementation
-/S/ - definition of mode is done by implementation of direct callbacks from the data source
-/S/ - plugin must implement *all* low-level callbacks
-/S/ (start code)
-/S/ jUpd[tabName;data] - callback function for retrieving high frequency data from journal file
-/S/ upd[tabName;data]  - callback function for retrieving high frequency data from tick server
-/S/ sub[server;schema] - callback invoked after subscription to tick server but before the journal replay
-/S/ (end)
-/S/ - timers can be defined if required using qsl/timer.q library (i.e. add new timer with <.tmr.start[]>)
+/-/ Plugins:
+/-/ *Defining plugin in "lowLevel" mode*
+/-/ - provides more flexibility but requires more implementation
+/-/ - definition of mode is done by implementation of direct callbacks from the data source
+/-/ - plugin must implement *all* low-level callbacks
+/-/ (start code)
+/-/ jUpd[tabName;data] - callback function for retrieving high frequency data from journal file
+/-/ upd[tabName;data]  - callback function for retrieving high frequency data from tick server
+/-/ sub[server;schema] - callback invoked after subscription to tick server but before the journal replay
+/-/ (end)
+/-/ - timers can be defined if required using qsl/timer.q library (i.e. add new timer with <.tmr.start[]>)
 
-/S/ *Defining plugin using "cache" mode*
-/S/ - provides less flexibility but requires less implementation
-/S/ - pre-defined callbacks implemented in "lowLevel" mode can be readily used
-/S/ - following plugin functions must be defined in order to specify mode logic
-/S/ (start code)
-/S/ .stream.plug.init[] - invoked during initialization of stream process
-/S/ .stream.plug.sub[]  - invoked after successful subscription to the data source
-/S/ .stream.plug.ts[]   - invoked on timer with frequency defined via configuration entry cfg.tsInterval
-/S/                       The timer is:
-/S/                         - activated after .stream.plug.init[] callback
-/S/                         - active during whole lifetime of stream process
-/S/                       Notes: 
-/S/                         - it is possible that .stream.plug.ts[] is invoked before .plug.stream.sub[] callback
-/S/                         - .stream.plug.ts[] is invoked using protected execution mode
-/S/                         - .stream.plug.ts[] is invoked directly before eod callback .stream.plug.eod[]
-/S/ .stream.plug.eod[] - invoked after eod (end of day) event in stream process.
-/S/ (end)
-/S/ Functionality can be implemented using predefined helper interface
-/S/ (start code)
-/S/ .stream.initPub[]
-/S/ .stream.pub[]
-/S/ .stream.savepoint[]
-/S/ (end)
-/S/ *Predefined plugins*
-/S/ There is a set of predefined plugins that are ready to use
-/S/ mrvs - most recent values implemented in <streamMrvs.q>
-/S/ (start code)
-/S/ q stream.q -lib streamMrvs.q
-/S/ (end)
+/-/ *Defining plugin using "cache" mode*
+/-/ - provides less flexibility but requires less implementation
+/-/ - pre-defined callbacks implemented in "lowLevel" mode can be readily used
+/-/ - following plugin functions must be defined in order to specify mode logic
+/-/ (start code)
+/-/ .stream.plug.init[] - invoked during initialization of stream process
+/-/ .stream.plug.sub[]  - invoked after successful subscription to the data source
+/-/ .stream.plug.ts[]   - invoked on timer with frequency defined via configuration entry cfg.tsInterval
+/-/                       The timer is:
+/-/                         - activated after .stream.plug.init[] callback
+/-/                         - active during whole lifetime of stream process
+/-/                       Notes: 
+/-/                         - it is possible that .stream.plug.ts[] is invoked before .plug.stream.sub[] callback
+/-/                         - .stream.plug.ts[] is invoked using protected execution mode
+/-/                         - .stream.plug.ts[] is invoked directly before eod callback .stream.plug.eod[]
+/-/ .stream.plug.eod[] - invoked after eod (end of day) event in stream process.
+/-/ (end)
+/-/ Functionality can be implemented using predefined helper interface
+/-/ (start code)
+/-/ .stream.initPub[]
+/-/ .stream.pub[]
+/-/ .stream.savepoint[]
+/-/ (end)
+/-/ *Predefined plugins*
+/-/ There is a set of predefined plugins that are ready to use
+/-/ mrvs - most recent values implemented in <streamMrvs.q>
+/-/ (start code)
+/-/ q stream.q -lib streamMrvs.q
+/-/ (end)
 
-/S/ snap - snapshoting implemented in <streamSnap.q>
-/S/ (start code)
-/S/ q stream.q -lib streamSnap.q
-/S/ (end)
+/-/ snap - snapshoting implemented in <streamSnap.q>
+/-/ (start code)
+/-/ q stream.q -lib streamSnap.q
+/-/ (end)
 
-/S/ aggr - aggregation of data into buckets implemented in <streamAggr.q>
-/S/ (start code)
-/S/ q stream.q -lib streamAggr.q
-/S/ (end)
+/-/ aggr - aggregation of data into buckets implemented in <streamAggr.q>
+/-/ (start code)
+/-/ q stream.q -lib streamAggr.q
+/-/ (end)
 
 /------------------------------------------------------------------------------/
 /                               lib and etc                                    /
@@ -103,15 +103,19 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 /------------------------------------------------------------------------------/
 /                              initialization                                  /
 /------------------------------------------------------------------------------/
-/F/ Stream main initialization function
-/F/ - selection of stream mode - loading custom scripts
-/F/ - initialization of stream journal
-/F/ - initialization of publishing
-/F/ - initialization of connections
+/F/ Inits stream process.
+/-/ - selection of stream mode - loading custom scripts
+/-/ - initialization of stream journal
+/-/ - initialization of publishing
+/-/ - initialization of connections
 /E/ .stream.p.init[]
 .stream.p.init:{[]
-  if[not `i in key .stream;.stream.i:(`symbol$())!(`long$())];
+  if[not `i in key .stream;
+    /G/ Dictionary with current position of journal of each table.
+    .stream.i:(`symbol$())!(`long$())
+    ];
   .stream.p.srcSubscriptionOn:1b;
+  /G/ Current date.
   .stream.date:.sl.eodSyncedDate[];
 
   .event.at[`stream;`.stream.p.initConnections;();`;`info`info`error; "initializing connections"];
@@ -128,9 +132,10 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 
 /------------------------------------------------------------------------------/
 .stream.p.initConnections:{[]
-  //prepare for subscription
+  /G/ List of source tickHF servers.
   .stream.srcServers:exec distinct server from .stream.cfg.srcTab where subType=`tickHF;
   .hnd.poAdd[;`.stream.p.TickHFPo] each .stream.srcServers;
+  /G/ List of source tickLF servers.
   .stream.tickLFServers:exec distinct server from .stream.cfg.srcTab where subType=`tickLF;
   .hnd.poAdd[;`.stream.p.TickLFPo] each .stream.tickLFServers;
   };
@@ -165,11 +170,15 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 /------------------------------------------------------------------------------/
-/F/Initialization of publishing, compatible with classic tick from kx (and tickHF)
-/F/ - data model will be set to global namespace using provided table names
-/F/ - `a attribute will be set on sym column
-/F/ - .u.w will be set
+/                            initialization                                    /
+/------------------------------------------------------------------------------/
+/F/ Initializes publishing, compatible with classic tick from kx (and tickHF).
+/-/ - data model will be set to global namespace using provided table names
+/-/ - `a attribute will be set on sym column
+/-/ - .u.w will be set
 /P/ model:LIST[PAIR(SYMBOL;MODEL)] - list of pairs (tableName;dataModel) that should be published, previous values will be overwritten
+/R/ no return value
+/E/ .stream.initPub((`trade;tradeModel);(`quote;quoteModel))
 .stream.initPub:{[model]
   if[count missingSym:model[;0] where not `sym in/: cols each model[;1];
     .log.error[`stream] "missing sym column in tables ", .Q.s1 missingSym;
@@ -177,22 +186,25 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
     ];
   {x set y} ./: model;         //use the same table names as source data model
   @[;`sym;`g#]each model[;0];
+  /G/ 
   .u.w:.u.t!(count .u.t::(),model[;0])#();
   .cb.add[`.z.pc;`.u.pc];
   };
 
 /------------------------------------------------------------------------------/
-/F/Initialization of journal for derived data stream
-/F/ if journal was already open, it will be closed and re-opened
+/F/ Initializes journal for derived data stream.
+/-/ if journal was already open, it will be closed and re-opened
 /P/ date:DATE - date of the journal
 .stream.p.initJrn:{[date]
   //init journal
   if[not `jrnH in key .stream.p;.stream.p.jrnH:0N];
   if[`jrn in key .stream.p; @[hclose;.stream.p.jrnH;::]];
+  /G/ 
   .u.L:.stream.p.jrn:`$string[.stream.cfg.journal],string[date];
   if[()~key .stream.p.jrn;
     .stream.p.jrn set (); 
     ];
+  /G/ 
   .u.i:-11!(-2;.stream.p.jrn);
   .stream.p.jrnH:hopen .stream.p.jrn;
   };
@@ -200,17 +212,22 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 /------------------------------------------------------------------------------/
 /                              end of day                                      /
 /------------------------------------------------------------------------------/
-/F/ due to clash of .u.end name as library name and callback name it has to be renamed
+/F/ Publishes eod.
+/-/ Due to clash of .u.end name as library name and callback name it has to be renamed.
+/P/ date:DATE - eod date
+/R/ no return value
+/E/ .u.end .z.d
 .u.endPublish:.u.end;
 
 /------------------------------------------------------------------------------/
 /F/ End-Of-Day (eod) callback from subscribed server (e.g. tick)
-/F/  - invoke final <.stream.plug.ts[]> callback before eod
-/F/  - invoke <.stream.plug.eod[]> callback
-/F/  - switch journal file for derived data
-/F/  - republish end of day message (<.u.end>) to subscribers (if stream is working as publisher)
-/P/ date:DATE - eod date (in most cases current date)
-/E/ date:.z.d
+/-/  - invokes final <.stream.plug.ts[]> callback before eod
+/-/  - invokes <.stream.plug.eod[]> callback
+/-/  - switches journal file for derived data
+/-/  - republishes end of day message (<.u.end>) to subscribers (if stream is working as publisher)
+/P/ date:DATE - eod date
+/R/ no return value
+/E/ .u.end .z.d
 .u.end:{[date]
   if[date<.stream.date;
     .log.info[`stream] "Eod process was called already. Further eod activities won't be performed";
@@ -231,12 +248,14 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 /------------------------------------------------------------------------------/
 /                              publishing                                      /
 /------------------------------------------------------------------------------/
-/F/ publish derived data stream
-/F/  - store the data in the journal for derived data
-/F/  - increase .u.i counter
-/F/  - publish the data to the subscribers using <u.q> library
+/F/ Publishes derived data stream.
+/-/  - store the data in the journal for derived data
+/-/  - increase .u.i counter
+/-/  - publish the data to the subscribers using <u.q> library
 /P/ tab:SYMBOL - published table name
 /P/ data:TABLE - table with published update
+/R/ no return value
+/E/  .stream.pub[`tradeSnap; tradeSnapData]
 .stream.pub:{[tab;data]
   if[0=count data;:()];
   //store data in journal [optional by configuration]
@@ -249,10 +268,11 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 /------------------------------------------------------------------------------/
 /                               modes                                          /
 /------------------------------------------------------------------------------/
-/F/ initialize plugin definition mode, currently supported modes
-/F/  - lowLevel - all low level callbacks must be defined by the plugin
-/F/  - cache - data cached on upd, calculation is done in timer callback
+/F/ Initializes plugin definition mode, currently supported modes:
+/-/  - lowLevel - all low level callbacks must be defined by the plugin
+/-/  - cache - data cached on upd, calculation is done in timer callback
 /P/ mode:ENUM[`lowLevel`cache] - plugin definition mode 
+/R/ no return value
 /E/ .stream.initMode[`cache]
 .stream.initMode:{[mode]
   .stream.mode:mode;
@@ -296,22 +316,24 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   `sub set .stream.p.sub;
   };
 
-
 /------------------------------------------------------------------------------/
-/F/ State of the plugin can be periodically saved. In case process is disrupted (e.g. restarted) and then connection is restored
-/F/ - plugin needs to return to its most recent state prior to the disruption based on the data taken from the last savepoint
-/F/ - journal's data will be replayed from the point where the last savepoint was called until the time connection was restored
-/P/ savepointData - should contain all data required to recover after restart
+/F/ Stores current state of the plugin. After process restart, the source data will be replayed from this position in the journals.
+/-/ The state of the plugin should be resotred properly basing on the savepointData.
+/-/ Plugins should use savepoint periodically in order to minimize the journals replay effort, 
+/-/ this is most helpfull with time consuming processing.
+/P/ savepointData:ANY - all data required to recover after restart
+/R/ no return value
+/E/  .stream.savepoint[currentStateData]
 .stream.savepoint:{[savepointData]
   //save .stream.i and savepointData
   (`$string[.stream.cfg.savepointFile],string[.stream.date]) set (.stream.i;savepointData);
   };
 
-/F/ Initialization of subscription callback
-/F/ - initialize .stream.skip basing on data from savepoint file
-/F/ - initialize .stream.lastTs with midnight
-/F/ - invoke .stream.plug.sub callback using data from savepoint file
-
+/------------------------------------------------------------------------------/
+/F/ Initializes subscription callback.
+/-/  - initialize .stream.skip basing on data from savepoint file
+/-/  - initialize .stream.lastTs with midnight
+/-/  - invoke .stream.plug.sub callback using data from savepoint file
 .stream.p.sub:{[x;y]
   savepointFile:(`$string[.stream.cfg.savepointFile],string[.stream.date]);
   savepoint:$[not ()~key savepointFile;get savepointFile;(()!`long$();(::))];
@@ -325,9 +347,16 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 /==============================================================================/
-/F/ script startup function
+/F/ Component initialization entry point.
+/P/ flags:LIST - nyi
+/R/ no return value
+/E/ .sl.main`
 .sl.main:{[flags]
   srcTab:.cr.getCfgPivot[`THIS;`table`sysTable;`srcTickLF`srcTickHF];
+  /G/ Source tables, loaded from srcTickLF and srcTickHF fields from dataflow.cfg.
+  /-/  -- tab:SYMBOL     - table name
+  /-/  -- server:SYMBOL  - server name
+  /-/  -- subType:SYMBOL - subscription type, `tickHF or `tickLF
   .stream.cfg.srcTab:(select tab:sectionVal, server:srcTickHF, subType:`tickHF from srcTab where srcTickHF<>`),(select tab:sectionVal, server:srcTickLF, subType:`tickLF from srcTab where srcTickLF<>`);
   if[0=count src:exec distinct server from .stream.cfg.srcTab where subType=`tickHF;
     .log.error[`stream] "Data source server should be specified (srcTickHF field in dataflow.cfg)";
@@ -337,12 +366,18 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
     .log.error[`stream] each exec "Forbidden multiple sources for table "(,)/:string[tab](,)'":"(,)/:.Q.s1'[server] from multiSource;
     :()
     ];
+  /G/ Data model, loaded from dataflow.cfg.
   .stream.cfg.model:.cr.getModel[`THIS];
 
+  /G/ Connection open timeout, loaded from cfg.timeout field from system.cfg.
   .stream.cfg.timeout:       .cr.getCfgField[`THIS;`group;`cfg.timeout];
+  /G/ Internal timer interval, loaded from cfg.tsInterval field from system.cfg.
   .stream.cfg.tsInterval:    .cr.getCfgField[`THIS;`group;`cfg.tsInterval];
+  /G/ List of auxliary servers, loaded from cfg.serverAux field from system.cfg.
   .stream.cfg.serverAux:     .cr.getCfgField[`THIS;`group;`cfg.serverAux];
+  /G/ Stream journal name, loaded from cfg.journal field from system.cfg.
   .stream.cfg.journal:       .cr.getCfgField[`THIS;`group;`cfg.journal];
+  /G/ Stream savepoint file name, loaded from cfg.savepointFile field from system.cfg.
   .stream.cfg.savepointFile: .cr.getCfgField[`THIS;`group;`cfg.savepointFile];
 
   .sl.libCmd[];
@@ -351,8 +386,10 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 /------------------------------------------------------------------------------/
-/F/ By default subscription to the source server is made in po (port open) callback, directly after connection to the source server is opened.
-/F/ This behaviour can be changed by switching the initial subscription off. Responsibility for subscription invocation is then shifted to the plugin developer.
+/F/ Turns off automatic subscription to the data sources, responsibility for subscription invocation is then shifted to the plugin developer.
+/-/ By default subscription to the source server is made in po (port open) callback, directly after connection to the source server is opened.
+/R/ no return value
+/E/  .stream.srcSubscriptionOff[]
 .stream.srcSubscriptionOff:{[]
   .log.debug[`stream] ".stream.srcSubscriptionOff[]: subscription to the source server deactivated. Plugin component will have to initialize it.";
   .stream.p.srcSubscriptionOn:0b;
@@ -364,6 +401,3 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 
 /------------------------------------------------------------------------------/
 \
-
-.cr.getCfgPivot[`THIS;`group;(),`cfg.timeout1]
-.cr.getCfgTab[`THIS;`group;`cfg.timeout1]

@@ -1,71 +1,71 @@
 /L/ Copyright (c) 2011-2014 Exxeleron GmbH
-/L/
-/L/ Licensed under the Apache License, Version 2.0 (the "License");
-/L/ you may not use this file except in compliance with the License.
-/L/ You may obtain a copy of the License at
-/L/
-/L/   http://www.apache.org/licenses/LICENSE-2.0
-/L/
-/L/ Unless required by applicable law or agreed to in writing, software
-/L/ distributed under the License is distributed on an "AS IS" BASIS,
-/L/ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-/L/ See the License for the specific language governing permissions and
-/L/ limitations under the License.
+/-/
+/-/ Licensed under the Apache License, Version 2.0 (the "License");
+/-/ you may not use this file except in compliance with the License.
+/-/ You may obtain a copy of the License at
+/-/
+/-/   http://www.apache.org/licenses/LICENSE-2.0
+/-/
+/-/ Unless required by applicable law or agreed to in writing, software
+/-/ distributed under the License is distributed on an "AS IS" BASIS,
+/-/ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+/-/ See the License for the specific language governing permissions and
+/-/ limitations under the License.
 
 /A/ DEVnet:  Bartosz Dolecki
 /V/ 3.0
 
 /S/ Hdb synchronization tool:
-/S/ Responsible for:
-/S/ - performing file marshalling between the sites
-/S/ - saving .sym file at backup location
-/S/ - synchronization of partitions between hosts
-/S/ - providing backward backup of new (freshly added) columns
-/S/ 
-/S/ Input parameters for the script:
-/S/ hdbSync.q is invoked from eodMng.q process and receives following input parameters
-/S/ source directory - source directory for synchronization
-/S/ destination directory - destination directory for synchronization
-/S/ partition - defines partition name, if unpartitioned please pass an empty string ("")
-/S/ sym backup directory - backup directory for sym file
-/S/ status file (optional) - path to the file where housekeeping status is stored (required for eodMng communication)
-/S/ 
-/S/ *Sample command using yak*
-/S/ (start code)
-/S/ yak start hdbSync.q -a "source:/hdb destination:/mirror/hdb 2001.04.23 /backups/hdbsym/ /comm/statusFile.out"
-/S/ (end)
-/S/ 
-/S/ This command
-/S/ - Performs backup of the sym file from destination
-/S/ (start code)
-/S/ /mirror/hdb/sym
-/S/ (end)
-/S/ to
-/S/ (start code)
-/S/ /backups/hdbsym/
-/S/ (end)
-/S/ - Copies partition 2001.04.23 source
-/S/ (start code)
-/S/ /hdb/2001.04.23
-/S/ (end)
-/S/ to destination
-/S/ (start code)
-/S/ /mirror/hdb
-/S/ (end)
-/S/ - Writes status (in this case 'successful') to 
-/S/ (start code)
-/S/ /comm/statusFile.out
-/S/ (end)
-/S/ 
-/S/ Prerequisites:
-/S/ 1. - rsync installed and available (used for all file transfers) 
-/S/ 2. - ssh installed and available
-/S/ 3. - Automatic ssh validation with remote host (no password required when connecting via ssh to remote host)
-/S/ 4. - For synchronization, databases must have the same format (ie. both have to be partitioned or segmented)
-/S/ 5. - Additionally segmented databases need to have the same amount of partitions on both sides (otherwise error will be reported)
-/S/ 
-/S/ Note:
-/S/ As of now, both partitioned and segmented (with par.txt) databases are supported.
+/-/ Responsible for:
+/-/ - performing file marshalling between the sites
+/-/ - saving .sym file at backup location
+/-/ - synchronization of partitions between hosts
+/-/ - providing backward backup of new (freshly added) columns
+/-/ 
+/-/ Input parameters for the script:
+/-/ hdbSync.q is invoked from eodMng.q process and receives following input parameters
+/-/ source directory - source directory for synchronization
+/-/ destination directory - destination directory for synchronization
+/-/ partition - defines partition name, if unpartitioned please pass an empty string ("")
+/-/ sym backup directory - backup directory for sym file
+/-/ status file (optional) - path to the file where housekeeping status is stored (required for eodMng communication)
+/-/ 
+/-/ *Sample command using yak*
+/-/ (start code)
+/-/ yak start hdbSync.q -a "source:/hdb destination:/mirror/hdb 2001.04.23 /backups/hdbsym/ /comm/statusFile.out"
+/-/ (end)
+/-/ 
+/-/ This command
+/-/ - Performs backup of the sym file from destination
+/-/ (start code)
+/-/ /mirror/hdb/sym
+/-/ (end)
+/-/ to
+/-/ (start code)
+/-/ /backups/hdbsym/
+/-/ (end)
+/-/ - Copies partition 2001.04.23 source
+/-/ (start code)
+/-/ /hdb/2001.04.23
+/-/ (end)
+/-/ to destination
+/-/ (start code)
+/-/ /mirror/hdb
+/-/ (end)
+/-/ - Writes status (in this case 'successful') to 
+/-/ (start code)
+/-/ /comm/statusFile.out
+/-/ (end)
+/-/ 
+/-/ Prerequisites:
+/-/ 1. - rsync installed and available (used for all file transfers) 
+/-/ 2. - ssh installed and available
+/-/ 3. - Automatic ssh validation with remote host (no password required when connecting via ssh to remote host)
+/-/ 4. - For synchronization, databases must have the same format (ie. both have to be partitioned or segmented)
+/-/ 5. - Additionally segmented databases need to have the same amount of partitions on both sides (otherwise error will be reported)
+/-/ 
+/-/ Note:
+/-/ As of now, both partitioned and segmented (with par.txt) databases are supported.
 
 /------------------------------------------------------------------------------/
 
@@ -78,26 +78,32 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 .sl.lib["qsl/os"];
 
 /------------------------------------------------------------------------------/
-/G/ source directory for synchronization
+/G/ Source directory for synchronization, loaded from 1st cmd line argument.
 .hdbSync.cfg.source:.z.x[0];
-/G/ destination directory for synchronization
+
+/G/ Destination directory for synchronization, loaded from 2nd cmd line argument.
 .hdbSync.cfg.destination:.z.x[1];
-/G/ defines partition name, if unpartitioned please pass an empty string ("")
+
+/G/ Partition name, if unpartitioned please pass an empty string (""), loaded from 3rd cmd line argument.
 .hdbSync.cfg.partition:.z.x[2];
-/G/ backup directory for sym file
+
+/G/ Backup directory for sym file, loaded from 4th cmd line argument.
 .hdbSync.cfg.symDir:.z.x[3];
-/G/ path to the file where status is stored (required for eodMng communication)
+
+/G/ Path to the file where status is stored (required for eodMng communication).
 .hdbSync.cfg.statusFile:$[4 < count .z.x;hsym `$.z.x[4];`];
 
-/F/ main function of the script; writes appropriate messages to the status file
-/F/ while performing each of these major activities:
-/F/   - backup of the sym file
-/F/   - synchronization of the whole partition
-/F/   - synchronization of the whole database if column / table was added / removed
-/F/ 
+/------------------------------------------------------------------------------/
+/F/ Performs synchronization of two hdb dirctories. Backups sym file.
+/-/ Main function of the script; writes appropriate messages to the status file while performing each of these major activities
+/-/   - backup of the sym file
+/-/   - synchronization of the whole partition
+/-/   - synchronization of the whole database if column / table was added / removed
 /P/ sourceDir:STRING - source directory for synchronization
-/P/ destDir:STRING - destination directory for synchronization
+/P/ destDir:STRING   - destination directory for synchronization
 /P/ partition:STRING - defines partition name (if unpartitioned pass emmpty string : "")
+/R/ no return value
+/E/ .hdbSync.performSync[.hdbSync.cfg.source;.hdbSync.cfg.destination;.hdbSync.cfg.partition];
 .hdbSync.performSync:{[sourceDir;destDir;partition]
   .log.info[`hdbSync]"Start hdb synchronization with parameters: ", .Q.s1(sourceDir;destDir;partition);
   .hdbSync.p.saveStatus[`begin];
@@ -147,15 +153,17 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   .log.info[`hdbSync]"hdb synchronization completed";
   };
 
-/F/ function that returns path to segmented hdb for given date
-/P/ pars : STRING LIST - list of paths to segments (contents of par.txt)
-/P/ date : DATE - date for which path should be computed
+/------------------------------------------------------------------------------/
+/F/ Returns path to segmented hdb for given date.
+/P/ pars:LIST STRING - list of paths to segments (contents of par.txt)
+/P/ date:DATE - date for which path should be computed
 .hdbSync.p.getDatePath:{[pars;date]
   :pars[date mod count pars],"/",string[date];
   };
 
-/F/ function that reads and returns par.txt content
-/P/ path : STRING - path (optionally with hostname) where par.txt is located
+/------------------------------------------------------------------------------/
+/F/ Reads and returns par.txt content.
+/P/ path:STRING - path (optionally with hostname) where par.txt is located
 .hdbSync.p.getPar:{[path]
   urls:":" vs path;
   host:first urls;
@@ -186,8 +194,9 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
     
     
-/F/ function that saves status to file
-/P/ status : Symbol - status to write
+/------------------------------------------------------------------------------/
+/F/ Saves status to file.
+/P/ status:SYMBOL - status to write
 .hdbSync.p.saveStatus:{[status]
   if[not `~ .hdbSync.cfg.statusFile;
     .pe.at[.hdbSync.cfg.statusFile 0: enlist (string status)," ",(string .sl.zz[])];

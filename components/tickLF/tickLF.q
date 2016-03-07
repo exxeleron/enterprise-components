@@ -1,50 +1,46 @@
 /L/ Copyright (c) 2011-2014 Exxeleron GmbH
-/L/
-/L/ Licensed under the Apache License, Version 2.0 (the "License");
-/L/ you may not use this file except in compliance with the License.
-/L/ You may obtain a copy of the License at
-/L/
-/L/   http://www.apache.org/licenses/LICENSE-2.0
-/L/
-/L/ Unless required by applicable law or agreed to in writing, software
-/L/ distributed under the License is distributed on an "AS IS" BASIS,
-/L/ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-/L/ See the License for the specific language governing permissions and
-/L/ limitations under the License.
+/-/
+/-/ Licensed under the Apache License, Version 2.0 (the "License");
+/-/ you may not use this file except in compliance with the License.
+/-/ You may obtain a copy of the License at
+/-/
+/-/   http://www.apache.org/licenses/LICENSE-2.0
+/-/
+/-/ Unless required by applicable law or agreed to in writing, software
+/-/ distributed under the License is distributed on an "AS IS" BASIS,
+/-/ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+/-/ See the License for the specific language governing permissions and
+/-/ limitations under the License.
 
 /V/ 3.0
 
-/T/ q tickLF.q
-/T/ q tickLF.q -lib plugins.q
-
 /S/ Tick Low Frequency component:
-/S/ Tick with extended functionality, ideal for reference data
-
-/S/ Responsible for:
-/S/ - handling inserts, overwrites and deletes
-/S/ - data validating
-/S/ - supporting journal switching when data image is received (<.tickLF.pubImg> is called) or at the end-of-day
-/S/ - enabling data enrichment and validation trough custom plugins
-/S/ - data manipulating at the end-of-day trough <.tickLF.plug.eod> plugin
-/S/ - protecting data publishing - in case of connection failure or handle corruption to one of subscribers, data publishing is not affected to the others; publishing failure will be logged as an error in the log file
-/S/ - protecting against loops between publisher-subscriber in case if publisher is also subscribed to the same table; data published by tickLF interface by such process won't be send back to the producer; producer should handle updates that are sent through tickLF on its side
-/S/ Note:
-/S/ sym (type:SYMBOL) column is mandatory in the data model for tickLF tables
-
-/S/ List of plugins to setup:
-/S/ - custom data validation, return: signal in case of validation failure
-/S/ (start code)
-/S/ .tickLF.plug.validate[table name:SYMBOL;data as nested list:LIST GENERAL]
-/S/ (end)
-/S/ - data enriching parameters, return: LIST GENERAL
-/S/ (start code)
-/S/ .tickLF.plug.enrich[table name:SYMBOL;data as nested list:LIST GENERAL]
-/S/ (end)
-/S/ - end-of-day plugin
-/S/ (start code)
-/S/ .tickLF.plug.eod[table name:SYMBOL;table name:SYMBOL]
-/S/ (end)
-/S/ Interface for receiving data from tickLF is described in qsl/<sub.q>
+/-/ Tick with extended functionality, ideal for reference data
+/-/ Responsible for:
+/-/ - handling inserts, overwrites and deletes
+/-/ - data validating
+/-/ - supporting journal switching when data image is received (<.tickLF.pubImg> is called) or at the end-of-day
+/-/ - enabling data enrichment and validation trough custom plugins
+/-/ - data manipulating at the end-of-day trough <.tickLF.plug.eod> plugin
+/-/ - protecting data publishing - in case of connection failure or handle corruption to one of subscribers, data publishing is not affected to the others; publishing failure will be logged as an error in the log file
+/-/ - protecting against loops between publisher-subscriber in case if publisher is also subscribed to the same table; data published by tickLF interface by such process won't be send back to the producer; producer should handle updates that are sent through tickLF on its side
+/-/ Note:
+/-/ sym (type:SYMBOL) column is mandatory in the data model for tickLF tables
+/-/
+/-/ List of plugins to setup:
+/-/ - custom data validation, return: signal in case of validation failure
+/-/ (start code)
+/-/ .tickLF.plug.validate[table name:SYMBOL;data as nested list:LIST GENERAL]
+/-/ (end)
+/-/ - data enriching parameters, return: LIST GENERAL
+/-/ (start code)
+/-/ .tickLF.plug.enrich[table name:SYMBOL;data as nested list:LIST GENERAL]
+/-/ (end)
+/-/ - end-of-day plugin
+/-/ (start code)
+/-/ .tickLF.plug.eod[table name:SYMBOL;table name:SYMBOL]
+/-/ (end)
+/-/ Interface for receiving data from tickLF is described in qsl/<sub.q>
 
 
 /------------------------------------------------------------------------------/
@@ -56,58 +52,82 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 .sl.lib["qsl/handle"];
 
 /------------------------------------------------------------------------------/
-/F/ Information about subscription protocols supported by the tickLF component.
-/F/ This definition overwrites default implementation from qsl/sl library.
-/F/ This function is used by qsl/sub library to choose proper subscription protocol.
-/R/ SYMBOL: returns list of protocol names that are supported by the server - `PROTOCOL_TICKLF
+/F/ Returns information about subscription protocols supported by the tickLF component.
+/-/  This definition overwrites default implementation from qsl/sl library.
+/-/  This function is used by qsl/sub library to choose proper subscription protocol.
+/R/ :LIST SYMBOL - returns list of protocol names that are supported by the server - `PROTOCOL_TICKLF
+/E/ .sl.getSubProtocols[]
 .sl.getSubProtocols:{[] enlist `PROTOCOL_TICKLF};
 
 /------------------------------------------------------------------------------/
-/G/ definition of custom data validation
+/G/ Custom data validation plugins.
 .tickLF.plug.validate:()!();
-/G/ definition of custom data enrichment
+
+/G/ Custom data enrichment plugins.
 .tickLF.plug.enrich:()!();
-/G/ definition of eod plugin
+
+/G/ Custom data eod plugins.
 .tickLF.plug.eod:()!();
 
 /------------------------------------------------------------------------------/
-/G/ journal handles
+/G/ Dictionary with journal handles.
 .tickLF.jrnHnd:()!();
-/G/ journal files
+
+/G/ Dictionary with journal files.
 .tickLF.jrn:()!();
-/G/ directories with journal files
+
+/G/ Dictionary with journal paths.
 .tickLF.jrnDirs:()!();
-/G/ number of entries in journals
+
+/G/ Number of entries in each journal.
 .tickLF.jrnI:()!();
-/G/ supported tables
+
+/G/ List of allowed tables.
 .tickLF.t:();
-/G/ supported tables and subscription details
+
+/G/ Dictionary with subscription list for each table.
 .tickLF.w:()!();
-/G/ current date
+
+/G/ Current date.
 .tickLF.d:0Nd;
-/G/ configuration for tables
+
+/G/ Table with tickLF configuration information.
+/-/  -- table:SYMBOL - table name
+/-/  -- validation:BOOLEAN    - if true -> validation should be performed
+/-/  -- jrnSwitch:LIST SYMBOL - flag for journal switching, journal can be rolled over when
+/-/  -- eodImg2Jrn:BOOLEAN    - if true -> store img to the journal at eod
+/-/  -- memory:BOOLEAN        - keep table in memory
+/-/  -- status:BOOLEAN        - if true -> track status
+/-/  -- enrichPlug:BOOLEAN    - if true -> execute enrichment plugin
+/-/  -- validatePlug:BOOLEAN  - if true -> execute validation plugin
 .tickLF.tables:();
-/G/ number of published messages
+
+/G/ Number of published messages.
 .tickLF.PubNo:()!();
-/G/ time of last update, delete, upsert, image
+
+/G/ Time of last update, delete, upsert, image.
 .tickLF.PubLast:()!();
-/G/ group of data validating functions
+
+/G/ Group of data validating functions.
 .tickLF.validate:()!();
-/G/ group of data validating functions for deletes
+
+/G/ Group of data validating functions for deletes.
 .tickLF.validateDel:()!();
-/G/ group of status updates functions
+
+/G/ Group of status updates functions.
 .tickLF.updStatus:()!();
-/G/ group of functions that require journal operations
+
+/G/ Group of functions that require journal operations.
 .tickLF.actionJrn:()!();
+
 /------------------------------------------------------------------------------/
-/F/ generic function for publishing updates and images
-/P/ fn - function name (symbol)
-/P/ t - table name (symbol)
-/P/ d - data (list)
-/E/ t:`universe;// t:`underlyings// t:`calendar
-/E/ d:(2#.z.t ;`a`b; 2#.z.d) // d:(.z.t ;`a; .z.d)
-/E/ fn:`.tickLF.img // fn:`.tickLF.upd
-/E/ .tickLF.p.pubSimple[fn;t;d]
+/F/ Generic function for publishing updates and images.
+/P/ fn:SYMBOL - function name
+/P/ t:SYMBOL  - table name
+/P/ d:LIST    - data as list of columns
+/R/ no return value
+/E/ .tickLF.p.pubSimple[`.tickLF.upd; `universe; 2#.z.t ;`a`b; 2#.z.d)]
+/E/ .tickLF.p.pubSimple[`.tickLF.img; `universe; 2#.z.t ;`a`b; 2#.z.d)]
 .tickLF.p.pubSimple:{[fn;t;d]
   d:.tickLF.validate[t][d;fn]; //218/1
   //pub
@@ -121,29 +141,30 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 /------------------------------------------------------------------------------/
-/F/ function for publishing updates
-/P/ t - table name (symbol)
-/P/ d - data (list)
+/F/ Publishes update message (`.tickLF.upd) to tickLF subscribers. The data is stored in journal file.
+/P/ t:SYMBOL - table name
+/P/ d:LIST   - incoming update data as list of columns
+/R/ no return value
 /E/ .tickLF.pubUpd[`universe;d]
 .tickLF.pubUpd:.tickLF.p.pubSimple[`.tickLF.upd];
 
 /------------------------------------------------------------------------------/
-/F/ function for publishing images
-/P/ t - table name (symbol)
-/P/ d - data (list)
+/F/ Publishes image message (`.tickLF.img) to tickLF subscribers. The data is stored in journal file.
+/P/ t:SYMBOL - table name
+/P/ d:LIST   - incoming image data as list of columns
+/R/ no return value
 /E/ .tickLF.pubImg[`universe;d]
 .tickLF.pubImg:.tickLF.p.pubSimple[`.tickLF.img];
 
 /------------------------------------------------------------------------------/
-/F/ function for publishing upserts
-/P/ t - table name as symbol
-/P/ d - incoming data as list
-/P/ a is a dictionary of aggregates, b is a dictionary of group-bys and c is a list of constraints   
-/E/ t:`universe;
-/E/ d:(.z.t ;`a; .z.d+1);
-/E/ d:(.z.t ;`b; .z.d);
-/E/ c:();b:(enlist `sym)!enlist `sym;a:(`time`mat!`time`mat)
-
+/F/ Publishes upsert message (`.tickLF.ups) to tickLF subscribers. The data is stored in journal file.
+/P/ t:SYMBOL - table name
+/P/ d:LIST   - incoming data as list
+/P/ a:DICT   - dictionary of aggregates
+/P/ b:DICT   - dictionary of group-bys 
+/P/ c:LIST   - list of constraints   
+/R/ no return value
+/E/ .tickLF.pubUps[`universe; (.z.t ;`a; .z.d+1); (`time`mat!`time`mat); (enlist `sym)!enlist `sym; ()]
 .tickLF.pubUps:{[t;d;c;b;a]
   d:.tickLF.validate[t][d;(`.tickLF.ups;c;b;a)]; 
   //pub
@@ -157,14 +178,14 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 /------------------------------------------------------------------------------/
-/F/ function for publishing deletes
-/P/ t - table name as symbol
-/P/ a - dictionary of aggregates
-/P/ b - dictionary of group-bys 
-/P/ c - list of constraints   
-/E/ t:`universe;
-/E/ parse"delete from `universe where sym in `a`b, mat>.z.d"
-/E/ c:(( in;`sym;enlist `a`b);(>;`mat;.z.d));b:0b;a:0#`
+/F/ Publishes delete message (`.tickLF.del) to tickLF subscribers. The data is stored in journal file.
+/P/ t:SYMBOL - table name
+/P/ a:DICT   - dictionary of aggregates
+/P/ b:DICT   - dictionary of group-bys 
+/P/ c:LIST   - list of constraints   
+/R/ no return value
+/E/ .tickLF.pubDel[`universe; (( in;`sym;enlist `a`b);(>;`mat;.z.d)); 0b; 0#`]
+/-/    - equivalent to "delete from `universe where sym in `a`b, mat>.z.d"
 .tickLF.pubDel:{[t;c;b;a]
   .tickLF.validateDel[t][();(`.tickLF.del;c;b;a)]; 
   //pub
@@ -189,48 +210,45 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   res
   };
 /------------------------------------------------------------------------------/   
-/F/ data publishing
-/P/ t - table 
-/P/ x - data 
-/P/ fn - function img upd
-/E/ fn:`.tickLF.img;x:$[0>type first d;enlist f!d;flip f!d];
+/F/ Publishes data.
+/P/ t:SYMBOL  - table 
+/P/ fn:SYMBOL - function, one of `.tickLF.img`.tickLF.upd`.tickLF.del`.tickLF.ups
+/P/ x:ANY     - the data 
+/E/ .tickLF.p.pub[`universe; `.tickLF.img; $[0>type first d;enlist f!d;flip f!d]];
 .tickLF.p.pub:{[t;fn;x]
   {[t;fn;x;w] if[count x:.tickLF.p.sel[x]w 1;.tickLF.p.tmp:((neg first w);(fn;t;x));.tickLF.p.run[]]}[t;fn;x]each .tickLF.p.wList[t;.z.w];
   };
 
 /------------------------------------------------------------------------------/
-/F/ data publishing
-/P/ table/data/params - ups
-/E/ x:$[0>type first d;enlist f!d;flip f!d];
+/F/ Publishes upsert.
 .tickLF.p.pubUps:{[t;x;c;b;a]
   {[t;x;c;b;a;w] if[count x:.tickLF.p.sel[x]w 1;.tickLF.p.tmp:((neg first w);(`.tickLF.ups;t;x;c;b;a));.tickLF.p.run[]]}[t;x;c;b;a;]each .tickLF.p.wList[t;.z.w];
   };
+  
 /------------------------------------------------------------------------------/
-/F/ publishing deletes
-/P/ table/params - del
+/F/ Publishes delete.
 .tickLF.p.pubDel:{[t;c;b;a]
   {[t;c;b;a;w] .tickLF.p.tmp:((neg first w);(`.tickLF.del;t;c;b;a));.tickLF.p.run[]}[t;c;b;a;]each .tickLF.p.wList[t;.z.w];
   };
 
 /------------------------------------------------------------------------------/
-/F/ select data from table
+/F/ Select data from table.
 .tickLF.p.sel:{$[`~y;x;select from x where sym in y]};
 
 /------------------------------------------------------------------------------/
-/F/ delete from subscription dictionary
-/E/ y:.z.x
+/F/ Deletes from subscription dictionary.
 .tickLF.p.del:{.tickLF.w[x]_:.tickLF.w[x;;0]?y};
 
 /------------------------------------------------------------------------------/
-/F/ add to subscription dictionary
+/F/ Adds to subscription dictionary.
 .tickLF.p.add:{$[(count .tickLF.w x)>i:.tickLF.w[x;;0]?z;.[`.tickLF.w;(x;i;1);union;y];.tickLF.w[x],:enlist(z;y)];(x;$[99=type v:value x;.tickLF.sel[v]y;0#v])};
 
 /------------------------------------------------------------------------------/
-/F/ internal timer definition
+/F/ Internal timer definition.
 .tickLF.p.ts:{if[.tickLF.d<.sl.eodSyncedDate[];.tickLF.p.endofday[]]};
 
 /------------------------------------------------------------------------------/
-/F/ end of day actions
+/F/ Executes end of day actions.
 .tickLF.p.endofday:{[]
   .tickLF.d+:1;
   .log.info[`tickLF] "Call eod, switch date to:", string .tickLF.d;
@@ -246,11 +264,10 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 /------------------------------------------------------------------------------/
-// journal operations
+/                             journal operations                               /
 /------------------------------------------------------------------------------/
-/F/ journal initialization
-/E/ tabs:`universe`underlyings`calendar
-/E/ jrn:config`jrn
+/F/ Initializes journal file.
+/E/ .tickLF.p.initJrn[`universe`underlyings`calendar;config`jrn]
 .tickLF.p.initJrn:{[tabs;jrn]
   dirs:` sv/:jrn,/:tabs;
   .tickLF.jrnDirs[tabs]:dirs;
@@ -286,7 +303,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 /------------------------------------------------------------------------------/
-//.tickLF.p.closeJrn each tabs
+/E/ .tickLF.p.closeJrn `universe
 .tickLF.p.closeJrn:{[t]
   if[l:.tickLF.jrnHnd[t];hclose l;.tickLF.jrnHnd[t]:0i];
   };
@@ -301,7 +318,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 /------------------------------------------------------------------------------/
-//t:`universe;f:`.tickLF.img
+/E/ .tickLF.p.switchJrn[`universe;`.tickLF.img]
 .tickLF.p.switchJrn:{[t;f]
   .log.debug[`tickLF] "Switch journal for table: ", string[t], " ,func: ", string f;
   f:`$lower 9_string[f];
@@ -312,7 +329,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 /------------------------------------------------------------------------------/
-// setup validation, enriching and status updates
+/                setup validation, enriching and status updates                /
 /------------------------------------------------------------------------------/
 .tickLF.p.addValidFunc:{[tabsCfg]
   // deafulat validate function - return passed data
@@ -353,11 +370,8 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   .tickLF.actionJrn[flip (tabs;`.tickLF.del)]:delAct;
   };
 
-
 /------------------------------------------------------------------------------/
-//t:`universe
-//d:(09:41:44.576 09:41:44.576;`a`b;2011.10.25 2011.10.25)
-//fnparams:`.tickLF.img
+/E/ .tickLF.p.standardValidation[`universe;(09:41:44.576 09:41:44.576;`a`b;2011.10.25 2011.10.25)]
 .tickLF.p.standardValidation:{[t;d;fnparams]
   fnparams:(),fnparams;
   fn:fnparams[0];p:1_fnparams;
@@ -368,14 +382,13 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 /------------------------------------------------------------------------------/
-/F/ validate data model
-/R/ return signal if data model is incorrect
-/P/ t - table name (symbol)
-/P/ d - data (table, list)
-/E/ t:`universe
-/E/ d:(.z.t;`a;.z.d)
-/E/ d:2#/:(.z.t;`a;.z.d)
-/E/ d:([] time:enlist .z.t;sym:enlist `a;mat:enlist .z.d)
+/F/ Validates data model.
+/P/ t:SYMBOL - table name (symbol)
+/P/ d:DATA   - data (table, list)
+/R/ signal if data model is incorrect
+/E/ .tickLF.p.validateModel[`universe;(.z.t;`a;.z.d)]
+/E/ .tickLF.p.validateModel[`universe;2#/:(.z.t;`a;.z.d)]
+/E/ .tickLF.p.validateModel[`universe;([] time:enlist .z.t;sym:enlist `a;mat:enlist .z.d)]
 .tickLF.p.validateModel:{[t;d]
   f:key flip value t;
   // if it's not a table then convert to table
@@ -399,9 +412,6 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 /------------------------------------------------------------------------------/
-//p:(`a;enlist[`sym]!enlist `sym;`time`mat!`time`mat)
-//p:(();enlist[`sym]!enlist `sym;`time`mat!`time`mat)
-//fn:`.tickLF.img
 .tickLF.p.validateParams:{[t;fn;p]
   c:p[0];b:bv:p[1];a:av:p[2];
   if[0b~b;bv:()!()];if[any a~/:(0#`;());av:()!()];
@@ -423,8 +433,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 /------------------------------------------------------------------------------/
-//tab:`universe
-//func:`.tickLF.upd
+/E/ .tickLF.p.updStatus[`universe;`.tickLF.upd]
 .tickLF.p.updStatus:{[tab;func]
   .log.debug[`tickLF] "Update status for table,func: ", .Q.s1(tab;func);
   .tickLF.PubNo[(tab;func)]+:1;
@@ -432,14 +441,14 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 /------------------------------------------------------------------------------/
-// interfaces
+//                               interfaces                                    /
 /------------------------------------------------------------------------------/
-/F/ subscription to the tickLF
-/P/ x - table name (symbol)
-/P/ y - symbol name (list of symbols or `)
-/E/ x:`universe
-/E/ y:`
-/E/ value each .tickLF.sub[;`] each `universe`underlyings
+/F/ Subscribes to receive tickLF updates.
+/P/ x:SYMBOL             - table name
+/P/ y:SYMBOL|LIST SYMBOL - symbol name (list of symbols or `)
+/R/ PAIR(MODEL;PAIR)     - data model and journal replay information
+/E/ .tickLF.sub[`universe;`]
+/E/ .tickLF.sub[`underlyings;`] 
 .tickLF.sub:{[x;y]
   if[x~`;
     :.tickLF.sub[;y]each .tickLF.t
@@ -452,10 +461,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 /------------------------------------------------------------------------------/
-/F/ timer definition
-
-/F/ port close callback, removing subscriber from the subscription list
-
+/F/ Port close callback, removing subscriber from the subscription list.
 .tickLF.p.pc:{
   if[not x in first'[raze value .tickLF.w];:()];
   // disable port close with handle 0. Port close with handle 0 is called when yak closed stream on descriptor 0.
@@ -464,33 +470,24 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   .tickLF.p.del[;x]each .tickLF.t
   };
 
-
-
-
 /------------------------------------------------------------------------------/
-/F/ .tickLF.status[] derives information about
-/F/ - tickLF initialization
-/F/ - updates processing
-/F/ - subscription lists
-/R/ table with following details
-/R/ (start code)
-/R/ table        - table name
-/R/ validation   - validation on/off
-/R/ jrnSwitch    - list of methods for journal switching
-/R/ eodImg2Jrn   - store img to the journal at eod
-/R/ memory       - keep table in memory
-/R/ status       - status tracking
-/R/ enrichPlug   - flag for loaded enrichment plugins
-/R/ validatePlug - flag for loaded validation plugins
-/R/ jrn          - journal location
-/R/ i            - number of entries stored in journal file
-/R/ hnd          - handle to the journal file
-/R/ .tickLF.img  - last time and number of img messages
-/R/ .tickLF.upd  - last time and number of upd messages
-/R/ .tickLF.ups  - last time and number of ups messages
-/R/ sub          - subscription lists with subscribers handles and universe
-/R/ (end)
-
+/F/ TickLF status including updates processing and subscription lists.
+/R/ :TABLE - status table with following details
+/-/  -- table        - table name
+/-/  -- validation   - validation on/off
+/-/  -- jrnSwitch    - list of methods for journal switching
+/-/  -- eodImg2Jrn   - store img to the journal at eod
+/-/  -- memory       - keep table in memory
+/-/  -- status       - status tracking
+/-/  -- enrichPlug   - flag for loaded enrichment plugins
+/-/  -- validatePlug - flag for loaded validation plugins
+/-/  -- jrn          - journal location
+/-/  -- i            - number of entries stored in journal file
+/-/  -- hnd          - handle to the journal file
+/-/  -- .tickLF.img  - last time and number of img messages
+/-/  -- .tickLF.upd  - last time and number of upd messages
+/-/  -- .tickLF.ups  - last time and number of ups messages
+/-/  -- sub          - subscription lists with subscribers handles and universe
 /E/ .tickLF.status[]
 .tickLF.status:{[]
   t:flip `table`f`n!(flip key .tickLF.PubLast,'.tickLF.PubNo),enlist value .tickLF.PubLast,'.tickLF.PubNo;
@@ -512,18 +509,15 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };    
 
 /------------------------------------------------------------------------------/
-/F/ Initialize default callbacks
+/F/ Initializes default callbacks.
 .tickLF.p.initDefaultCallbacks:{[]
   {key[x] set' value[x]} .sub.tickLF.default;
   };
 
 /------------------------------------------------------------------------------/
-/F/ initialization
-/E/ config:.tickLF.cfg;
-/E/ .tickLF.p.init[config]
+/F/ Initializes tickLF component.
+/E/ .tickLF.p.init .tickLF.cfg
 .tickLF.p.init:{[config]
-
-
   .cb.add[`.z.pc;`.tickLF.p.pc];
   // load configuration
   tabsCfg:config[`tables]; tabs:tabsCfg[`table];
@@ -567,12 +561,31 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 /==============================================================================/
+/F/ Component initialization entry point.
+/P/ flags:LIST - nyi
+/R/ no return value
+/E/ .sl.main`
 .sl.main:{[flags]
   (set) ./:           .cr.getModel[`THIS];
+
+  /G/ Internal timer frequency, loaded from cfg.timer field from system.cfg.
   .tickLF.cfg.timer:  .cr.getCfgField[`THIS;`group;`cfg.timer];
+
+  /G/ Journal directory, loaded from cfg.jrnDir field from system.cfg.
   .tickLF.cfg.jrn:    .cr.getCfgField[`THIS;`group;`cfg.jrnDir];
+
+  /G/ TickLF configuration table, loaded from dataflow.cfg.
+  /-/  -- table:SYMBOL          - table name
+  /-/  -- validation:BOOLEAN    - if true -> validation should be performed
+  /-/  -- jrnSwitch:LIST SYMBOL - flag for journal switching, journal can be rolled over when
+  /-/  -- eodImg2Jrn:BOOLEAN    - if true -> store img to the journal at eod
+  /-/  -- memory:BOOLEAN        - keep table in memory
+  /-/  -- status:BOOLEAN        - if true -> track status
   .tickLF.cfg.tables: `table xcol 0!.cr.getCfgPivot[`THIS;`table`sysTable;`validation`jrnSwitch`eodImg2Jrn`memory`status];
+
+  /G/ Dictionary with data model types.
   .tickLF.cfg.types:  .tickLF.p.getModelTypes[`THIS];
+
   .sl.libCmd[];
 
   .tickLF.p.init[.tickLF.cfg];

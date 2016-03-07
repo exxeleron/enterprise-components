@@ -1,22 +1,22 @@
 /L/ Copyright (c) 2011-2014 Exxeleron GmbH
-/L/
-/L/ Licensed under the Apache License, Version 2.0 (the "License");
-/L/ you may not use this file except in compliance with the License.
-/L/ You may obtain a copy of the License at
-/L/
-/L/   http://www.apache.org/licenses/LICENSE-2.0
-/L/
-/L/ Unless required by applicable law or agreed to in writing, software
-/L/ distributed under the License is distributed on an "AS IS" BASIS,
-/L/ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-/L/ See the License for the specific language governing permissions and
-/L/ limitations under the License.
+/-/
+/-/ Licensed under the Apache License, Version 2.0 (the "License");
+/-/ you may not use this file except in compliance with the License.
+/-/ You may obtain a copy of the License at
+/-/
+/-/   http://www.apache.org/licenses/LICENSE-2.0
+/-/
+/-/ Unless required by applicable law or agreed to in writing, software
+/-/ distributed under the License is distributed on an "AS IS" BASIS,
+/-/ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+/-/ See the License for the specific language governing permissions and
+/-/ limitations under the License.
 
 /A/ DEVnet: Joanna Jarmulska, Pawel Hudak
 /V/ 3.0
 
 /S/ hdbWriter - writing data to the hdb.
-/S/ see detailed description in the hdbWriter/README.md file
+/-/ see detailed description in the hdbWriter/README.md file
 
 /------------------------------------------------------------------------------/
 /                                 libraries                                    /
@@ -32,9 +32,11 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 //----------------------------------------------------------------------------//
 //                              initialization                                //
 //----------------------------------------------------------------------------//
-/S/ Initialzation of the hdbWriter, invoked in the .sl.main[]
-/S/ - open connection to dstHdb
-/S/ - initialize and load tmpHdb
+/F/ Initialzates of the hdbWriter, function invoked in the .sl.main[].
+/-/  - opens connection to dstHdb
+/-/  - initializes and loads tmpHdb
+/R/ no return value
+/E/ .hdbw.init[]
 .hdbw.init:{[]
   .hnd.hopen[.hdbw.cfg.dstHdb;100i;`lazy];
 
@@ -46,12 +48,14 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 //----------------------------------------------------------------------------//
 //                         insert to tmpHdb                                   //
 //----------------------------------------------------------------------------//
-/F/ Uploading the data to the tmpHdb.
-/F/ - data is stored to splayed on-disk tables in tmpHdb
-/F/ - splayed on-disk tables are loaded into memory (mmap)
+/F/ Uploads the data to the tmpHdb.
+/-/ - data is stored to splayed on-disk tables in tmpHdb
+/-/ - splayed on-disk tables are loaded into memory (mmap)
 /P/ tabName:SYMBOL - table name
-/P/ data:TABLE - table with the data model matching to the data model of table, it should also contain date column
-/P/      alternatively list of columns
+/P/ data:TABLE     - table with the data model matching to the data model of table, it should also contain date column
+/-/                  alternatively list of columns
+/R/ no return value
+/E/ .hdbw.insert[`trade;tradeData]
 .hdbw.insert:{[tabName;data]
   .log.info[`hdbw]"Inserting ",string[count data]," rows for table ", string[tabName];
   if[not -11h=type tabName;
@@ -76,11 +80,12 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 //----------------------------------------------------------------------------//
-/S/ On-disk insert data for one tab/day to the tmpHdb
+/F/ Inserts data for one tab/day to the tmpHdb.
 /P/ tabName:SYMBOL - table name
-/P/ data:TABLE - data in the table format that should be written to tmpHdb
-/P/ day:SYMBOL - partition name
-//tabName:`trade;day:2014.01.01;.hdbw.cfg.tmpHdbPath:`:.
+/P/ data:TABLE     - data in the table format that should be written to tmpHdb
+/P/ day:SYMBOL     - partition name
+/R/ no return value
+/E/ .hdbw.p.store[`trade; tradeData; 2014.01.01]
 .hdbw.p.store:{[tabName;data;day]
   // generate the write path
   writePath:.Q.par[.hdbw.cfg.tmpHdbPath;day;`$string[tabName],"/"];
@@ -97,11 +102,12 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 /------------------------------------------------------------------------------/
-/F/ Initialization of the partition in the tmpHdb
-/F/ Performs copy from the dstHdb if required
+/F/ Initializes the partition in the tmpHdb.
+/-/ Performs copy from the dstHdb if required
 /P/ writePath:SYMBOL - full path of the table partition in the tmpHdb
-/P/ tabName:SYMBOL - table name
-/P/ day:SYMBOL - partition name
+/P/ tabName:SYMBOL   - table name
+/P/ day:SYMBOL       - partition name
+/R/ no return value
 .hdbw.p.initPartition:{[writePath;tabName;day]
   //if writePath does not exist or is empty => initiate it
   if[0 = count key writePath;
@@ -123,11 +129,12 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 //----------------------------------------------------------------------------//
 //                            organize tmpHdb                                 //
 //----------------------------------------------------------------------------//
-/F/ Organize the data in tmpHdb - sort and validate the data.
-/F/ Must be performed before pushing the data to dstHdb (.hdbw.finalize[]).
-/P/ tabls:LIST SYMBOL - list of tables, or `ALL to take all tables that were inserted so far
+/F/ Organizes the data in tmpHdb - validates and sorts the data.
+/-/ Must be performed before pushing the data to dstHdb (.hdbw.finalize[]).
+/P/ tabls:LIST SYMBOL      - list of tables, or `ALL to take all tables that were inserted so far
 /P/ partitions:LIST SYMBOL - list of partitions, or `ALL to take all partitions that were inserted so far
-//.hdbw.organize[`ALL;`ALL]
+/R/ no return value
+/E/ .hdbw.organize[`ALL;`ALL]
 .hdbw.organize:{[tabs;partitions]
   toMove:.hdbw.p.list[tabs;partitions];
   //disksort new partitions
@@ -135,10 +142,10 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 //----------------------------------------------------------------------------//
-/F/ Create listing of partition/table
-/P/ tabls:LIST SYMBOL - list of tables, or `ALL to take all tables that were inserted so far
+/F/ Creates listing of partition/table.
+/P/ tabls:LIST SYMBOL      - list of tables, or `ALL to take all tables that were inserted so far
 /P/ partitions:LIST SYMBOL - list of partitions, or `ALL to take all partitions that were inserted so far
-/R/ TABLE - listing of all partition/table pairs
+/R/ :TABLE - listing of all partition/table pairs
 .hdbw.p.list:{[tabs;partitions]
   if[tabs~`ALL;tabs:tables[]];
   if[0=count tabs;:([]date:`symbol$();tab:`symbol$(); cnt:`long$())];
@@ -151,9 +158,10 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 //----------------------------------------------------------------------------//
-/F/ Sort one table partition on disk
-/P/ day:SYMBOL - partition name
+/F/ Sorts one table partition on disk.
+/P/ day:SYMBOL    - partition name
 /P/ tabName:TABLE - table name
+/R/ no return value
 .hdbw.p.sortTab:{[day;tabName]
   / sort on disk by sym and set `p#
   dstPath:.Q.par[.hdbw.cfg.tmpHdbPath;day;`$string[tabName],"/"];
@@ -161,9 +169,9 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 //----------------------------------------------------------------------------//
-/F/ Sort one table partition on disk
-/P/ t:SYMBOL - Full path to the table on disk
-/P/ c:SYMBOL - column which should be used for sorting
+/F/ Sorts one table partition on disk.
+/P/ t:SYMBOL   - full path to the table on disk
+/P/ c:SYMBOL   - column which should be used for sorting
 /P/ a:FUNCTION - attribute which should be applied on the sorted column
 .hdbw.p.disksort:{[t;c;a] 
   if[not`s~attr(t:hsym t)c;
@@ -178,15 +186,16 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 //----------------------------------------------------------------------------//
 //                            finalize                                        //
 //----------------------------------------------------------------------------//
-/F/ Deploy the data in the dstHdb. Note that .hdbw.organize[] must be used 
-/F/ before the finalization.
-/F/ - validate each (table/partition)
-/F/ - archive - move dstHdb/partition/table to archive/{timestmap}/partition/table
-/F/ - move tmpHdb/partition/table to dstHdb/partition/table
-/F/ - fill missing days in dstHdb
-/F/ - reload dstHdb process
-/P/ tabls:LIST SYMBOL - list of tables, or `ALL to take all tables that were inserted so far
+/F/ Deploys the data in the dstHdb. Note that .hdbw.organize[] must be used before the finalization.
+/-/  - validate each (table/partition)
+/-/  - archive - move dstHdb/partition/table to archive/{timestmap}/partition/table
+/-/  - move tmpHdb/partition/table to dstHdb/partition/table
+/-/  - fill missing days in dstHdb
+/-/  - reload dstHdb process
+/P/ tabls:LIST SYMBOL      - list of tables, or `ALL to take all tables that were inserted so far
 /P/ partitions:LIST SYMBOL - list of partitions, or `ALL to take all partitions that were inserted so far
+/R/ no return value
+/E/ .hdbw.finalize[`ALL;`ALL]
 .hdbw.finalize:{[tabs;partitions]
   toMove:.hdbw.p.list[tabs;partitions];
 
@@ -208,9 +217,9 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 //----------------------------------------------------------------------------//
-/F/ Push one partition/table from tmpHdb to dstHdb
+/F/ Pushes one partition/table from tmpHdb to dstHdb.
 /P/ currentArchivePath:SYMBOL - archive directory path
-/P/ item:DICT - info about partition
+/P/ item:DICT                 - info about partition
 .hdbw.p.deployOne:{[currentArchivePath;item]
   srcPath:.Q.par[.hdbw.cfg.tmpHdbPath;item`date;item`tab];
   srcDirPath:.Q.par[.hdbw.cfg.tmpHdbPath;item`date;`];
@@ -236,7 +245,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 //----------------------------------------------------------------------------//
-/F/ Check whether table in tmpHdb contains `p attribute
+/F/ Checks whether table in tmpHdb contains `p attribute
 /P/ date:DATE - date which should be checked
 /P/ tab:TABLE - table name
 .hdbw.p.checkAttr:{[date;tab] 
@@ -244,9 +253,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 //----------------------------------------------------------------------------//
-/F/ Cleanup mmap of tmpHdb directory (as some of the mmaped files/direcotires
-/F/ does not exist on disk anymore).
-/F/ Reload the tmpHdb
+/F/ Cleanups mmap of tmpHdb directory (as some of the mmaped files/direcotires does not exist on disk anymore). Reloads the tmpHdb.
 .hdbw.p.cleanupTmpHdb:{[] 
   {value"delete ",string[x]," from `."} each tables[];
   system"l .";
@@ -255,7 +262,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 //----------------------------------------------------------------------------//
 //                         initialization                                     //
 //----------------------------------------------------------------------------//
-/F/ Fill missing days and reload the tmpHdb.
+/F/ Fills missing days and reload the tmpHdb.
 .hdbw.p.reloadTmpHdb:{[]
   .log.info[`hdbw]"Reloading tmpHdb: ", system"cd";
   .Q.chk[`:.];
@@ -263,16 +270,35 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 //----------------------------------------------------------------------------//
-/F/ Starting point of the hdbWriter.
-.sl.main:{[]
+/F/ Component initialization entry point.
+/P/ flags:LIST - nyi
+/R/ no return value
+/E/ .sl.main`
+.sl.main:{[flags]
+  /G/ Destination hdb name, loaded from cfg.dstHdb field from system.cfg.
   .hdbw.cfg.dstHdb:.cr.getCfgField[`THIS;`group;`cfg.dstHdb];
+
+  /G/ Destination hdb path.
   .hdbw.cfg.dstHdbPath:.cr.getCfgField[.hdbw.cfg.dstHdb;`group;`dataPath];
-  .hdbw.cfg.tmpHdbPath:.cr.getCfgField[`THIS;`group;`cfg.tmpHdbPath];
+
+  /G/ Temporary local hdb (tmpHdb) path, loaded from cfg.tmpHdbPath field from system.cfg.
+  .hdbw.cfg.tmpHdbPath:.cr.getCfgField[`THIS;`group;`cfg.tmpHdbPath];  
+
+  /G/ Data archive path, loaded from cfg.archivePath field from system.cfg.
   .hdbw.cfg.archivePath:.cr.getCfgField[`THIS;`group;`cfg.archivePath];
+
+  /G/ Dictionary with the data model, loaded from dataflow.cfg.
   .hdbw.cfg.model:(!) . flip .cr.getModel[`THIS];  //TODO FUTURE: consolidate with cfgModel
+
+  /G/ Table with the data model, loaded from dataflow.cfg.
   .hdbw.cfg.cfgModel:select tab:sectionVal, model:finalValue from .cr.getCfgTab[`THIS;`table;`model];
+
+  /G/ Dictionary with expected data model meta information.
   .hdbw.cfg.expMeta:exec tab!{(enlist[`date]!enlist["d"]), exec col1!.tabs.cfg.typeMap col2 from x} each model from .hdbw.cfg.cfgModel;
+
+  /G/ Dictionary with sorting columns, loaded from hdbSortingCols field from dataflow.cfg
   .hdbw.cfg.hdbSortingCols:exec sectionVal!hdbSortingCols from .cr.getCfgPivot[`THIS;`table;`hdbSortingCols];
+
   .sl.libCmd[];
   .hdbw.init[];
   };
@@ -280,14 +306,3 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 //----------------------------------------------------------------------------//
 .sl.run[`hdbw;`.sl.main;`];
 /
-\a
-raze {meta x} each value each tables[]
-meta deltas
-sym:`symbol$()
-.hdbw.organize[`ALL;`ALL]
-.tabs.status[]
-.hdbw.finalize[`instrumentStateChange;`ALL]
-meta instrumentStateChange
-meta select from deltas
-deltas
-select from instrumentStateChange

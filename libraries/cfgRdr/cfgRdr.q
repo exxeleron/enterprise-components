@@ -1,248 +1,248 @@
 /L/ Copyright (c) 2011-2014 Exxeleron GmbH
-/L/
-/L/ Licensed under the Apache License, Version 2.0 (the "License");
-/L/ you may not use this file except in compliance with the License.
-/L/ You may obtain a copy of the License at
-/L/
-/L/   http://www.apache.org/licenses/LICENSE-2.0
-/L/
-/L/ Unless required by applicable law or agreed to in writing, software
-/L/ distributed under the License is distributed on an "AS IS" BASIS,
-/L/ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-/L/ See the License for the specific language governing permissions and
-/L/ limitations under the License.
+/-/
+/-/ Licensed under the Apache License, Version 2.0 (the "License");
+/-/ you may not use this file except in compliance with the License.
+/-/ You may obtain a copy of the License at
+/-/
+/-/   http://www.apache.org/licenses/LICENSE-2.0
+/-/
+/-/ Unless required by applicable law or agreed to in writing, software
+/-/ distributed under the License is distributed on an "AS IS" BASIS,
+/-/ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+/-/ See the License for the specific language governing permissions and
+/-/ limitations under the License.
  
 /A/ DEVnet:  Bartosz Dolecki
 /V/ 3.0
  
 /S/ Configuration reader library:
-/S/ Responsible for:
-/S/ - loading of *.cfg configuration files based on *.qsd meta files (q schema definition)
+/-/ Responsible for:
+/-/ - loading of *.cfg configuration files based on *.qsd meta files (q schema definition)
 
-/S/ Supported data types:
+/-/ Supported data types:
 
-/S/ *BOOLEAN*
-/S/ (start code)
-/S/ qsd:
-/S/ cfg.isActive = <type(BOOLEAN)>
-/S/ 
-/S/ cfg:
-/S/ cfg.isActive = 1     // value in q: 1b
-/S/ cfg.isActive = 1b    // value in q: 1b
-/S/ cfg.isActive = TRUE  // value in q: 1b
-/S/ cfg.isActive = 0     // value in q: 0b
-/S/ cfg.isActive = 0b    // value in q: 0b
-/S/ cfg.isActive = FALSE // value in q: 0b
-/S/ (end)
+/-/ *BOOLEAN*
+/-/ (start code)
+/-/ qsd:
+/-/ cfg.isActive = <type(BOOLEAN)>
+/-/ 
+/-/ cfg:
+/-/ cfg.isActive = 1     // value in q: 1b
+/-/ cfg.isActive = 1b    // value in q: 1b
+/-/ cfg.isActive = TRUE  // value in q: 1b
+/-/ cfg.isActive = 0     // value in q: 0b
+/-/ cfg.isActive = 0b    // value in q: 0b
+/-/ cfg.isActive = FALSE // value in q: 0b
+/-/ (end)
 
-/S/ *CHAR*
-/S/ (start code)
-/S/ qsd:
-/S/ cfg.flag = <type(CHAR)>
-/S/ 
-/S/ cfg:
-/S/ cfg.flag = F // value in q "F" (type -10h)
-/S/ (end)
+/-/ *CHAR*
+/-/ (start code)
+/-/ qsd:
+/-/ cfg.flag = <type(CHAR)>
+/-/ 
+/-/ cfg:
+/-/ cfg.flag = F // value in q "F" (type -10h)
+/-/ (end)
 
-/S/ *DATE*
-/S/ (start code)
-/S/ qsd:
-/S/ cfg.maxMaturity = <type(DATE)>
-/S/ 
-/S/ cfg:
-/S/ cfg.maxMaturity = 2013.05.13
-/S/ (end)
+/-/ *DATE*
+/-/ (start code)
+/-/ qsd:
+/-/ cfg.maxMaturity = <type(DATE)>
+/-/ 
+/-/ cfg:
+/-/ cfg.maxMaturity = 2013.05.13
+/-/ (end)
 
-/S/ *DATETIME*
-/S/ (start code)
-/S/ qsd:
-/S/ cfg.minTstmp = <type(DATETIME)>
-/S/ 
-/S/ cfg:
-/S/ cfg.minTstmp = 2013.05.13D14:30:00.000  // value in q: 2013.05.13T14:30:00.000
-/S/ (end)
+/-/ *DATETIME*
+/-/ (start code)
+/-/ qsd:
+/-/ cfg.minTstmp = <type(DATETIME)>
+/-/ 
+/-/ cfg:
+/-/ cfg.minTstmp = 2013.05.13D14:30:00.000  // value in q: 2013.05.13T14:30:00.000
+/-/ (end)
 
-/S/ *FLOAT*
-/S/ (start code)
-/S/ qsd:
-/S/ cfg.latency = <type(FLOAT)>
-/S/ 
-/S/ cfg:
-/S/ cfg.timeZone = 12.0   // value in q: 12.0 (type -9h - float) 
-/S/ (end)
+/-/ *FLOAT*
+/-/ (start code)
+/-/ qsd:
+/-/ cfg.latency = <type(FLOAT)>
+/-/ 
+/-/ cfg:
+/-/ cfg.timeZone = 12.0   // value in q: 12.0 (type -9h - float) 
+/-/ (end)
 
-/S/ *GUID*
-/S/ (start code)
-/S/ valid with q version > 3.0
-/S/ qsd:
-/S/ cfg.guid = <type(GUID)>
-/S/ 
-/S/ cfg:
-/S/ cfg.guid = 337714f8-3d76-f283-cdc1-33ca89be59e9 0a369037-75d3-b24d-6721-5a1d44d4bed5
-/S/ (end)
+/-/ *GUID*
+/-/ (start code)
+/-/ valid with q version > 3.0
+/-/ qsd:
+/-/ cfg.guid = <type(GUID)>
+/-/ 
+/-/ cfg:
+/-/ cfg.guid = 337714f8-3d76-f283-cdc1-33ca89be59e9 0a369037-75d3-b24d-6721-5a1d44d4bed5
+/-/ (end)
 
-/S/ *INT*
-/S/ (start code)
-/S/ qsd:
-/S/ cfg.latency = <type(INT)>
-/S/ 
-/S/ cfg:
-/S/ cfg.latency = 42   // value in q: 42i
-/S/ (end)
+/-/ *INT*
+/-/ (start code)
+/-/ qsd:
+/-/ cfg.latency = <type(INT)>
+/-/ 
+/-/ cfg:
+/-/ cfg.latency = 42   // value in q: 42i
+/-/ (end)
 
-/S/ *LONG*
-/S/ (start code)
-/S/ qsd:
-/S/ cfg.latency = <type(LONG)>
-/S/ 
-/S/ cfg:
-/S/ cfg.latency = 42    // value in q: 42j
-/S/ (end)
+/-/ *LONG*
+/-/ (start code)
+/-/ qsd:
+/-/ cfg.latency = <type(LONG)>
+/-/ 
+/-/ cfg:
+/-/ cfg.latency = 42    // value in q: 42j
+/-/ (end)
 
-/S/ *PATH*
-/S/ Environment variables can be used here; empty path must be denoted by NULL 
-/S/ (start code)
-/S/ qsd:
-/S/ cfg.reportDir = <type(PATH)>
-/S/ cfg.sourceDir = <type(PATH)>
-/S/ 
-/S/ cfg:
-/S/ cfg.reportDir = /mnt/data/reports
-/S/ cfg.sourceDir = ${dataPath}/src/
-/S/ (end)
+/-/ *PATH*
+/-/ Environment variables can be used here; empty path must be denoted by NULL 
+/-/ (start code)
+/-/ qsd:
+/-/ cfg.reportDir = <type(PATH)>
+/-/ cfg.sourceDir = <type(PATH)>
+/-/ 
+/-/ cfg:
+/-/ cfg.reportDir = /mnt/data/reports
+/-/ cfg.sourceDir = ${dataPath}/src/
+/-/ (end)
 
-/S/ *REAL*
-/S/ (start code)
-/S/ qsd:
-/S/ cfg.latency = <type(REAL)>
-/S/ 
-/S/ cfg:
-/S/ cfg.timeZone = 12.0e   // value in q: 12.0 (type -8h - real)
-/S/ (end)
+/-/ *REAL*
+/-/ (start code)
+/-/ qsd:
+/-/ cfg.latency = <type(REAL)>
+/-/ 
+/-/ cfg:
+/-/ cfg.timeZone = 12.0e   // value in q: 12.0 (type -8h - real)
+/-/ (end)
 
-/S/ *SHORT*
-/S/ (start code)
-/S/ qsd:
-/S/ cfg.latency = <type(SHORT)>
-/S/ 
-/S/ cfg:
-/S/ cfg.latency = 42    // value in q: 42h
-/S/ (end)
+/-/ *SHORT*
+/-/ (start code)
+/-/ qsd:
+/-/ cfg.latency = <type(SHORT)>
+/-/ 
+/-/ cfg:
+/-/ cfg.latency = 42    // value in q: 42h
+/-/ (end)
 
-/S/ *STRING*
-/S/ Special characters "<>()" need to be escaped with a "/"; empty string must be denoted by NULL
-/S/ (start code)
-/S/ qsd:
-/S/ cfg.timeZone = <type(SYMBOL), default(UTC)>
-/S/ 
-/S/ cfg:
-/S/ cfg.timeZone = CET      // value in q: "CET"
-/S/ cfg.timeZone = "CET"    // value in q: "\"CET\"" (note the double quotes are not removed)
-/S/ cfg.timeZone = CET \(Central European Time\)  // value in q: "CET (Central European Time)" 
-/S/ cfg.timeZone = NULL     // value in q: ""
-/S/ (end)
+/-/ *STRING*
+/-/ Special characters "<>()" need to be escaped with a "/"; empty string must be denoted by NULL
+/-/ (start code)
+/-/ qsd:
+/-/ cfg.timeZone = <type(SYMBOL), default(UTC)>
+/-/ 
+/-/ cfg:
+/-/ cfg.timeZone = CET      // value in q: "CET"
+/-/ cfg.timeZone = "CET"    // value in q: "\"CET\"" (note the double quotes are not removed)
+/-/ cfg.timeZone = CET \(Central European Time\)  // value in q: "CET (Central European Time)" 
+/-/ cfg.timeZone = NULL     // value in q: ""
+/-/ (end)
 
-/S/ *SYMBOL*
-/S/ Special characters "<>()" need to be escaped with a "/"; empty symbol must be denoted by NULL
-/S/ (start code)
-/S/ qsd:
-/S/ cfg.timeZone = <type(SYMBOL), default(UTC)>
-/S/ 
-/S/ cfg:
-/S/ cfg.timeZone = CET    // value in q: `CET
-/S/ (end)
+/-/ *SYMBOL*
+/-/ Special characters "<>()" need to be escaped with a "/"; empty symbol must be denoted by NULL
+/-/ (start code)
+/-/ qsd:
+/-/ cfg.timeZone = <type(SYMBOL), default(UTC)>
+/-/ 
+/-/ cfg:
+/-/ cfg.timeZone = CET    // value in q: `CET
+/-/ (end)
 
-/S/ *TIME*
-/S/ (start code)
-/S/ qsd:
-/S/ cfg.marketClose = <type(TIME)>
-/S/ 
-/S/ cfg:
-/S/ cfg.marketClose = 17:00:00.000
-/S/ (end)
+/-/ *TIME*
+/-/ (start code)
+/-/ qsd:
+/-/ cfg.marketClose = <type(TIME)>
+/-/ 
+/-/ cfg:
+/-/ cfg.marketClose = 17:00:00.000
+/-/ (end)
 
-/S/ *TIMESPAN*
-/S/ (start code)
-/S/ qsd:
-/S/ cfg.minTstmp = <type(TIMESPAN)>
-/S/ 
-/S/ cfg:
-/S/ cfg.minTstmp = 12D14:30:00.000 // value in q 12D14:30:00.000000000
-/S/ (end)
+/-/ *TIMESPAN*
+/-/ (start code)
+/-/ qsd:
+/-/ cfg.minTstmp = <type(TIMESPAN)>
+/-/ 
+/-/ cfg:
+/-/ cfg.minTstmp = 12D14:30:00.000 // value in q 12D14:30:00.000000000
+/-/ (end)
 
-/S/ *TIMESTAMP*
-/S/ (start code)
-/S/ qsd:
-/S/ cfg.minTstmp = <type(TIMESTAMP)>
-/S/ 
-/S/ cfg:
-/S/ cfg.minTstmp = 2013.05.13D14:30:00.000  // value in q: 2013.05.13D14:30:00.000000000
-/S/ (end)
+/-/ *TIMESTAMP*
+/-/ (start code)
+/-/ qsd:
+/-/ cfg.minTstmp = <type(TIMESTAMP)>
+/-/ 
+/-/ cfg:
+/-/ cfg.minTstmp = 2013.05.13D14:30:00.000  // value in q: 2013.05.13D14:30:00.000000000
+/-/ (end)
 
-/S/ *LIST <TYPE>*
-/S/ For all atomic types (all types listed above), a list of values can be defined by adding "LIST" before type name in *.qsd file; such values are then listed in cfg file with coma as a delimiter
-/S/ (start code)
-/S/ qsd:
-/S/ .cfg.reportTimes = <type(LIST TIME)>
-/S/ cfg:
-/S/ cfg.reportTimes = 12:00:00.000, 17:00:00.000 // value in q: (12:00:00.000, 17:00:00.000)
-/S/ (end)
+/-/ *LIST <TYPE>*
+/-/ For all atomic types (all types listed above), a list of values can be defined by adding "LIST" before type name in *.qsd file; such values are then listed in cfg file with coma as a delimiter
+/-/ (start code)
+/-/ qsd:
+/-/ .cfg.reportTimes = <type(LIST TIME)>
+/-/ cfg:
+/-/ cfg.reportTimes = 12:00:00.000, 17:00:00.000 // value in q: (12:00:00.000, 17:00:00.000)
+/-/ (end)
 
-/S/ *TABLE*
-/S/ Returns table with 2 columns
-/S/ (start code)
-/S/ qsd:
-/S/ cfg.enum = <type(TABLE), col1(SYMBOL), col2(INT)>
-/S/ 
-/S/ cfg:
-/S/ cfg.enum = red(1), blue(2), green(3)  
-/S/ // value in q
-/S/ //    +--------+--------+
-/S/ //    +  col1  |  col2  +
-/S/ //    +--------+--------+
-/S/ //    +  red   |    1   |
-/S/ //    +  blue  |    2   |
-/S/ //    +  green |    3   |
-/S/ //    +--------+--------+
-/S/ (end)
+/-/ *TABLE*
+/-/ Returns table with 2 columns
+/-/ (start code)
+/-/ qsd:
+/-/ cfg.enum = <type(TABLE), col1(SYMBOL), col2(INT)>
+/-/ 
+/-/ cfg:
+/-/ cfg.enum = red(1), blue(2), green(3)  
+/-/ // value in q
+/-/ //    +--------+--------+
+/-/ //    +  col1  |  col2  +
+/-/ //    +--------+--------+
+/-/ //    +  red   |    1   |
+/-/ //    +  blue  |    2   |
+/-/ //    +  green |    3   |
+/-/ //    +--------+--------+
+/-/ (end)
 
-/S/ *ARRAY*
-/S/ Allows to define more complex tables
-/S/ (start code)
-/S/
-/S/ cfg:
-/S/ cfg.tab = <type(ARRAY), model(timezone(SYMBOL), descr(STRING), offset(TIME))>
-/S/ cfg:
-/S/ cfg.tab = ((timezone(UTC), descr(Coordinated universal time), offset(00:00:00.000)), (timezone(CET), descr(Central European time), offset(01:00:00.000)))
-/S/ // value in q
-/S/ //  |--------------------------------------------------------|
-/S/ //  | timezone | descr                       | offset        |
-/S/ //  |----------+-----------------------------+---------------|
-/S/ //  |   UTC    | Coordinated universal time  | 00:00:00.000  |
-/S/ //  |   CET    | Central European time       | 01:00:00.000  |
-/S/ //  |--------------------------------------------------------|
-/S/ (end)
+/-/ *ARRAY*
+/-/ Allows to define more complex tables
+/-/ (start code)
+/-/
+/-/ cfg:
+/-/ cfg.tab = <type(ARRAY), model(timezone(SYMBOL), descr(STRING), offset(TIME))>
+/-/ cfg:
+/-/ cfg.tab = ((timezone(UTC), descr(Coordinated universal time), offset(00:00:00.000)), (timezone(CET), descr(Central European time), offset(01:00:00.000)))
+/-/ // value in q
+/-/ //  |--------------------------------------------------------|
+/-/ //  | timezone | descr                       | offset        |
+/-/ //  |----------+-----------------------------+---------------|
+/-/ //  |   UTC    | Coordinated universal time  | 00:00:00.000  |
+/-/ //  |   CET    | Central European time       | 01:00:00.000  |
+/-/ //  |--------------------------------------------------------|
+/-/ (end)
 
-/S/ *PORT*
-/S/ Used for defining port numbers; value can be arithmetic expression (with "+" and "-" operators) and use basePort variable.
-/S/ (start code)
-/S/ qsd:
-/S/ cfg.port = <type(PORT)>
-/S/ 
-/S/ cfg:
-/S/ cfg.port = ${basePort} + 42
-/S/ (end)
+/-/ *PORT*
+/-/ Used for defining port numbers; value can be arithmetic expression (with "+" and "-" operators) and use basePort variable.
+/-/ (start code)
+/-/ qsd:
+/-/ cfg.port = <type(PORT)>
+/-/ 
+/-/ cfg:
+/-/ cfg.port = ${basePort} + 42
+/-/ (end)
 
-/S/ *COMPONENT*
-/S/ Used for defining component names; value can be a component symbolic name. 
-/S/ If a base name of a clone is used - it will be automatically expanded to a list all its clones.
-/S/ (start code)
-/S/ qsd:
-/S/ cfg.src = <type(COMPONENT)>
-/S/ 
-/S/ cfg:
-/S/ cfg.src = in.tickHF
-/S/ (end)
+/-/ *COMPONENT*
+/-/ Used for defining component names; value can be a component symbolic name. 
+/-/ If a base name of a clone is used - it will be automatically expanded to a list all its clones.
+/-/ (start code)
+/-/ qsd:
+/-/ cfg.src = <type(COMPONENT)>
+/-/ 
+/-/ cfg:
+/-/ cfg.src = in.tickHF
+/-/ (end)
 
 //----------------------------------------------------------------------------//
 system"l ",getenv[`EC_QSL_PATH],"/sl.q";
@@ -885,7 +885,8 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
  
 // various possible prefixes
 .cr.atomic.prefix:.par.choice (.cr.atomic.drive;.par.pstring["../"];.par.pstring["./"];.par.pstring["//"];.par.pstring[enlist "/"]);
- 
+
+/F/ parses a column 
 /P/ env:DICTIONARY[SYMBOL;STRING] - environment variables
 /P/ t:DICTIONARY[SYMBOL;SYMBOL] - column types
 .cr.atomic.column:{[model;env;ps]
@@ -930,8 +931,6 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
  
 /frac .par.initP ".0234 "
- 
- 
 .cr.atomic.p.secs:{[ps]
   ps2:.par.option["";.cr.atomic.p.frac] ps1: .cr.atomic.p.twodigits .par.char[":"] ps;
   if[0N<>ps1`errp;ps1[`cp]:ps`cp;:ps1];
@@ -1142,8 +1141,8 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
     ];
   :res4;
   };
+
 //-------------------------- ARITHMETIC PARSER -------------------------------//
- 
 .cr.arith.number: {[ps]
   ps1: .par.many1[.par.digit] ps;
   if[0N <> ps1`errp; 
@@ -1249,7 +1248,6 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
  
 //------------------------ COMPOUND PARSERS -------------------------------------//
- 
 /F/ parses a table as a list of rows separated by commas
 /model:mdl
 /env
@@ -1263,7 +1261,6 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   if[0N <> ps2`errp;:ps2];
   if[0N <> ps3`errp;:.par.addErr[ps3;"expected a list of rows separated by commas"]];
   if[0N <> ps4`errp;:ps4];
- 
  
   nd:(key model)!.cr.atomic.nulls[value model]; 
   // empty table case
@@ -1357,12 +1354,10 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
  
  
 // ====================================================
- 
 //txt:varText
 //tp:varType
 //qsdInfo:varQsd
-//ps: .par.initP txt
- 
+//ps: .par.initP txt 
 .cr.p.parseVal:{[ps;qsdInfo;env;tp;eol]
   isAtomic:tp in key .cr.atomic.parsers;
   isCompound:tp in key .cr.compound.parsers;
@@ -1509,13 +1504,21 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 // -----------------------------------------------------------------------------
 // getters
 // -----------------------------------------------------------------------------
-/F/ Returns configuration details
-/P/ componentId : SYMBOL - name of process (`THIS and `ALL can be used as well)
-/P/ secType : SYMBOL | SYMBOL LIST - type of section (`group,`table etc.)
-/P/ fields : LIST SYMBOL - list of variables to fetch
-/R/ table with columns sectionVal, subsection, varName, finalValue
-/E/ .cr.getCfgTab[`ALL;`group;`var1`var2]
-/E/ .cr.getCfgTab[componentId;`sysTable`table;`model]
+/F/ Returns values for given config fields as a table with one row for each subsection-field combination for given componentId.
+/P/ componentId:SYMBOL           - name of process (`THIS can be used as well)
+/P/ secType:SYMBOL | SYMBOL LIST - type of section (`group,`table etc.)
+/P/ fields:LIST SYMBOL           - list of config fields to fetch
+/R/ TABLE - table with configuration values of requesteds fields for requested sectionType for given componentId.
+/-/  -- sectionVal:SYMBOL - configuration section value (from sectionTypes sections)
+/-/  -- subsection:SYMBOL - configuration subsection value = componentId
+/-/  -- varName:SYMBOL    - configuration field name
+/-/  -- finalValue:ANY    - configuration field value
+/E/ .cr.getCfgTab[`core.rdb;`group;`port`dataPath]
+/-/    - returns table with `sectionVal`subsection`varName`finalValue columns, with two rows for core.rdb - dataPath and port
+/E/ .cr.getCfgTab[`core.rdb;`sysTable`table;`model]
+/-/    - returns table with `sectionVal`subsection`varName`finalValue columns, with model field for all the tables defined for core.rdb
+/E/ .cr.getCfgTab[`THIS;`userGroup;`namespaces`checkLevel]
+/-/    - returns table with `sectionVal`subsection`varName`finalValue columns, with namespaces and checkLevel fields for all the userGroups defined for `THIS
 .cr.getCfgTab:{[componentId;secType;fields]
   componentId:$[`THIS~componentId;.sl.componentId;componentId];
   fields:`$(),string fields; 
@@ -1540,12 +1543,20 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   :select sectionVal:section, subsection:componentId, varName, finalValue:varVal from processes where varName in fields;
   };
 
-/F/ Returns configuration details, similar to <.cr.getCfgTab>, but returns values on the group level
-/P/ secType : SYMBOL | SYMBOL LIST - type of section (`group,`table etc.)
-/P/ fields : LIST SYMBOL - list of variables to fetch
-/R/ table with columns sectionVal, subsection, varName, finalValue
-/E/ .cr.getGroupCfgTab[`group;`var1`var2]
+/F/ Returns values for given config fields as a table with one row for each section-field combination for each section of given secType.
+/P/ secType:SYMBOL | SYMBOL LIST - type of section (`group,`table etc.)
+/P/ fields:LIST SYMBOL           - list of config fields to fetch
+/R/ TABLE - table with configuration values of requesteds fields for requested sectionType.
+/-/  -- sectionVal:SYMBOL - configuration section value (from sectionTypes sections)
+/-/  -- section:SYMBOL    - configuration subsection value = componentId
+/-/  -- varName:SYMBOL    - configuration field name
+/-/  -- finalValue:ANY    - configuration field value
+/E/ .cr.getGroupCfgTab[`group;`basePort]
+/-/    - returns table with `sectionVal`section`varName`finalValue columns, with one row (basePort) for each group in the system.cfg
 /E/ .cr.getGroupCfgTab[`sysTable`table;`model]
+/-/    - returns table with `sectionVal`section`varName`finalValue columns, with one row (model) for each table and systemTable in the dataflow.cfg
+/E/ .cr.getGroupCfgTab[`userGroup;`checkLevel`stopWords]
+/-/    - returns table with `sectionVal`section`varName`finalValue columns, with two rows (checkLevel and stopWords) for each userGroup in the access.cfg
 .cr.getGroupCfgTab:{[secType;fields]
   paths: raze  {[cfg;pref] enlist[cfg]!enlist (enlist ``),/: exec enlist each (prefix,'suffix) from .cr.cfg[cfg][`subGroups] where prefix in pref}[;secType] each key .cr.cfg;
   //force evaluation of necessary subgroups;
@@ -1554,32 +1565,45 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   if[not count vars;'"missing group(s):",.Q.s1[secType]];
   :select sectionVal,section,varName, finalValue:varVal from vars where varName in fields;
   };
-   
-/F/ Returns detailed info on values. Similar to .cr.getCfgPivot, but works on a group level
-/P/ secType : SYMBOL | SYMBOL LIST - type of section (`group,`table etc.)
-/P/ fields : LIST SYMBOL - list of variables to fetch
-/R/ Table with columns sectionVal, field1, field2, fieldN keyed on sectionVal; 
-/R/ in each column are values of given field for given sections.
+
+/F/ Returns values for given config fields on the section level as a pivoted table with section-rows and field-columns.
+/-/   .cr.getGroupCfgPivot[] is similar to .cr.getCfgPivot[], but returns values for the entire section, not particular componentId.
+/P/ sectionTypes:SYMBOL | SYMBOL LIST - type of section (`group,`table etc.)
+/P/ fields:LIST SYMBOL                - list of config fields to fetch
+/R/ TABLE - table with columns: sectionVal and number of field-columns (matching requested fields) with section-based rows.
+/-/  -- sectionVal:SYMBOL - configuration section values (from sectionTypes sections)
+/-/  -- field1:ANY - first field requested in the (attributes) parameter
+/-/  -- field2:ANY - second field requested in the (attributes) parameter
+/-/  -- fieldN:ANY - n-th field requested in the (attributes) parameter
+/E/ .cr.getGroupCfgPivot[`table`sysTable;`model]
+/-/    - returns table with `sectionVal`model columns, with one row for each table and sysTable
+/E/ .cr.getGroupCfgPivot[`userGroup;`checkLevel`stopWords]
+/-/    - returns table with `sectionVal`checkLevel`stopWords columns, with one row for each userGroup
+/E/ .cr.getGroupCfgPivot[`user;`usergroups]
+/-/    - returns table with `sectionVal`usergroups columns, with one row for each user
 .cr.getGroupCfgPivot:{[sectionTypes;fields]
   exec ((),fields)#(varName!finalValue) by sectionVal:sectionVal from .cr.getGroupCfgTab[sectionTypes;fields]
   };
   
-/F/ Checks if given field is defined 
-/P/ componentId : SYMBOL - name of process (`THIS and `ALL can be used as well)
-/P/ secType : SYMBOL - type of section (`group,`table etc.)
-/P/ field : SYMBOL - variable which existence is checked
-/R/ table with columns sectionVal,subsection,varName,finalValue
-/E/ .cr.getCfgTab[`ALL;`group;`var1]
-/E/ .cr.getCfgTab[componentId;`sysTable;`model]  
-/R/ 1b if variable is defined, 0b otherwise
+/F/ Checks if given field is defined in the configuration.
+/P/ componentId:SYMBOL               - name of process (`THIS can be used as well)
+/P/ sectionType:SYMBOL | SYMBOL LIST - type of section (`group,`table etc.)
+/P/ field:SYMBOL                     - config field which existence is checked
+/R/ BOOLEAN - 1b if config field is defined, 0b otherwise
+/E/ .cr.isCfgFieldDefined[`THIS;`group;`missingField]
+/-/    - checks if `missingField field is defined in `group section for THIS process in system.cfg
+/E/ .cr.isCfgFieldDefined[`core.rdb;`group;`port]
+/-/    - checks if `port field is defined in `group section for `core.rdb process in system.cfg
 .cr.isCfgFieldDefined:{[componentId;sectionType;field]
   :0<>count res:.cr.p.getVar[.cr.section2file[sectionType];componentId;sectionType;field];
   };   
-  
- 
-/F/ Returns models of tables for given process
-/P/ componentId : SYMBOL - name of the process (`THIS may be ussed for current process)
-/R/ list of pairs (TABLE_NAME,TABLE_MODEL); table model is an empty table 
+
+/F/ Returns tables for given process (table name and table model).
+/P/ componentId:SYMBOL - name of the process (`THIS may be ussed for current process)
+/R/ LIST(PAIR(SYMBOL;MODEL)) - list of pairs (table name;table model as an empty q table)
+/E/ .cr.getModel[`THIS]
+/-/    - returns the list with entry for each table defined for `THIS process
+/-/    - each entry consists of pair (table name;table model)
 .cr.getModel:{[componentId]
   componentId:$[`THIS~componentId;.sl.componentId;componentId];
   tabs1:.cr.getCfgTab[componentId;`sysTable`table;`model];
@@ -1592,6 +1616,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   :res where not invalid;
   };
  
+//----------------------------------------------------------------------------//
 .cr.p.readSourceTabs:{[cfg]
   tName:cfg`sectionVal;
   pName:cfg`finalValue;
@@ -1610,40 +1635,60 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   :(info[`sectionVal];flip (key model)!{$[0h<type x;0#enlist x;0#x]} each .cr.atomic.nulls[value model]);
   };
  
-/F/ Returns values for given variables for all processes; 
-/F/ searches for values only in system.cfg
-/P/ attributes : LIST SYMBOL - list of attributes to fetch
-/R/ table with columns: proc, attributes (each attribute has its own column)
+//----------------------------------------------------------------------------//
+/F/ Returns values for given config fields (from system.cfg) for all components configured in the system.
+/P/ attributes:LIST SYMBOL - list of attributes (system.cfg config fields) to fetch
+/R/ TABLE - table with columns: proc and number of field-columns (matching requested fields)
+/-/  -- proc:SYMBOL - process name - componentId
+/-/  -- field1:ANY - first field requested in the (attributes) parameter
+/-/  -- field2:ANY - second field requested in the (attributes) parameter
+/-/  -- fieldN:ANY - n-th field requested in the (attributes) parameter
+/E/ .cr.getByProc[`port`dataPath]
+/-/    - returns port and dataPath config fields for all processes defined in the system
 .cr.getByProc:{[attributes]
   exec attributes#(varName!finalValue) by proc:subsection from .cr.getCfgTab[`ALL;`group;attributes]
   };
  
-//.cr.getCfgPivot[`core.tick;`group;`hk`asd`kromsiale]
-/F/ Returns configuration details
-/P/ componentId : SYMBOL - name of process (`THIS can be used as well)
-/P/ secType : SYMBOL | SYMBOL LIST - type of section (`group,`table etc.)
-/P/ fields : LIST SYMBOL - list of variables to fetch
-/R/ Table with columns sectionVal, field1, field2, fieldN keyed on sectionVal; 
-/R/ in each column are values of given field for given sections.
+/F/ Returns values for given config fields on the section level as a pivoted table with section-rows and field-columns for the given componentId.
+/-/   .cr.getCfgPivot[] is similar to .cr.getGroupCfgPivot[], but returns values configured only for given componentId.
+/P/ componentId:SYMBOL                - name of process (`THIS can be used as well)
+/P/ sectionTypes:SYMBOL | SYMBOL LIST - type of section (`group,`table etc.)
+/P/ fields:LIST SYMBOL                - list of config fields to fetch
+/R/ TABLE - table with columns: sectionVal and number of field-columns (matching requested fields) with section-based rows for given componentId.
+/-/  -- sectionVal:SYMBOL - configuration section values (from sectionTypes sections)
+/-/  -- field1:ANY - first field requested in the (attributes) parameter
+/-/  -- field2:ANY - second field requested in the (attributes) parameter
+/-/  -- fieldN:ANY - n-th field requested in the (attributes) parameter
+/E/ .cr.getCfgPivot[`core.rdb;`table`sysTable;`model]
+/-/    - returns table with `sectionVal`model columns, with one row for each table and sysTable defined for core.rdb component
+/E/ .cr.getCfgPivot[`access.ap;`userGroup;`checkLevel`stopWords]
+/-/    - returns table with `sectionVal`checkLevel`stopWords columns, with one row for each userGroup defined for access.ap component
 .cr.getCfgPivot:{[componentId;sectionTypes;fields]
   exec ((),fields)#(varName!finalValue) by sectionVal:sectionVal from .cr.getCfgTab[componentId;sectionTypes;fields]
   };
- 
-/F/ Returns dictionary of variable names and corresponding values
-/P/ componentId : SYMBOL - name of process (`THIS and `ALL can be used as well)
-/P/ secType : SYMBOL | SYMBOL LIST - type of section (`group,`table etc.)
-/P/ fields : LIST SYMBOL - list of variables to fetch
-/R/ dictionary varName -> varValue
+
+/F/ Returns values for given config fields as a (field->value) dictionary for given componentId.
+/P/ componentId:SYMBOL                - name of process (`THIS and `ALL can be used as well)
+/P/ sectionTypes:SYMBOL | SYMBOL LIST - type of section (`group,`table etc.)
+/P/ fields:LIST SYMBOL                - list of config fields to fetch
+/R/ DICT(SYMBOL;ANY) - dictionary with mapping (requested config fields)->(configuration values)
+/E/ .cr.getCfgDict[`THIS;`group;`port`dataPath]
+/-/    - returns dictionary with `port`dataPath keys and value for `THIS process for those fields from the system.cfg file.
+/E/ .cr.getCfgDict[`core.rdb;`group;`port`dataPath]
+/-/    - returns dictionary with `port`dataPath keys and value for `core.rdb process for those fields from the system.cfg file.
 .cr.getCfgDict:{[componentId;sectionTypes;fields]
   exec varName!finalValue from .cr.getCfgTab[componentId;sectionTypes;fields]
   };
  
-/F/ Returns value of given variable for given process
-/P/ componentId : SYMBOL - name of service (or `THIS for current process)
-/P/ sectionType : SYMBOL - name of section in which value exists (`group for system.cfg, `table/`sysTable for dataflow.cfg etc.)
-/P/ field : SYMBOL - name of variable
-/E/ .cr.getCfgField[`core.tick;`group;`cfg.timeout]
-/E/ .cr.getCfgField[`THIS;`group;`cfg.timeout]
+/F/ Returns value for given configuration field for given componentId.
+/P/ componentId:SYMBOL - name of service (or `THIS for current process)
+/P/ sectionType:SYMBOL - name of section in which value exists (`group for system.cfg, `table/`sysTable for dataflow.cfg etc.)
+/P/ field:SYMBOL       - name of the configuration field to fetch
+/R/ ANY - value for requested field from requested sectionType, type depends on the requested field.
+/E/ .cr.getCfgField[`THIS;`group;`port]
+/-/    - returns `port field from `group section for `THIS component
+/E/ .cr.getCfgField[`core.rdb;`group;`dataPath]
+/-/    - returns `dataPath field from `group section for `core.rdb component
 .cr.getCfgField:{[componentId;sectionType;field]
   if[0=count res:.cr.p.getVar[file:.cr.section2file[sectionType];componentId;sectionType;field];
     '"Field ",.Q.s1[field], " for componentId ", .Q.s1[componentId], " for sectionType ",.Q.s1[sectionType]," is missing in file ",string[file],".cfg";
@@ -1651,6 +1696,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   :res[`varVal];
   };
  
+//----------------------------------------------------------------------------//
 //.cr.p.getVar[`system;`core.tick;`group;`asd]
 .cr.p.getVar:{[cfgFile;componentId;sectionType;field]
   componentId:$[`THIS=componentId;.sl.componentId;componentId];
@@ -1668,9 +1714,11 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 //----------------------------------------------------------------------------//
 // sync config                                                                //
 //----------------------------------------------------------------------------//
-/F/ Loads additional sync.cfg file; 
-/F/ used in components that synchronize/communicate with other systems. 
-/F/ If sync.cfg does not exist it will throw a signal.
+/F/ Loads additional sync.cfg file, used in components that synchronize/communicate with other systems. 
+/-/ If sync.cfg does not exist it will throw a signal.
+/R/ no return value
+/E/ .cr.loadSyncCfg[]
+/-/    - loads sync.cfg config file
 .cr.loadSyncCfg:{[]
   qsdPath:`$":",getenv[`EC_QSL_PATH],"/system.qsd";
   cfgPath:`$":",getenv[`EC_ETC_PATH],"/sync.cfg";
@@ -1681,11 +1729,14 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   .cr.cfg[`sync]:.cr.p.align[`system;();();cfg;qsd;.sl.componentId;1b];
   };
  
-/F/ Returns field value from sync.cfg file
-/F/ Usage is the same as for <.cr.getCfgField>
-/P/ componentId : SYMBOL - name of service (or `THIS for current process)
-/P/ sectionType : SYMBOL - name of section in which value exists (`group for system.cfg, `table/`sysTable for dataflow.cfg etc.)
-/P/ field : SYMBOL - name of variable
+/F/ Returns value for given configuration field from sync.cfg file for given componentId.
+/F/   Usage is the same as for (.cr.getCfgField[])
+/P/ componentId:SYMBOL - name of service (or `THIS for current process)
+/P/ sectionType:SYMBOL - name of section in which value exists (`group for system.cfg, `table/`sysTable for dataflow.cfg etc.)
+/P/ field:SYMBOL       - name of the configuration field to fetch
+/R/ ANY - value for requested field from requested sectionType, type depends on the requested field.
+/E/ .cr.getSyncCfgField[`THIS;`group;`cfg.primaryHdb]
+/-/    - returns `cfg.primaryHdb field from `group section for `THIS component loaded from sync.cfg
 .cr.getSyncCfgField:{[componentId;sectionType;field]
   cfg:$[`sync in key .cr.cfg;`sync;'"sync config not loaded"];
   if[0=count res:.cr.p.getVar[cfg;componentId;sectionType;field];
@@ -1697,7 +1748,6 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 //----------------------------------------------------------------------------//
 // Validators                                                                 //
 //----------------------------------------------------------------------------//
- 
 .cr.p.validate:{[valInfo]
   //debugInfo:`cfgFile`cfgLine`cfgCol`qsdFile`qsdLine`qsdCol`varName!v[`cfgFile`cfgLine`cfgCol`qsdFile`qsdLine`qsdCol`varName];
 
@@ -1721,19 +1771,17 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   :valInfo;
   };
  
-/F/ Checks if a parameter is within the range of allowed values; applies only to numeric types 
+/F/ Checks if a parameter is within the range of allowed values; applies only to numeric types .
 /P/ allowedParams - two element list of numbers
-/P/ checkParam - parameter to be checked
+/P/ checkParam    - parameter to be checked
 /R/ 1b if element is within the allowed range (inlusive), 0b otherwise
 /E/ .cr.v.within[(-10;10);1]
 /E/ .cr.v.within[(-10;10);-10]
 /E/ .cr.v.within[(-10;10);10]
 /E/ .cr.v.within[(-10;10);-11]
 /E/ .cr.v.within[(-10;10);11]
-/E/ 
-/E/ // in qsd file
-/E/ cfg.param = <type(INT), within(0,10)>
-
+/-/ // in qsd file
+/-/ cfg.param = <type(INT), within(0,10)>
 .cr.v.within:{[tp;allowedParams;checkParam]
   if[not tp in `INT`FLOAT`REAL`SHORT;:`$"validator \"within\" can be used only for numeral types"];
   res:.cr.atomic.parsers[`$"LIST ",string[tp]] .par.initP allowedParams;
@@ -1744,18 +1792,16 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
  
 //----------------------------------------------------------------------------//
- 
-/F/ Checks if an element is in the list of other allowed elements (one of many)
+/F/ Checks if an element is in the list of other allowed elements (one of many).
 /P/ allowedParams - list of parameters that are chosen from
-/P/ checkParam - parameter to be checked
+/P/ checkParam    - parameter to be checked
 /R/ 1b if element is within allowed parameters, 0b otherwise
 /E/ .cr.v.in[(1 2 3);1]
 /E/ .cr.v.in[(1 2 3);5]
 /E/ .cr.v.in[`a`b`c;`a]
 /E/ .cr.v.in[`a`b`c;`d]
-/E/ 
-/E/ // in qsd file
-/E/ cfg.param = <type(INT), within(1,2,3)>
+/-/ // in qsd file
+/-/ cfg.param = <type(INT), within(1,2,3)>
 .cr.v.in:{[tp;allowedParams;checkParam]
   listType:$[tp like "LIST*";tp;`$"LIST ",string[tp]];
   if[not listType in key .cr.atomic.parsers;:`$"validator \"in\" can be used only on atomic listable types"];
@@ -1766,8 +1812,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
  
 //----------------------------------------------------------------------------//
- 
-/F/ Checks if given component is present within the system
+/F/ Checks if given component is present within the system.
 /P/ component - component to be verified
 /R/ 1b if present, 0b otherwise
 /E/ // in qsd file
@@ -1778,8 +1823,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   :$[all component in `,.cr.p.procNames;`;`$"component \"", .Q.s1[component] ,"\" missing in the system"];
   };
 //----------------------------------------------------------------------------//
- 
-/F/ Checks if given component is present within the system
+/F/ Checks if given component is present within the system.
 /P/ component - component to be verified
 /R/ 1b if present, 0b otherwise
 /E/ // in qsd file
@@ -1791,9 +1835,8 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 //----------------------------------------------------------------------------//
- 
-/F/ Checks if given path exists
-/P/ path : PATH | LIST PATH - path(s) to be checked
+/F/ Checks if given path exists.
+/P/ path:PATH|LIST PATH - path(s) to be checked
 /R/ 0b if path exists, 1b otherwise
 /E/ .cr.v.pathExist[`;`:test/data/bin/kdb.accessPoint]
 /E/ // in qsd file
@@ -1804,7 +1847,6 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
  
 //----------------------------------------------------------------------------//
- 
 /F/ Checks if y is greater than x
 /P/ x - number (as string)
 /P/ y - number
@@ -1822,8 +1864,8 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
  
 /F/ Marks fields that are defined in sync.cfg file only.
-/F/ Field marked with this validator will not be visible for <.cr.getCfgField>.
-/F/ To get value of such field please use <.cr.getSyncCfgField>.
+/-/ Field marked with this validator will not be visible for <.cr.getCfgField>.
+/-/ To get value of such field please use <.cr.getSyncCfgField>.
 /E/ // in qsd file
 /E/ cfg.param = <type(INT), syncOnly()> 
 .cr.v.syncOnly:{[tp;dummy;val]
@@ -1831,13 +1873,15 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
  
 // ---------------------------------------------------------------------------//
- 
- 
 .cr.p.initEnv:{[services]
   if[not `cfg in key `.cr;
+    /G/ Dictionary with full path for each of three main qsd files (system.qsd, dataflow.qsd and access.qsd).
     .cr.qsdFile:()!();
+    /G/ Dictionary with full path for each of three main configuration files (system.cfg, dataflow.cfg and access.cfg).
     .cr.cfgFile:()!();
+    /G/ Dictionary with configuration loaded from .cr.cfgFile files. Not aligned with qsd files yet.
     .cr.cfgTab:()!();
+    /G/ Dictionary with configuration loaded from .cr.cfgFile files. Not aligned with cfg files yet.
     .cr.qsdTab:()!();
  
     .cr.qsdFile[`system]:`$":",getenv[`EC_QSL_PATH],"/system.qsd";
@@ -1857,6 +1901,10 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
     .cr.cfgTab[`dataflow;`subGroups]:update {$[count x;raze .cr.p.expandClonesSet each x;x]}each subGroups from .cr.cfgTab[`dataflow;`subGroups];
     .cr.cfgTab[`access;`subGroups]:update {$[count x;raze .cr.p.expandClonesSet each x;x]}each subGroups from .cr.cfgTab[`access;`subGroups];
 
+    /G/ Dictionary with mapping section to configuration file type.
+    /-/ Keys contains all supported section types in the configuration files.
+    /-/ e.g. group for [group:core], table for [table:trade]
+    /-/ values contains one of three configration file types (`system, `dataflow or `access).
     .cr.section2file:raze {[t] 
       sections:exec distinct prefix from .cr.cfgTab[t][`subGroups];
       :sections!(count sections)#t;
@@ -1875,6 +1923,9 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   nonExistentProcs:services except .cr.p.procNames;
   if[0<>count nonExistentProcs;'"processes ",.Q.s1[nonExistentProcs]," not defined";];
  
+  /G/ Dictionary with loaded configuration, content should be accessed via .cr.getCfg*[] getters.
+  /-/ Contains three keys - `system`dataflow`access.
+  /-/ Values contain the configuration in a form of recursive tree.
   .cr.cfg:()!();
   {[services;t] 
     .log.debug[`cr] "Aligning ",string[t], " config files";
@@ -1884,9 +1935,15 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   {[s] sect:group `template _ .cr.section2file; {[s;k;v] .cr.cfg[k]:.cr.p.forceEval[.cr.cfg[k];s;v]}[s]'[key sect;value sect]}each services;
   };
 
-/F/ Loads configuration for given service(s). 
-/F/ It is necessary to load configuration for specific service before it's fields can be obtained. 
-/P/ services: SYMBOL | SYMBOL LIST - list of services for which configuration will be loaded
+//----------------------------------------------------------------------------//
+/F/ Loads configuration for given service(s). Configuration for `THIS process is automatically loaded during .sl.run[] execution.
+/-/    It is necessary to load configuration for specific service before it's fields can be obtained. 
+/P/ services:SYMBOL | SYMBOL LIST - list of services for which configuration will be loaded (`THIS can be used as well)
+/R/ no return value
+/E/ .cr.loadCfg[`THIS]
+/-/    - loads configuration for `THIS process
+/E/ .cr.loadCfg[`core.rdb]
+/-/    - loads configuration for `core.rdb process
 .cr.loadCfg:{[services]
   services:(),services;
   .cr.p.initEnv[services];
@@ -1939,11 +1996,15 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 .cr.p.excludeComment:{$[null c:first where "#"=x;x;c#x]};
 .cr.p.isVarNameValid:{(count[x]=0) or (count[x]<>.cr.p.identifier[.par.initP x]`cp)};
 
-//file:.cr.cfgFile`system;
-//.cr.parseCfgFileOld[file:`:test/full/system.qsd;1b]
-/F/ Parses configuration file
-/P/ file: SYMBOL - path to file
+//----------------------------------------------------------------------------//
+/F/ Parses configuration file or qsd file into in-mem tree.
+/P/ file:SYMBOL - path to file
 /P/ flag:BOOL - 0b if cfg file, 1b for qsd file
+/R/ DICT - parsed config file as a parse tree
+/E/ .cr.parseCfgFile[`:../../tutorial/Lesson01/etc/system.cfg;0b]
+/-/     - reads system.cfg file into in-mem tree
+/E/ .cr.parseCfgFile[`:../../libraries/qsl/system.qsd;1b]
+/-/     - reads system.qsd file into in-mem tree
 .cr.parseCfgFile:{[file;flag]
   raw:read0 file;
   raw:.cr.p.excludeComment each raw;
@@ -1991,7 +2052,6 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   :cfg;
   };
 
-
 .cr.p.parseQsdFields:{[row]
   res:.cr.p.angleDict[();.par.initP row[`varVal]];
   $[null res[`errp];
@@ -2005,9 +2065,5 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   :row; 
   };
 
-  
 //----------------------------------------------------------------------------// 
 /
-.cr.p.getErr[a]
- 
- 

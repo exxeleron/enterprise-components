@@ -1,44 +1,46 @@
 /L/ Copyright (c) 2011-2014 Exxeleron GmbH
-/L/
-/L/ Licensed under the Apache License, Version 2.0 (the "License");
-/L/ you may not use this file except in compliance with the License.
-/L/ You may obtain a copy of the License at
-/L/
-/L/   http://www.apache.org/licenses/LICENSE-2.0
-/L/
-/L/ Unless required by applicable law or agreed to in writing, software
-/L/ distributed under the License is distributed on an "AS IS" BASIS,
-/L/ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-/L/ See the License for the specific language governing permissions and
-/L/ limitations under the License.
+/-/
+/-/ Licensed under the Apache License, Version 2.0 (the "License");
+/-/ you may not use this file except in compliance with the License.
+/-/ You may obtain a copy of the License at
+/-/
+/-/   http://www.apache.org/licenses/LICENSE-2.0
+/-/
+/-/ Unless required by applicable law or agreed to in writing, software
+/-/ distributed under the License is distributed on an "AS IS" BASIS,
+/-/ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+/-/ See the License for the specific language governing permissions and
+/-/ limitations under the License.
 
 /A/ DEVnet:  Joanna Jarmulska, Pawel Hudak.
 /V/ 3.0
 
 /S/ Subscription management library:
-/S/ Provides API for subscription to data published in tickLF (<tickLF.q>) or tickHF (<tickHF.q>) protocols
+/-/ Provides API for subscription to data published in tickLF (<tickLF.q>) or tickHF (<tickHF.q>) protocols
 
-/S/ Features:
-/S/ - event based subscription and data replay from tickLF and tickHF components
-/S/ - handling data updates in tickLF and tickHF protocols
+/-/ Features:
+/-/ - event based subscription and data replay from tickLF and tickHF components
+/-/ - handling data updates in tickLF and tickHF protocols
 
-/S/ TickHF subscription library:
-/S/ Proxy for subscription to data published using tickHF (<tickHF.q>) protocol
+/-/ TickHF subscription library:
+/-/ Proxy for subscription to data published using tickHF (<tickHF.q>) protocol
 
-/S/ Features:
-/S/ - definition of default callbacks upd and jUpd
-/S/ - functions for subscription and replay of the data from tickHF
+/-/ Features:
+/-/ - definition of default callbacks upd and jUpd
+/-/ - functions for subscription and replay of the data from tickHF
 
 /------------------------------------------------------------------------------/
 /                      tickHF subscription                                     /
 /------------------------------------------------------------------------------/
-//F/ subscription using tickHF interface
-//P/ server - logical name of the server that was initialized by .hnd.hopen
-//P/ tabs - list of table to be subscribed
-//P/ uni - list of universe to subscribe
-//E/ tabs:enlist `trade
-//E/ server:`tick1
-//E/ uni:enlist `
+/F/ Subscribes to tickHF-like data source.
+/P/ server:SYMBOL - logical name of the server that was initialized by .hnd.hopen
+/P/ tabs:SYMBOL | LIST SYMBOL - list of tables requested for subscribtion, ` for ALL
+/P/ uni:SYMBOL | LIST SYMBOL - list of universe entries requested for subscription, ` for ALL
+/R/ no return value
+/E/ .sub.tickHF.subscribe[`core.tickHF; `; `]
+/-/   - subscribes for all tables, full universe from core.tickHF server
+/E/ .sub.tickHF.subscribe[`core.tickHF; enlist `trade; `]
+/-/   - subscribes for `trade table, full universe from core.tickHF server
 .sub.tickHF.subscribe:{[server;tabs;uni]
   subDetails:.hnd.h[server]"(.u.sub'[`",("`" sv string[tabs]),";`",("`" sv string[(),uni]), "];`.u `i`L)";
   .log.debug[`sub] "Set data model for tables: `","`" sv string[tabs];
@@ -52,9 +54,11 @@
   };
 
 /------------------------------------------------------------------------------/
-//F/ function for replay data for mode tickHF
-//P/ jrn - number of entries to replay and journal name
-//E/ jrn:(1;`:jrn)
+/F/ Replays data from tickHF source.
+/P/ jrn:PAIR(LONG;SYMBOL) - number of entries to replay and journal name
+/R/ no return value
+/E/ .sub.tickHF.replayData(100j;`:jrn)
+/-/  - replay 100 entries from `:jrn
 .sub.tickHF.replayData:{[jrn]
   .log.info[`sub] "Replaying ",string[jrn 0], " messages from: ",string[jrn 1];
 
@@ -64,30 +68,25 @@
 /------------------------------------------------------------------------------/
 /                      tickHF default realtime callbacks                       /
 /------------------------------------------------------------------------------/
-/G/ default realtime callbacks for tickLF
+/G/ Default realtime callbacks for tickHF.
 .sub.tickHF.default:()!();
 
 /------------------------------------------------------------------------------/
-/F/ initialize data model using schema from subscription callback
+/F/ Initialize data model using schema from subscription callback.
 .sub.tickHF.default[`sub]:{[server;schema] (set) ./: schema};
 
 /------------------------------------------------------------------------------/
-/F/ insert data on updates from tickHF
+/F/ Insert data on updates from tickHF.
 .sub.tickHF.default[`upd]:insert;
 
 /------------------------------------------------------------------------------/
-/F/ insert data on tickHF journal replay
+/F/ Insert data on tickHF journal replay.
 .sub.tickHF.default[`jUpd]:{[t;d]
   if[t in .sub.subListOfJrnTabs;
     t insert d;
     ];
   };
    
-
 /==============================================================================/
 /
 
-sub
-{key[x]}.sub.tickHF.default
-
-sub

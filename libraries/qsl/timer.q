@@ -1,35 +1,37 @@
 /L/ Copyright (c) 2011-2014 Exxeleron GmbH
-/L/
-/L/ Licensed under the Apache License, Version 2.0 (the "License");
-/L/ you may not use this file except in compliance with the License.
-/L/ You may obtain a copy of the License at
-/L/
-/L/   http://www.apache.org/licenses/LICENSE-2.0
-/L/
-/L/ Unless required by applicable law or agreed to in writing, software
-/L/ distributed under the License is distributed on an "AS IS" BASIS,
-/L/ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-/L/ See the License for the specific language governing permissions and
-/L/ limitations under the License.
+/-/
+/-/ Licensed under the Apache License, Version 2.0 (the "License");
+/-/ you may not use this file except in compliance with the License.
+/-/ You may obtain a copy of the License at
+/-/
+/-/   http://www.apache.org/licenses/LICENSE-2.0
+/-/
+/-/ Unless required by applicable law or agreed to in writing, software
+/-/ distributed under the License is distributed on an "AS IS" BASIS,
+/-/ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+/-/ See the License for the specific language governing permissions and
+/-/ limitations under the License.
 
 /A/ DEVnet: Slawomir Kolodynski
 /V/ 3.0
 
-/S/ Timer library:
-/S/ .tmr.status contains table of active timers
-/S/ -- tick:INT - the number of timer ticks since the last run
-/S/ -- period:INT - the period between runs in timer ticks
-/S/ -- periodms:INT - the period between runs in milliseconds
-/S/ -- fun:SYMBOL - the function to be run
-/S/ -- funid:SYMBOL - the timer identifier
+/S/ Timer library.
 
-
-/F/ runs a function every number of timer ticks provided per parameter
+//----------------------------------------------------------------------------//
+/F/ Starts new timer callback (`func`) with given frequency (specified by period `per`). 
+/-/   Runs a function every number of timer ticks provided per parameter.
+/-/   All started timers are listed in the .tmr.status global table.
+/-/   Timer can be stopped using .tmr.stop[] function.
+/-/   Timer frequency can be changed with .tmr.change[] function.
 /P/ func:SYMBOL - name of a function that takes exactly one parameter; the timestamp from .z.p or .z.P 
-/P/ (depending on the EC_TIMESTAMP_MODE configuration variable) is passed to that function
-/P/ per:INT - the period between runs in ms
-/P/ id:SYMBOL - timer id, assigned by the user; if such already exists, the previous is overwritten
+/-/              (depending on the EC_TIMESTAMP_MODE configuration variable) is passed to that function
+/P/ per:INT     - the period between runs in ms
+/P/ id:SYMBOL   - timer id, assigned by the user; if such already exists, the previous is overwritten
+/-/               timer `id` is often the same as `func`
 /R/ :INT - number of timers defined (including this one)
+/E/ .tmr.start[`.example.ts; 5000; `myExampleTimer]
+/-/     - function .example.ts will be executed every 5 seconds
+/-/     - .tmr.status contains now timer with with fun`.example.ts and funid=`myExampleTimer
 .tmr.start:{[func;per;id]
   //(-1) (string .z.p)," *** tmrdebug ","starting timer for function ",(string func)," period ",(string per)," id ",string id;
   .log.info[`tmr] "starting timer for function ",(string func)," period ",(string per)," id ",string id;
@@ -82,10 +84,15 @@
   :count .tmr.status;
   };
 
-
-/F/ removes a function (timer callback) from the list to be run; other callbacks are not affected.
+//----------------------------------------------------------------------------//
+/F/ Stops timer with given timer id. Other callbacks are not affected.
+/-/ Removes a function (timer callback) from the list to be run.
+/-/ id must match the one specified in .tmr.start[]
 /P/ id:SYMBOL - id of the timer to be removed
 /R/ :INT - number of remaining timers
+/E/ .tmr.stop[`myExampleTimer]
+/-/     - timer `myExampleTimer is stopped
+/-/     - `myExampleTimer is removed from .tmr.status
 .tmr.stop:{[id]
   //(-1) (string .z.p)," *** tmrdebug ","stopping timer id:",(string id)," callbacks:",("," sv string each .tmr.status`fun)," tick: ",("," sv string each .tmr.status`tick);
   .log.debug[`tmr] "callbacks before stopping: ",("," sv string each .tmr.status`fun)," tick: ",("," sv string each .tmr.status`tick);
@@ -105,10 +112,14 @@
   :c
   };
 
-/F/ changes the frequency of given timer
+//----------------------------------------------------------------------------//
+/F/ Changes the frequency of given timer.
+/-/ id must match the one specified in .tmr.start[]
 /P/ per:INT - new timer period in ms
 /P/ id:SYMBOL - timer identifier
-/R/ Int - previous period in ms
+/R/ :INT - previous period in ms
+/E/ .tmr.change[10000; `myExampleTimer]
+/-/     - change frequency of myExampleTimer - now it will be invoked every 10 seconds
 .tmr.change:{[per;id]
   .log.info[`tmr] "changing timer id",(string id)," to period ",string per;
   if[not id in .tmr.status`funid;
@@ -122,19 +133,26 @@
   :oldper;
   };
 
-/F/ removes all timer callbacks
+//----------------------------------------------------------------------------//
+/F/ Removes all timer callbacks.
+/R/ no return value
+/E/ .tmr.reset[]
 .tmr.reset:{[]
   .log.info[`tmr] "recovering original configuration: timer period ",string .tmr.p.t;
   .z.ts:.tmr.p.zts;
   system "t ", string .tmr.p.t;
-  .tmr.p.cleanup:{};
+  .tmr.p.cleanup:{[]};
   delete from `.tmr.status;
   };
 
-/F/ runs the specified function around specified time (10 s accuracy)
-/P/ t:TIME - the time the function is to run the first time 
-/P/ fun:SYMBOL - the name of the function
-/P/ id:SYMBOL - the id of this job
+//----------------------------------------------------------------------------//
+/F/ Runs the specified function around specified time (10 s accuracy).
+/P/ t:TIME      - the time the function is to run the first time 
+/P/ func:SYMBOL - the name of the function
+/P/ id:SYMBOL   - the id of this job
+/R/ no return value
+/E/ .tmr.runAt[12:00:00.000; `.example.fireAtNoon; `noonCallback]
+/-/     - function .example.fireAtNoon will be executed around 12:00:00.000 (with 10 s accuracy)
 .tmr.runAt:{[t;func;id]
   //(-1) "scheduling ",(string func)," to run at ",string t;
   .log.info[`tmr] "scheduling ",(string func)," to run at ",string t;
@@ -144,8 +162,11 @@
   .tmr.start[f;10000i;id];
   };
 
-/F/ checks for known invariants in case someone resets the q timer or .z.ts by hand; errors are logged, but no other action is taken (no signals)
+//----------------------------------------------------------------------------//
+/F/ Checks for known invariants in case someone resets the q timer or .z.ts by hand.
+/-/ Errors are logged, but no other action is taken (no signals).
 /R/ message about the state of timer
+/E/ .tmr.sanityCheck[]
 .tmr.sanityCheck:{[]
   if[not .z.ts~.tmr.run;
     .log.error[`tmr] msg:".z.ts different than expected, modified outside the library?";
@@ -162,9 +183,12 @@
   :"";
   };
 
-//------------------- private --------------------------------------------------
-/F/ runs a timer function on the timer tick; if some tick have been missed because the 
-/F/ process was busy, each missed function is executed once
+//----------------------------------------------------------------------------//
+/F/ Timer execution engine that should be always asigned to .z.ts q callback. 
+/-/ Runs a timer function on the timer tick.
+/-/ If some tick have been missed because the process was busy, each missed function is executed once.
+/R/ no return value
+/E/ .tmr.run[]
 .tmr.run:{[]
   //.log.info[`tmr] ".tmr.run";
   //.dbg.status:.tmr.status;
@@ -187,8 +211,11 @@
   (exec fun from .tmr.status where 0=tick) .pe.atLog[`tmr;;;0b;`error]' .sl.zp[];
   .tmr.p.cleanup[];
   };
-/F/ Calculates a greatest common divisor by doing simple optimizations and then
-/F/ calling the brute force method
+
+//----------------------------------------------------------------------------//
+//                            private functions                               //
+//----------------------------------------------------------------------------//
+/F/ Calculates a greatest common divisor by doing simple optimizations and then calling the brute force method.
 /P/ x:LIST[INT] - a nonempty list of positive integers.    
 .tmr.p.gcd:{[x]
   if[0~ count x;.log.error[`tmr] "attempt to calculate a gcd of empty list";'`$"Invalid argument"];
@@ -198,14 +225,14 @@
   :.tmr.p.gcdBrute x
   };
 
-/F/ Calculates greatest common divisor by a brute force method
+/F/ Calculates greatest common divisor by a brute force method.
 /P/ x:LIST[INT] - a nonempty list of positive integers. The nonemptiness is not checked
 /R/ :INT - the greatest common divisor of x
 .tmr.p.gcdBrute:{[x] d last where (d:(1+ til min x)) {[x;y] all 0=y mod/: x}\: x};
 
-/F/ calculates greatest common divisor of a list of positive integers using
-/F/ Euclidean algorithm and associativity of gcd. Faster than .tmr.p.gcd, but
-/F/ not used as it may give 'stack
+/F/ Calculates greatest common divisor of a list of positive integers.
+/-/ Euclidean algorithm and associativity of gcd. Faster than .tmr.p.gcd, but
+/-/ not used as it may give 'stack.
 /P/ x:LIST[INT] - a nonempty list of positive integers. The nonemptiness is not checked
 .tmr.p.gcdEuc:{[x]
   if[1<count x;
@@ -215,10 +242,9 @@
   :x[0];
   };
 
-
 /F/ Calculates gcd of all periods in the status tables and sets the timer.
-/F/ This should only be done when all functions are at tick 0, hence the check
-.tmr.p.recalcGcd:{
+/-/ This should only be done when all functions are at tick 0, hence the check
+.tmr.p.recalcGcd:{[]
   if[(0<count .tmr.status) and  all 0=.tmr.status`tick;
     .log.debug[`tmr] "cleanup, callbacks:",("," sv string each .tmr.status`fun)," tick: ",("," sv string each .tmr.status`tick), " period: ", ("," sv string each .tmr.status`period);
     factor:(newt:.tmr.p.gcd .tmr.status`periodms)%system "t";
@@ -226,14 +252,14 @@
     system "t ",string newt;
     .tmr.p.tt:2000000j*system "t";
     .log.debug[`tmr] "system timer period reset to ",string system "t";
-    .tmr.p.cleanup:{};
+    .tmr.p.cleanup:{[]};
     ];
   };
 
-/F/ a wrapper for function that needs to run at some time every day
-/P/ t:TIME - time at which the function is supposed to run
-/P/ func:SYMBOL - name of the function to run
-/P/ id:SYMBOL - id of the timer
+/F/ A wrapper for function that needs to run at some time every day.
+/P/ t:TIME       - time at which the function is supposed to run
+/P/ func:SYMBOL  - name of the function to run
+/P/ id:SYMBOL    - id of the timer
 /P/ zp:TIMESTAMP - timestamp passed to the function
 .tmr.p.runAt:{[t;func;id;zp]
   if[(.sl.zd[]>.tmr.p.lastRun[id]) and (`time$zp)>t;
@@ -244,19 +270,31 @@
     ];
   };
 
-// last time tick way in the future to avoid triggering missed ticks processing
-.tmr.p.lastTick:`timestamp$2020.01.01T00:00:00.0
+//----------------------------------------------------------------------------//
+/G/ Last time tick way in the future to avoid triggering missed ticks processing.
+.tmr.p.lastTick:`timestamp$2020.01.01T00:00:00.0;
 
 /F/ function that simplifies the status table recalculating GCD of periods, 
-/F/ initially noop, set to .tmr.p.recalcGcd when removing a timer callback
-.tmr.p.cleanup:{};
+/-/ initially noop, set to .tmr.p.recalcGcd when removing a timer callback
+.tmr.p.cleanup:{[]};
 
 // global for counting remaining runs of a function
 //if[not `runs in key `.tmr.p;.tmr.p.runs:()!()];
 
-/G/ global for functions run at specified time, indicates the date of last run
-if[not `lastRun in key `.tmr.p;.tmr.p.lastRun:()!()];
+//----------------------------------------------------------------------------//
+if[not `lastRun in key `.tmr.p;
+  /G/ global for functions run at specified time, indicates the date of last run
+  .tmr.p.lastRun:()!();
+  ];
 
 // set up
-if[not `status in key .tmr;.tmr.status:([] tick:`int$();period:`int$();periodms:`int$();fun:`$();funid:`$())];
+if[not `status in key .tmr;
+/G/ Contains list and status of all active timers.
+/-/ -- tick:INT     - the number of timer ticks since the last run
+/-/ -- period:INT   - the period between runs in timer ticks
+/-/ -- periodms:INT - the period between runs in milliseconds
+/-/ -- fun:SYMBOL   - the function to be run
+/-/ -- funid:SYMBOL - the timer identifier
+  .tmr.status:([] tick:`int$();period:`int$();periodms:`int$();fun:`$();funid:`$());
+  ];
 

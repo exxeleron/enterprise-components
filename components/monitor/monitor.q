@@ -1,64 +1,62 @@
 /L/ Copyright (c) 2011-2014 Exxeleron GmbH
-/L/
-/L/ Licensed under the Apache License, Version 2.0 (the "License");
-/L/ you may not use this file except in compliance with the License.
-/L/ You may obtain a copy of the License at
-/L/
-/L/   http://www.apache.org/licenses/LICENSE-2.0
-/L/
-/L/ Unless required by applicable law or agreed to in writing, software
-/L/ distributed under the License is distributed on an "AS IS" BASIS,
-/L/ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-/L/ See the License for the specific language governing permissions and
-/L/ limitations under the License.
+/-/
+/-/ Licensed under the Apache License, Version 2.0 (the "License");
+/-/ you may not use this file except in compliance with the License.
+/-/ You may obtain a copy of the License at
+/-/
+/-/   http://www.apache.org/licenses/LICENSE-2.0
+/-/
+/-/ Unless required by applicable law or agreed to in writing, software
+/-/ distributed under the License is distributed on an "AS IS" BASIS,
+/-/ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+/-/ See the License for the specific language governing permissions and
+/-/ limitations under the License.
 
 /A/ DEVnet: Pawel Hudak
 /V/ 3.0
 /D/ 2012.04.10
 
 /S/ Monitor component:
-/S/ Responsible for:
-/S/ - capturing various information relevant to the system monitoring and profiling
+/-/ Responsible for:
+/-/ - capturing various information relevant to the system monitoring and profiling
 
-/S/ Captured information:
-/S/ Captured information is grouped into following sections
-/S/ - resources usage - memory, cpu (information based on q internal information and OS information)
-/S/ - state (process state, number of fatals/errors/warnings, connections state, internal kdb+ state etc. )
-/S/ - system events (like initialization of each component, subscription, journal replay)
+/-/ Captured information:
+/-/ Captured information is grouped into following sections
+/-/ - resources usage - memory, cpu (information based on q internal information and OS information)
+/-/ - state (process state, number of fatals/errors/warnings, connections state, internal kdb+ state etc. )
+/-/ - system events (like initialization of each component, subscription, journal replay)
 
-/S/ List of monitored processes:
-/S/ List of monitored processes is based on <.monitor.cfg.procMaskList> process mask list. 
-/S/ Mask list is applied to process names defined in the main system configuration file (system.cfg). The list is periodically updated.
-/S/ If a new process appears, it is added to the monitoring list <.monitor.status> and connection to the process is established with `eager mode.
-/S/ If process disappears, it is removed from the monitoring list <.monitor.status> and connection to the process is closed.
+/-/ List of monitored processes:
+/-/ List of monitored processes is based on <.monitor.cfg.procMaskList> process mask list. 
+/-/ Mask list is applied to process names defined in the main system configuration file (system.cfg). The list is periodically updated.
+/-/ If a new process appears, it is added to the monitoring list <.monitor.status> and connection to the process is established with `eager mode.
+/-/ If process disappears, it is removed from the monitoring list <.monitor.status> and connection to the process is closed.
 
-/S/ Communication model:
-/S/ Monitor is keeping opened connection to all monitored processes and regularly polling for status information. 
-/S/ Different frequency can be set for each group of checks.
-/S/ The primary goal for the communication protocol is to minimize time-footprint on the monitored servers. This is achieved by the following mechanism
-/S/  - Checks are grouped and code for execution is optimized
-/S/  - There is always at most one request per server at a time, next request is done only after getting response from the previous request
-/S/ The consequence of this approach is the following, if monitored server for some reason will not respond for the probing check, 
-/S/ it might cause a gap in monitor tables, i.e. no updates for some time from the malfunctioning server.
-/S/
-/S/ Additional monitoring information is retrieved using the yak service.
+/-/ Communication model:
+/-/ Monitor is keeping opened connection to all monitored processes and regularly polling for status information. 
+/-/ Different frequency can be set for each group of checks.
+/-/ The primary goal for the communication protocol is to minimize time-footprint on the monitored servers. This is achieved by the following mechanism
+/-/  - Checks are grouped and code for execution is optimized
+/-/  - There is always at most one request per server at a time, next request is done only after getting response from the previous request
+/-/ The consequence of this approach is the following, if monitored server for some reason will not respond for the probing check, 
+/-/ it might cause a gap in monitor tables, i.e. no updates for some time from the malfunctioning server.
+/-/
+/-/ Additional monitoring information is retrieved using the yak service.
 
-/S/ System events reader:
-/S/ .monitor.cfg.eventDir directory is regularly checked in order to discover and process new event files.
-/S/ Once event is discovered, it is processed, published to subscribers in correct form and archived in the backup directory.
+/-/ System events reader:
+/-/ .monitor.cfg.eventDir directory is regularly checked in order to discover and process new event files.
+/-/ Once event is discovered, it is processed, published to subscribers in correct form and archived in the backup directory.
 
-/S/ Data publishing:
-/S/ Data is published in tickHF (<tickHF.q>) protocol in the form of predefined tables.
-/S/ All published messages are journalled in .monitor.cfg.jrn daily journal file.
-/S/ Published data can be stored in rdb and hdb for later analysis or processed in any tickHF (<tickHF.q>) protocol-compatible tool e.g. stream process.
+/-/ Data publishing:
+/-/ Data is published in tickHF (<tickHF.q>) protocol in the form of predefined tables.
+/-/ All published messages are journalled in .monitor.cfg.jrn daily journal file.
+/-/ Published data can be stored in rdb and hdb for later analysis or processed in any tickHF (<tickHF.q>) protocol-compatible tool e.g. stream process.
 
-/S/ End of day actions: 
-/S/ - eod of day message ".u.end[date]" is published to all subscribers; date parameter is equal to the day that has just ended
-/S/ - monitor journal for completed day is closed; journal for new day is opened
+/-/ End of day actions: 
+/-/ - eod of day message ".u.end[date]" is published to all subscribers; date parameter is equal to the day that has just ended
+/-/ - monitor journal for completed day is closed; journal for new day is opened
 
-/S/ Schema of monitor tables is described in <monitor.qsd>.
-
-/T/ - q monitor.q
+/-/ Schema of monitor tables is described in <monitor.qsd>.
 
 /------------------------------------------------------------------------------/
 /                                 libraries                                    /
@@ -73,35 +71,32 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 .sl.lib["monitorStats"];
 
 /------------------------------------------------------------------------------/
-/F/ Information about subscription protocols supported by the monitor component.
-/F/ This definition overwrites default implementation from qsl/sl library.
-/F/ This function is used by qsl/sub library to choose proper subscription protocol.
-/R/ SYMBOL: returns list of protocol names that are supported by the server - `PROTOCOL_TICKHF
+/F/ Returns information about subscription protocols supported by the tickHF component.
+/-/  This definition overwrites default implementation from qsl/sl library.
+/-/  This function is used by qsl/sub library to choose proper subscription protocol.
+/R/ :LIST SYMBOL - returns list of protocol names that are supported by the server - `PROTOCOL_TICKHF
+/E/ .sl.getSubProtocols[]
 .sl.getSubProtocols:{[] enlist `PROTOCOL_TICKHF};
 
 /------------------------------------------------------------------------------/
-
 /G/ Table describing status of all checks being done on monitored components.
-/G/ One row contains information about state of one check dedicated to one server
-/G/ (start code)
-/G/ time:TIME               - information publish timestamp
-/G/ sym:SYMBOL              - component name
-/G/ hndStatus:SYMBOL        - component handle status
-/G/ request:SYMBOL          - request id
-/G/ check:SYMBOL            - request name
-/G/ code:STRING             - request code
-/G/ ts0_req:TIMESTAMP       - timestamp of request sending 
-/G/ ts1_befExec:TIMESTAMP   - beginning of request execution
-/G/ ts2_afterExec:TIMESTAMP - end of request execution
-/G/ ts3_res:TIMESTAMP       - timestamp of result retrieving
-/G/ status:SYMBOL           - status of the check
-/G/ interval:INT            - interval of check execution
-/G/ requestId:LONG          - current request id
-/G/ (end)
+/-/ One row contains information about state of one check dedicated to one server.
+/-/  -- time:TIME               - information publish timestamp
+/-/  -- sym:SYMBOL              - component name
+/-/  -- hndStatus:SYMBOL        - component handle status
+/-/  -- request:SYMBOL          - request id
+/-/  -- check:SYMBOL            - request name
+/-/  -- code:STRING             - request code
+/-/  -- ts0_req:TIMESTAMP       - timestamp of request sending 
+/-/  -- ts1_befExec:TIMESTAMP   - beginning of request execution
+/-/  -- ts2_afterExec:TIMESTAMP - end of request execution
+/-/  -- ts3_res:TIMESTAMP       - timestamp of result retrieving
+/-/  -- status:SYMBOL           - status of the check
+/-/  -- interval:INT            - interval of check execution
+/-/  -- requestId:LONG          - current request id
 .monitor.status:([]time:`time$(); sym:`symbol$(); hndStatus:`symbol$();request:`symbol$();check:`symbol$();code:();
   ts0_req:`timestamp$(); ts1_befExec:`timestamp$(); ts2_afterExec:`timestamp$(); ts3_res:`timestamp$(); 
   status:`symbol$(); interval:`int$(); requestId:`long$());
-
 
 /------------------------------------------------------------------------------/
 /                               checks                                         /
@@ -131,13 +126,11 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 /------------------------------------------------------------------------------/
 /                        send request                                          /
 /------------------------------------------------------------------------------/
-/F/ timer function to execute scheduled checks
-/F/- end of day trigger
-/F/- selection of checks that should be executed (based on previous result and configured frequency)
-/F/- update of monitor status table
-/F/- execute all checks asynchronously
-/P/ id - 
-/E/.monitor.p.tsCheck `
+/F/ Timer function to execute scheduled checks.
+/-/  - end of day trigger
+/-/  - selection of checks that should be executed (based on previous result and configured frequency)
+/-/  - update of monitor status table
+/-/  - execute all checks asynchronously
 .monitor.p.tsCheck:{[id]
   ts:.sl.zp[];
   if[.sl.zd[]>.monitor.p.date;  //end of day
@@ -162,19 +155,18 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 /------------------------------------------------------------------------------/
-/F/ execute asynchronously selected checks on monitored process
-/F/ Remote execution of code lines is done by calling function defined as a string
-/F/ (so that it is working with the compiled code).
-/F/ Code lines are executed one after another, each line in protected evaluation mode.
-/F/ In case of signal returned from any fo the lines it will be returned as a pair (`signal;signalmessage)
-/F/ Total time of execution of all code lines is measured and returned as a part of result.
-/F/ Remote execution will return the result as a list in format (`.monitor.response; endTs; resultList; startTs)
-/F/ resultList element is (`signal; signalMessage) in case of failure of execution of the check
-/F/ As code is executed asynchronously, the result will arrive in the .z.ps callback.
-/P/ dest:SYMBOL - server that will be inspected
+/F/ Executes asynchronously selected checks on monitored process.
+/-/ Remote execution of code lines is done by calling function defined as a string
+/-/ (so that it is working with the compiled code).
+/-/ Code lines are executed one after another, each line in protected evaluation mode.
+/-/ In case of signal returned from any fo the lines it will be returned as a pair (`signal;signalmessage)
+/-/ Total time of execution of all code lines is measured and returned as a part of result.
+/-/ Remote execution will return the result as a list in format (`.monitor.response; endTs; resultList; startTs)
+/-/ resultList element is (`signal; signalMessage) in case of failure of execution of the check
+/-/ As code is executed asynchronously, the result will arrive in the .z.ps callback.
+/P/ dest:SYMBOL     - server that will be inspected
 /P/ ch:LIST[SYMBOL] - list of checks
 /R/ :ENUM[`reqSent] -  in case of successful asynchronous execution
-/E/`dest`requestIds`checks set' req 0
 .monitor.p.sendReq:{[dest;ch]
   `ch set ch;
   remoteExec:"{[codeList](neg .z.w)res:(`.monitor.response;.sl.zp[];@[value;;{(`signal;x)}]each codeList;.sl.zp[])}";
@@ -189,12 +181,16 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 /------------------------------------------------------------------------------/
 /                        receive response                                      /
 /------------------------------------------------------------------------------/
-/F/handle asych response from the checks
-/F/- discover if the message is a response from a check
-/F/- update .monitor.status
-/F/- publish .monitor.status
-/F/- trigger result publishing
-/P/ res - should match format returned by .monitor.remoteCheck function.
+/F/ Callback with asych responses from the monitored processes.
+/-/ - discover if the message is a response from a check
+/-/ - update .monitor.status
+/-/ - publish .monitor.status
+/-/ - trigger result publishing
+/P/ ts1:TIMESTAMP - timestamp after send
+/P/ data:LIST     - list with results from checks
+/P/ ts0:TIMESTAMP - timestamp before send
+/R/ no return value
+/E/ .monitor.response[.z.p;checks;.z.p]
 .monitor.response:{[ts1;data;ts0]
   ts:.sl.zp[];zw:.z.w;
   src:exec first server from .hnd.status where handle~'zw;
@@ -213,13 +209,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 /------------------------------------------------------------------------------/
-/F/ Publish monitoring update
-// convert results to monitor data model which is ready for publishing
-/P/ src
-/P/ r
-//- structure result into monitoring update
-//- publish 
-//r: last .monitor.tmp.r
+/F/ Publishes monitoring update, converts results to monitor data model which is ready for publishing.
 .monitor.p.publishResult:{[src;r]
   `.monitor.tmp.r set (.sl.zt[];src;r);
   if[all `base.proc`sysConnStatus.hndStatus in key r;
@@ -249,20 +239,22 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 /------------------------------------------------------------------------------/
-/F/read handler status
+/F/ Read handler status.
 .monitor.p.getHnd:{[col;hndTab]
   handler:{if[not x~".hnd.status";.log.debug[`monitor] " cannot read handler status: signal:",x];:()};
   :.[{[col;hndTab] ?[hndTab;enlist (not;(null;`server));();col]}; (col;hndTab);handler];
   };
 
 /------------------------------------------------------------------------------/
-/F/ publish update of one of sysTable managed by the monitor process.
-/F/ - write update to the journal
-/F/ - update .u.i
-/F/ - publish data to the subscribers
-/F/ - update internal mrvs cache
+/F/ Publishes update of one of sysTable managed by the monitor process.
+/-/ - write update to the journal
+/-/ - update .u.i
+/-/ - publish data to the subscribers
+/-/ - update internal mrvs cache
 /P/ tab:SYMBOL - one of published system tables generated by monitor e.g. `sysConnStatus
 /P/ data:TABLE - update table with columns matching to the model of tab parameter
+/R/ no return value
+/E/ .monitor.pub[sysMyCustomTable;myMonitoringData]
 .monitor.pub:{[tab;data]
   //store data in journal [optional by configuration]
   .monitor.p.jrnH enlist (`jUpd;tab;data);
@@ -277,13 +269,13 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 /------------------------------------------------------------------------------/
 /                         initialization                                       /
 /------------------------------------------------------------------------------/
-/F/ initialize monitor process
-/F/- read and analyze yak file
-/F/- initialize monitor status
-/F/- initialize timer
-/F/- initialize publishing
-/F/- initialize monitor journal
-/F/- initialize connections to all monitored servers
+/F/ Initialize monitor process.
+/-/ - read and analyze yak file
+/-/ - initialize monitor status
+/-/ - initialize timer
+/-/ - initialize publishing
+/-/ - initialize monitor journal
+/-/ - initialize connections to all monitored servers
 .monitor.p.init:{[]
   .event.at[`monitor; `.monitor.p.initJrn; .monitor.p.date:.sl.zd[]; (); `info`info`error; "initializing monitor journal"];
   .event.at[`monitor; `.u.init; (); (); `info`info`error; "initializing publish library"];
@@ -293,7 +285,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 /------------------------------------------------------------------------------/
-/F/initialize monitor journal - should be executed at eod
+/F/ Initialize monitor journal - should be executed at eod.
 .monitor.p.initJrn:{[date]
   if[`jrnH in key .monitor.p; @[hclose;.monitor.p.jrnH;::]];
   .u.L:.monitor.p.jrn:`$string[.monitor.cfg.jrn],string[date];
@@ -325,10 +317,10 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 /------------------------------------------------------------------------------/
 /                       processes list management                              /
 /------------------------------------------------------------------------------/
-/F/capture status from yak - should be executed on timer
-/F/ - retreive update from yak
-/F/ - publish sysStatus and sysResUsageFromOs
-/F/ - .monitor.p.addProcesses/.monitor.p.removeProcesses processes in case state changed.
+/F/ Captures status from yak - should be executed on timer.
+/-/ - retreive update from yak
+/-/ - publish sysStatus and sysResUsageFromOs
+/-/ - .monitor.p.addProcesses/.monitor.p.removeProcesses processes in case state changed.
 .monitor.p.yakTs:{[x]
   list:$[`ALL in .monitor.cfg.procMaskList;"\"*\"";" "sv string .monitor.cfg.procMaskList];
   yakCmd:"yak . ",list," -f\"uid:1#pid:1#port:1#executed_cmd:1#status:11#started:1#started_by:1#stopped:1#cpu_user:1#cpu_sys:1#cpu_usage:1#mem_rss:1#mem_vms:1#mem_usage:1\" -d,";
@@ -352,12 +344,12 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
     ];
   };
 
-/F/ add process to monitoring
-/F/ - add/refresh record in .monitor.status
-/F/ - publish sysMonitorStatus table
-/F/ - define po and pc callbacks 
-/F/ - open connection using eager mode
-/P/ new:LIST[SYMBOL] - list of symbols with processes names
+/F/ Adds process to monitoring.
+/-/ - add/refresh record in .monitor.status
+/-/ - publish sysMonitorStatus table
+/-/ - define po and pc callbacks 
+/-/ - open connection using eager mode
+/-/ new:LIST[SYMBOL] - list of symbols with processes names
 .monitor.p.addProcesses:{[new]
   statusUpd:update interval:.monitor.cfg.schedule request, requestId:0j from ungroup
   ([]time:.sl.zt[]; sym:new; hndStatus:`none;
@@ -376,12 +368,12 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   .hnd.hopen[new;10i;`eager];
   };
 
-/F/ remove process from monitoring
-/F/ - disconnect process
-/F/ - publish sysMonitorStatus table
-/F/ - publish empty entries - reset status of the component
-/P/ old: LIST[SYMBOL] - list of processesto remove
-/E/old:enlist`tick
+/F/ Removes process from monitoring.
+/-/ - disconnect process
+/-/ - publish sysMonitorStatus table
+/-/ - publish empty entries - reset status of the component
+/P/ old:LIST[SYMBOL] - list of processesto remove
+/E/ .monitor.p.removeProcesses enlist `core.tick
 .monitor.p.removeProcesses:{[old]
   .hnd.hclose old;
   full:exec server from .hnd.status where server in old;
@@ -390,8 +382,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 /------------------------------------------------------------------------------/
-/F/ handling of port close from subscribers
-/F/- update status
+/F/ Handles of port close from subscribers.
 /P/ s:SYMBOL - component name
 .monitor.p.pc:{[s]
   .log.info[`monitor] "pc for ", string[s];
@@ -402,10 +393,8 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 /------------------------------------------------------------------------------/
-/F/ handling of port open from subscribers
-/F/- update status
+/F/ Handles of port open from subscribers.
 /P/ s:SYMBOL - component name
-/E/s:`tick
 .monitor.p.po:{[s]
   `.monitor.tmp.po set s;
   .log.info[`monitor] "po for ", string[s];
@@ -429,8 +418,8 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 /------------------------------------------------------------------------------/
-/F/ process event - convert into table update and publish using .monitor.pub[]
-/P/ file:Symbol - file name
+/F/ Processes event - convert into table update and publish using .monitor.pub[].
+/P/ file:SYMBOL - file name
 .monitor.p.processEvent:{[filePath]
   newEvent:get filePath;
   if[10h=type newEvent[`funcName];newEvent[`funcName]:`$newEvent[`funcName]];
@@ -451,16 +440,13 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
     ];
   };
 
-
 /------------------------------------------------------------------------------/
-//backupDir:.monitor.cfg.eventDir, "/archive/", string[.sl.zd[]],"/";
 .monitor.p.backupEvent:{[eventDir;file;backupDir]
   (hsym`$backupDir,"/lastEvent") set file;
   .os.move[eventDir,string[file]; backupDir];
   };
 
 /------------------------------------------------------------------------------/
-//file:first newFiles
 .monitor.p.processEventFile:{[file]
   .pe.atLog[`monitor;`.monitor.p.processEvent;`$string[.monitor.cfg.eventDir], string[file];`;`debug];
   .pe.dotLog[`monitor;`.monitor.p.backupEvent;(1_string[.monitor.cfg.eventDir];file;1_string[.monitor.cfg.eventDir], "/archive/", string[.sl.zd[]],"/");`;`debug];
@@ -469,16 +455,15 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 /------------------------------------------------------------------------------/
 //                    disk usage                                              //
 /------------------------------------------------------------------------------/
-
-/F/ calcualtes used disk space in kbytes, including subdirectories
-/P/ path - path to be checked
-/E/.monitor.p.du`:/home/kdb/devSystem/data/in.tickHF
+/F/ Calcualtes used disk space in kbytes, including subdirectories.
+/P/ path:SYMBOL - path to be checked
+/E/ .monitor.p.du`:/home/kdb/devSystem/data/in.tickHF
 .monitor.p.du:{[path]
   if["w"~first string .z.o;:0Nj]; // return null on Windows
   `long$("J"$first"\t"vs first system"du -sb ",1_string path)%1024
   };
 
-/F/ calculates disk free space using df command from unix
+/F/ Calculates disk free space using df command from unix.
 /P/ p:SYMBOL - path to be checked
 /R/ :TABLE(`path`filesystem`blocks1K`totalBytesUsed`totalBytesAvailable`totalCapacityPerc`mountedOn!(SYMBOL;SYMBOL;LONG;LONG;LONG;SYMBOL;SYMBOL)) - 1 row table with statistics
 /E/.monitor.p.df `:/home/kdb/devSystem/data/access.ap2
@@ -490,10 +475,9 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   flip columns!enlist[p],"SJJJSS"$flip trim{(0,where -1=deltas " "=x)_x} each 1_system"df -P ",1_string p
   };
 
-/F/ calculates disk usage for all paths in the configuration with name `binPath`etcPath`dataPath`logPath
-/F/ result is published as sysDiskUsage table
-/F/ function will return empty values if df/du commands are missing (e.g. in windows environment)
-/E/select sum procBytesUsed, last totalBytesUsed, last totalBytesAvailable by time, filesystem from sysDiskUsage
+/F/ Calculates disk usage for all paths in the configuration with name `binPath`etcPath`dataPath`logPath.
+/-/ result is published as sysDiskUsage table
+/-/ function will return empty values if df/du commands are missing (e.g. in windows environment)
 .monitor.p.diskTs:{[]
   pathsToCheck:`binPath`etcPath`dataPath`logPath;
   diskStats:select time:.sl.zt[], sym:subsection, pathName:varName, path:finalValue from .cr.getCfgTab[`ALL;`group;pathsToCheck];
@@ -522,17 +506,17 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 /==============================================================================/
-/F/ the main entry point run on start
-/P/ flags - currently unused
-
+/F/ Component initialization entry point.
+/P/ flags:LIST - nyi
+/R/ no return value
+/E/ .sl.main`
 .sl.main:{[flags]
-
   .cr.loadCfg[`ALL];
-
   .monitor.p.initSysTables[];
-  
-  .monitor.cfg.procMaskList:  .cr.getCfgField[`THIS;`group;`cfg.procMaskList];
 
+  /G/ List of masks which are applied to process names defined in the system.cfg.
+  /-/ `ALL option enables monitoring of all processes from the system.cfg.
+  .monitor.cfg.procMaskList:  .cr.getCfgField[`THIS;`group;`cfg.procMaskList];
   procList:exec subsection from .cr.getCfgTab[`ALL;`group;`type] where finalValue like "q:*";
   nsList:`$distinct first each "." vs/: string procList;
   if[count unknown:.monitor.cfg.procMaskList where not .monitor.cfg.procMaskList in nsList,procList,`ALL;
@@ -540,27 +524,43 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
     .monitor.cfg.procMaskList:.monitor.cfg.procMaskList except unknown;
     ];
 
+  /G/ Monitor journal full path, loaded from cfg.jrn field from system.cfg.
   .monitor.cfg.jrn:           .cr.getCfgField[`THIS;`group;`cfg.jrn];
+
+  /G/ System events directory, loaded from cfg.eventDir field from system.cfg.
   .monitor.cfg.eventDir:      .cr.getCfgField[`THIS;`group;`cfg.eventDir];
 
+  /G/ Detailed monitor status publishing (table sysMonitorStatus), generates a lot of load, switched off by default.
+  /-/ Loaded from cfg.monitorStatusPublishing field from system.cfg.
   .monitor.cfg.monitorStatusPublishing:.cr.getCfgField[`THIS;`group;`cfg.monitorStatusPublishing];
+
+  /G/ Dictionary with frequency of required updates per each generated table, loaded from frequency field from dataflow.cfg.
   .monitor.cfg.schedule:exec sectionVal!finalValue from .cr.getCfgTab[`THIS;`sysTable;`frequency];
   if[0=count .monitor.cfg.schedule;
     .log.error[`monitor] "There is no [sysTable:*] entry which is assigned to the ",string[.sl.componentId]," process in dataflow.cfg. There must be at least one [sysTable:*] with the [[",string[.sl.componentId],"]] process subsection.";
     exit 1;
     ];
+
+  /G/ Yak checks frequency, based on .monitor.cfg.schedule.
   .monitor.cfg.yakCheckInterval:min .monitor.cfg.schedule[`sysStatus`sysResUsageFromQ];
+  /G/ Monitor checks frequency, based on .monitor.cfg.schedule.
   .monitor.cfg.checksInterval:min .monitor.cfg.schedule[`sysConnStatus`sysLogStatus`sysResUsageFromQ];
+  /G/ Disk checks frequency, based on .monitor.cfg.schedule.
   .monitor.cfg.diskCheckInterval:.monitor.cfg.schedule[`sysDiskUsage];
 
   .sl.libCmd[];
   .monitor.p.init[];
   sysHdbSummaryProcList:raze exec finalValue from .cr.getCfgTab[`THIS;`sysTable;`hdbProcList] where sectionVal=`sysHdbSummary;
-  .monitor.cfg.sysHdbSummaryPathDict:sysHdbSummaryProcList!.cr.getCfgField[;`group;`cfg.hdbPath] each sysHdbSummaryProcList;
-  .monitor.cfg.sysHdbStatsProcList:raze exec finalValue from .cr.getCfgTab[`THIS;`sysTable;`hdbProcList] where sectionVal=`sysHdbStats;
 
+  /G/ Dictionary with hdb paths, loaded from cfg.hdbPath field from system.cfg.
+  .monitor.cfg.sysHdbSummaryPathDict:sysHdbSummaryProcList!.cr.getCfgField[;`group;`cfg.hdbPath] each sysHdbSummaryProcList;
+  /G/ List of hdb processes for sysHdbStats generation, loaded from hdbProcList field from dataflow.cfg.
+  .monitor.cfg.sysHdbStatsProcList:raze exec finalValue from .cr.getCfgTab[`THIS;`sysTable;`hdbProcList] where sectionVal=`sysHdbStats;
+  /G/ List of processes for sysFuncSummary generation, loaded from procList field from dataflow.cfg.
   .monitor.cfg.sysFuncSummaryProcList:raze exec finalValue from .cr.getCfgTab[`THIS;`sysTable;`procList] where sectionVal=`sysFuncSummary;
+  /G/ List of namespaces for sysFuncSummary generation, loaded from procNs field from dataflow.cfg.
   .monitor.cfg.sysFuncSummaryProcNs:raze exec finalValue from .cr.getCfgTab[`THIS;`sysTable;`procNs] where sectionVal=`sysFuncSummary;
+  /G/ Dictionary with daily exec times for selected tables, loaded from execTime field from dataflow.cfg.
   .monitor.cfg.dailyExecTimes:exec sectionVal!finalValue from .cr.getCfgTab[`THIS;`sysTable;`execTime];
   .tmr.runAt'[value .monitor.cfg.dailyExecTimes;` sv/:`.monitor.p.dailyExec,/:key .monitor.cfg.dailyExecTimes;key .monitor.cfg.dailyExecTimes];
   };
@@ -577,14 +577,10 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 /
 .hnd.status
 .tmr.status
-.monitor.status
 .cb.status
-.mrvs.sysStatus
+.monitor.status
 count each .mrvs
+.mrvs.sysStatus
 .mrvs.sysConnStatus
-
 .mrvs.sysMonitorStatus
 .mrvs.sysResUsageFromOs
-
-//select from .monitor.status where request=`sysStatus
-model:.cr.getModel[`THIS];
