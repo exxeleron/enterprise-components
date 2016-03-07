@@ -33,8 +33,8 @@
   // .sl.init runs first time, load the configuration for sl
   .sl.appname:appname;
   .sl.p.firstRun:0b;
-  .sl.p.libs:`$();
 
+  .sl.libs:([]lib:((`$getenv[`EC_COMPONENT_PKG],"/",getenv[`EC_COMPONENT_TYPE]);`$"qsl/sl"); file:(` sv (hsym`$system"cd"),.z.f;hsym`$getenv[`EC_QSL_PATH],"sl.q"));
   .sl.p.bootstrapLog[];
   .sl.p.initLibPath[];
   .sl.p.initDllPath[];
@@ -154,12 +154,12 @@
 .sl.lib:{[name]
   if[10h=type name; name:`$name];
   name:.sl.p.chopOff[name;".q"];
-  if[name in .sl.p.libs;.log.info[`sl] (string name),".q library already loaded";:()];
+  if[name in .sl.libs`lib;.log.info[`sl] (string name),".q library already loaded";:()];
   .log.info[`sl] "Loading ",(string name),".q library...";
   .log.p.offset+:2;
   if[0<count p:.sl.p.lib[.sl.p.appendName[name;".q"] each .sl.p.slash .sl.libpath;(string name),".q";.log.error[`sl]];
     // succesful load
-    .sl.p.libs,:name;
+    `.sl.libs insert (name;hsym`$p);
     .log.p.offset-:2;
     .log.info[`sl] p," loaded";
     :();
@@ -172,12 +172,12 @@
 /P/ name:SYMBOL - the name of the q module file, with or without the extension.
 .sl.libOption:{[name]
   name:.sl.p.chopOff[name;".q"];
-  if[name in .sl.p.libs;.log.info[`sl] (string name),".q library already loaded";:()];
+  if[name in .sl.libs`lib;.log.info[`sl] (string name),".q library already loaded";:()];
   .log.info[`sl] "Loading ",(string name),".q library...";
   .log.p.offset+:2;
   if[0<count p:.sl.p.lib[.sl.p.appendName[name;".q"] each .sl.p.slash .sl.libpath;(string name),".q";.log.debug[`sl]];
     // succesful load
-    .sl.p.libs,:name;
+    `.sl.libs insert (name;hsym`$p);
     .log.p.offset-:2;
     .log.info[`sl] p," loaded";
     :();
@@ -190,7 +190,7 @@
 /P/ name:SYMBOL - name of the application
 .sl.relib:{[name]
   name:.sl.p.chopOff[name;".q"];
-  .sl.p.libs: .sl.p.libs except name;
+  delete from `.sl.libs where lib=name;
   :.sl.lib[name];
   };
 
