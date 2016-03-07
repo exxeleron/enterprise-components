@@ -839,10 +839,10 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
  
 //.cr.atomic.string .par.initP "asd\\(asdasd\\) zxc"
-.cr.atomic.clearString:.cr.p.escString[.Q.a,.Q.A,"0123456789!@#$%^&*()<>{}\\/|:;,.-=+_' "];
+.cr.atomic.clearString:.cr.p.escString[.Q.a,.Q.A,"0123456789!@#$%^&*()<>{}\\/|:;,.-=+_'? "];
 .cr.atomic.quotedString:{[ps]
   res1:.par.char["\""] ps;
-  res2:.cr.p.escString[.Q.a,.Q.A,"0123456789!@#$%^&*()<>{}\\/|:;,.-=+_' "] res1;
+  res2:.cr.p.escString[.Q.a,.Q.A,"0123456789!@#$%^&*()<>{}\\/|:;,.-=+_'? "] res1;
   res3:.par.char["\""] res2;
   if[null res3`errp;res3[`ast]:"\"",res2[`ast],"\""];
   :res3;
