@@ -372,8 +372,9 @@
   if[`FILE in out;
     .log.p.h:hopen .log.p.path:.log.p.insertTs[.log.path;cid];
     if[(string .z.o) like "l*";
-      system "ln -f -s ",((1+count string hsym .log.path)_string .log.p.path)," ",1_(string hsym .log.path),"/init.log";
-      system "ln -f -s ",((1+count string hsym .log.path)_string .log.p.path)," ",1_(string hsym .log.path),"/current.log"
+      .log.p.initLog:((1+count string hsym .log.path)_string .log.p.path);
+      system "ln -f -s ",.log.p.initLog," ",.log.p.initLogLink:1_(string hsym .log.path),"/init.log";
+      system "ln -f -s ",.log.p.initLog," ",1_(string hsym .log.path),"/current.log"
     ];
     if[not .log.rotate~0Nt;
       .sl.lib["qsl/timer"];
@@ -408,6 +409,9 @@
   //(neg .log.p.h) (string value .log.p.time)[.log.p.pattern], " log continued from ", 1_string prevpath;
   .log.info[`sl] " log continued from ", 1_string prevpath;
   if[(string .z.o) like "l*";
+    system "touch ",.log.p.initLogLink; // touch the log file
+    system "rm -f ",.log.p.initLogLink; // remove the link. Some systems don't support touch -h
+    system "ln -f -s ",.log.p.initLog," ",.log.p.initLogLink; // put the link back
     system "ln -f -s ",((1+count string hsym .log.path)_string .log.p.path)," ",1_(string hsym .log.path),"/current.log"
     ];
   };
