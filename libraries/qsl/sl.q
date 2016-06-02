@@ -696,6 +696,13 @@ if[not `confStatus in key .sl;
   .sl.confStatus:([] name:enlist  `;val:enlist ();source:enlist `);
   ];
 
+/F/ Runs garbage collector
+.sl.gc:{
+  res:.Q.gc[];
+  .log.info[`sl]"garbage collector returned ",(string res)," bytes to the os";
+  res
+  };
+  
 / 
 /code below does not execute. used only for documentation generation
 //----------------------------------------------------------------------------//
