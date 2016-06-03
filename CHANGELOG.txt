@@ -1,4 +1,15 @@
 ------------------------------------------------------------------------------
+  enterprise-components 3.3.1 [2016.06.03]
+------------------------------------------------------------------------------
+
+  - New: qsl/doc - new library - access to the API documentation from the q process level
+  - New: qsl/sl - new wrapping function for garbage collector
+  - Change: doc - major upgrade of the source code documentation
+  - Change: qsl/doc - new global table .sl.libs
+  - Fix: cfgRdr - now ? character allowed in STRING (#51)
+  - Fix: qsl/sl - prevent housekeeping script to delete init.log (#52)
+  
+------------------------------------------------------------------------------
   enterprise-components 3.3.0 [2015.09.15]
 ------------------------------------------------------------------------------
 
