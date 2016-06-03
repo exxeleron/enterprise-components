@@ -1,24 +1,25 @@
 /L/ Copyright (c) 2011-2014 Exxeleron GmbH
-/L/
-/L/ Licensed under the Apache License, Version 2.0 (the "License");
-/L/ you may not use this file except in compliance with the License.
-/L/ You may obtain a copy of the License at
-/L/
-/L/   http://www.apache.org/licenses/LICENSE-2.0
-/L/
-/L/ Unless required by applicable law or agreed to in writing, software
-/L/ distributed under the License is distributed on an "AS IS" BASIS,
-  /L/ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-/L/ See the License for the specific language governing permissions and
-/L/ limitations under the License.
+/-/
+/-/ Licensed under the Apache License, Version 2.0 (the "License");
+/-/ you may not use this file except in compliance with the License.
+/-/ You may obtain a copy of the License at
+/-/
+/-/   http://www.apache.org/licenses/LICENSE-2.0
+/-/
+/-/ Unless required by applicable law or agreed to in writing, software
+/-/ distributed under the License is distributed on an "AS IS" BASIS,
+/-/ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+/-/ See the License for the specific language governing permissions and
+/-/ limitations under the License.
 
 /A/ DEVnet: Joanna Jarmulska
 /V/ 3.0
+
 /S/ tickHF adapter library for feedCsv:
-/S/ Responsible for:
-/S/ - publishing data in tickHF protocol 
-/S/ Note:
-/S/ Parsed data is published to tickHF component using .u.upd interface function (<tickLF.q>)
+/-/ Responsible for:
+/-/ - publishing data in tickHF protocol 
+/-/ Note:
+/-/ Parsed data is published to tickHF component using .u.upd interface function (<tickLF.q>)
 
 /------------------------------------------------------------------------------/
 system"l ",getenv[`EC_QSL_PATH],"/sl.q";
@@ -26,13 +27,12 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 .sl.init[`tickHFPublisher];
 
 /------------------------------------------------------------------------------/
-/F/ parse and publish data in tickHF format
-/P/ files:LIST PATH - list of files to be parsed
+/F/ Parses and publishes data in tickHF format.
+/P/ files:LIST PATH   - list of files to be parsed
 /P/ config:DICTIONARY - with fileFormat, destTab, separator
-/R/ :DICTIONARY - with ok, corrupted and pending files: `ok`corrupted`pending!(enlist `:data/file1;enlist `:data/file2;enlist `:data/file3)
-/E/ config:`fileFormat`destTab`separator!("TSD";`universe;";")
-/E/ .fcsv.processData[`:data/file1`:data/file2`:data/file3;config]
-//files:ff;config:cc
+/R/ :DICTIONARY - with ok, corrupted and pending files: 
+/-/    e.g. `ok`corrupted`pending!(enlist `:data/file1.csv ;enlist `:data/file2.csv ;enlist `:data/file3.csv)
+/E/ .fcsv.processData[`:data/file1.csv`:data/file2.csv`:data/file3.csv; `fileFormat`destTab`separator!("TSD";`universe;";")]
 .fcsv.processData:{[files;config]
   //    ff::files;cc::config;
   .log.info[`HFPub] "Start processing #files:",string[count files]," for table ", string config`destTab;
@@ -48,9 +48,9 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 /------------------------------------------------------------------------------/
-/F/ process one file
-/P/ file - file name
-/P/ config - row from .fcsv.cfg.files
+/F/ Processes one file.
+/P/ file:SYMBOL - file name
+/P/ config:DICT - row from .fcsv.cfg.files
 .fcsv.p.processOneFile:{[file;config]
   //    f::file; c::config;
   format:config`fileFormat;separator:config`separator;destTab:config`destTab;
@@ -65,3 +65,4 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   status
   };
 
+/------------------------------------------------------------------------------/

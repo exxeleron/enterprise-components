@@ -1,122 +1,122 @@
 /L/ Copyright (c) 2011-2014 Exxeleron GmbH
-/L/
-/L/ Licensed under the Apache License, Version 2.0 (the "License");
-/L/ you may not use this file except in compliance with the License.
-/L/ You may obtain a copy of the License at
-/L/
-/L/   http://www.apache.org/licenses/LICENSE-2.0
-/L/
-/L/ Unless required by applicable law or agreed to in writing, software
-/L/ distributed under the License is distributed on an "AS IS" BASIS,
-/L/ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-/L/ See the License for the specific language governing permissions and
-/L/ limitations under the License.
+/-/
+/-/ Licensed under the Apache License, Version 2.0 (the "License");
+/-/ you may not use this file except in compliance with the License.
+/-/ You may obtain a copy of the License at
+/-/
+/-/   http://www.apache.org/licenses/LICENSE-2.0
+/-/
+/-/ Unless required by applicable law or agreed to in writing, software
+/-/ distributed under the License is distributed on an "AS IS" BASIS,
+/-/ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+/-/ See the License for the specific language governing permissions and
+/-/ limitations under the License.
 
 /A/ DEVnet:  Bartosz Dolecki
 /V/ 3.0
 
 /S/ Hdb housekeeping tool:
-/S/ Responsible for:
-/S/ - performing predefined tasks such as deletion, compression, conflation, etc. enabled through plugins
-/S/ - providing functionality (through dedicated API) to write custom plugins
-/S/ 
-/S/ Input parameters for the script:
-/S/ hdbHk.q is invoked from eodMng.q process and receives following input parameters
-/S/ - hdb - path to hdb
-/S/ - hdbConn - name of hdb process to be reloaded after housekeeping procedure
-/S/ - date (optional) - date for which housekeeping will be performed, current date is used if none is specified
-/S/ - status (optional) - path to the file where housekeeping status is stored (required for eodMng communication)
-/S/ 
-/S/ *Sample command using yak*
-/S/ (start code)
-/S/ yak start batch.core_hdbHk -a "-hdb HDB/DATA/PATH -hdbConn core.hdb -date 2012.01.01 -status EOD_MNG/DATA/PATH/hkStatus"
-/S/ (end)
-/S/ 
-/S/ Workflow:
-/S/ 1. - Configuration file is loaded with list of tasks
-/S/ 2. - Tasks from the file are loaded into .hdbHk.cfg.taskLis table
-/S/ 3. - Tasks are executed based on the order in the configuration file / .hdbHk.cfg.taskList table
-/S/ 
-/S/ *Notes*
-/S/ - Please remember to order the tasks correctly, for example conflation before compression
-/S/ - Each plugin call is logged and wrapped in protected evaluation
-/S/ 
-/S/ Overview:
-/S/ Housekeeping script (hdbHk.q) is part of the eodMng and is used to manage hdb housekeeping which can be extended through plugins. Tasks to be performed by this script are in the .hdbHk.cfg.taskList table
-/S/ (start code)
-/S/ .hdbHk.cfg.taskList:
-/S/ | plugin   | table           | day_in_past | param1 | param2 | . . .  | param6 |
-/S/ |----------|-----------------|-------------|--------|--------|--------|--------|
-/S/ | compress | tab1,tab2,tab3  | 30          | arg_1  | arg_2  |        |        |
-/S/ | delete   | tab1,tab2       | 50          |        |        |        |        |
-/S/ (end)
-/S/ where
-/S/ plugin - name of the plugin (symbol - all plugins exists in .eodsnc.hk.plugins namespace)
-/S/ table - list of tables on which plugins will be operating (enlist ` for all tables)
-/S/ day_in_past - distance (in days) between *current date*, and date of partition that will be modified by plugin (1 for previous day, 2 for two days ago etc.)
-/S/ param[1-6] - additional parameters passed to plugin (up to 6 parameters)
-/S/ 
-/S/ For the given table, hdbHk.q would execute following function calls, where date is 30 (for compress) and 50 (for delete) days before current date
-/S/ (start code)
-/S/ .eodsnc.hk.plugins.compress[date;`tab1;(arg1;arg2;arg3)];
-/S/ .eodsnc.hk.plugins.compress[date;`tab2;(arg1;arg2;arg3)];
-/S/ .eodsnc.hk.plugins.compress[date;`tab3;(arg1;arg2;arg3)];
-/S/ .eodsnc.hk.plugins.delete[date;`tab1;()];
-/S/ .eodsnc.hk.plugins.delete[date;`tab2;()];
-/S/ (end)
-/S/ 
-/S/ *Note*
-/S/ Each plugin has its two first parameters fixed
-/S/ 1. - current partition date 
-/S/ 2. - table on which it should operate (plugin is called for each table separately) 
-/S/ 
-/S/ Table backup:
-/S/ As a backup, each table is saved in its original state in <.cfg.bckDir> before any housekeeping procedures are applied. Backup from each day is stored in a separate directory ‘hdbConn/date’ where
-/S/ hdbConn - hdb name to be processed
-/S/ date - date of housekeeping execution (current date)
-/S/ 
-/S/ Layout of the directory is the same as for hdb, for example for following parameters
-/S/ hdbConn - kdb.hdb
-/S/ date - 2012.07.12
-/S/ tasklist1 - conflation for table1,table2 ; day_in past = 2;
-/S/ tasklist2 - compression for table2; table3; day_in_past = 3;
-/S/ structure of the the cfg.bckDir would be
-/S/ (start code)
-/S/ ../kdb.hdb2012.07.12                    - directory for backup from 2012.07.12
-/S/ ../kdb.hdb2012.07.12/2012.07.09         - directory for compression (day_in_past = 3)
-/S/ ../kdb.hdb2012.07.12/2012.07.09/table2  - backup of table2 
-/S/ ../kdb.hdb2012.07.12/2012.07.09/table3  - backup of table3
-/S/ ../kdb.hdb2012.07.12/2012.07.10         - directory for conflation (day_in_past = 2)
-/S/ ../kdb.hdb2012.07.12/2012.07.10/table1  - backup of table1
-/S/ ../kdb.hdb2012.07.12/2012.07.10/table2  - backup of table2 
-/S/ (end)
-/S/ 
-/S/ *Notes*
-/S/ - Only original (unmodified by plugins) table partitions are backed up - if a table was conflated and then compressed only one backup (of the original partition) was performed before any plugins were applied
-/S/ - In case of issues, damaged partitions can be restored from the backup
-/S/ - Backups are deleted after N days defined in .cfg.bckDays variable in configuration file (by default set to 7 days)
-/S/ 
-/S/ Custom plugins:
-/S/ Functionality of the hdbHk.q can be extended through custom plugins with following generic signature
-/S/ (start code)
-/S/ .hdbHk.plug.action[name of the plugin][date;tableHnd;args]
-/S/ (end)
-/S/ where
-/S/ date - date of the partition on which it operates
-/S/ tableHnd - file handle (symbol) for table partition
-/S/ args - dictionary of parameters required by the plugin
-/S/ 
-/S/ When writing new plugins one should use only tableHnd to operate on partition table.
-/S/ For example, following plugin to calculate most recent values could be added to the hdbHk.q
-/S/ (start code)
-/S/ .hdbHk.plug.action[`mrvs]:{[date;tableHnd;args]
-/S/ columns:cols[tableHnd];
-/S/ lasts:columns except `sym;
-/S/ result:columns xcols 0!?[tableHnd; () ; (enlist `sym)!enlist `sym ; ()];
-/S/ tableHnd set result;
-/S/ @[tableHnd;`sym;`p#];
-/S/ };
-/S/ (end)
+/-/ Responsible for:
+/-/ - performing predefined tasks such as deletion, compression, conflation, etc. enabled through plugins
+/-/ - providing functionality (through dedicated API) to write custom plugins
+/-/ 
+/-/ Input parameters for the script:
+/-/ hdbHk.q is invoked from eodMng.q process and receives following input parameters
+/-/ - hdb - path to hdb
+/-/ - hdbConn - name of hdb process to be reloaded after housekeeping procedure
+/-/ - date (optional) - date for which housekeeping will be performed, current date is used if none is specified
+/-/ - status (optional) - path to the file where housekeeping status is stored (required for eodMng communication)
+/-/ 
+/-/ *Sample command using yak*
+/-/ (start code)
+/-/ yak start batch.core_hdbHk -a "-hdb HDB/DATA/PATH -hdbConn core.hdb -date 2012.01.01 -status EOD_MNG/DATA/PATH/hkStatus"
+/-/ (end)
+/-/ 
+/-/ Workflow:
+/-/ 1. - Configuration file is loaded with list of tasks
+/-/ 2. - Tasks from the file are loaded into .hdbHk.cfg.taskLis table
+/-/ 3. - Tasks are executed based on the order in the configuration file / .hdbHk.cfg.taskList table
+/-/ 
+/-/ *Notes*
+/-/ - Please remember to order the tasks correctly, for example conflation before compression
+/-/ - Each plugin call is logged and wrapped in protected evaluation
+/-/ 
+/-/ Overview:
+/-/ Housekeeping script (hdbHk.q) is part of the eodMng and is used to manage hdb housekeeping which can be extended through plugins. Tasks to be performed by this script are in the .hdbHk.cfg.taskList table
+/-/ (start code)
+/-/ .hdbHk.cfg.taskList:
+/-/ | plugin   | table           | day_in_past | param1 | param2 | . . .  | param6 |
+/-/ |----------|-----------------|-------------|--------|--------|--------|--------|
+/-/ | compress | tab1,tab2,tab3  | 30          | arg_1  | arg_2  |        |        |
+/-/ | delete   | tab1,tab2       | 50          |        |        |        |        |
+/-/ (end)
+/-/ where
+/-/ plugin - name of the plugin (symbol - all plugins exists in .eodsnc.hk.plugins namespace)
+/-/ table - list of tables on which plugins will be operating (enlist ` for all tables)
+/-/ day_in_past - distance (in days) between *current date*, and date of partition that will be modified by plugin (1 for previous day, 2 for two days ago etc.)
+/-/ param[1-6] - additional parameters passed to plugin (up to 6 parameters)
+/-/ 
+/-/ For the given table, hdbHk.q would execute following function calls, where date is 30 (for compress) and 50 (for delete) days before current date
+/-/ (start code)
+/-/ .eodsnc.hk.plugins.compress[date;`tab1;(arg1;arg2;arg3)];
+/-/ .eodsnc.hk.plugins.compress[date;`tab2;(arg1;arg2;arg3)];
+/-/ .eodsnc.hk.plugins.compress[date;`tab3;(arg1;arg2;arg3)];
+/-/ .eodsnc.hk.plugins.delete[date;`tab1;()];
+/-/ .eodsnc.hk.plugins.delete[date;`tab2;()];
+/-/ (end)
+/-/ 
+/-/ *Note*
+/-/ Each plugin has its two first parameters fixed
+/-/ 1. - current partition date 
+/-/ 2. - table on which it should operate (plugin is called for each table separately) 
+/-/ 
+/-/ Table backup:
+/-/ As a backup, each table is saved in its original state in <.cfg.bckDir> before any housekeeping procedures are applied. Backup from each day is stored in a separate directory ‘hdbConn/date’ where
+/-/ hdbConn - hdb name to be processed
+/-/ date - date of housekeeping execution (current date)
+/-/ 
+/-/ Layout of the directory is the same as for hdb, for example for following parameters
+/-/ hdbConn - kdb.hdb
+/-/ date - 2012.07.12
+/-/ tasklist1 - conflation for table1,table2 ; day_in past = 2;
+/-/ tasklist2 - compression for table2; table3; day_in_past = 3;
+/-/ structure of the the cfg.bckDir would be
+/-/ (start code)
+/-/ ../kdb.hdb2012.07.12                    - directory for backup from 2012.07.12
+/-/ ../kdb.hdb2012.07.12/2012.07.09         - directory for compression (day_in_past = 3)
+/-/ ../kdb.hdb2012.07.12/2012.07.09/table2  - backup of table2 
+/-/ ../kdb.hdb2012.07.12/2012.07.09/table3  - backup of table3
+/-/ ../kdb.hdb2012.07.12/2012.07.10         - directory for conflation (day_in_past = 2)
+/-/ ../kdb.hdb2012.07.12/2012.07.10/table1  - backup of table1
+/-/ ../kdb.hdb2012.07.12/2012.07.10/table2  - backup of table2 
+/-/ (end)
+/-/ 
+/-/ *Notes*
+/-/ - Only original (unmodified by plugins) table partitions are backed up - if a table was conflated and then compressed only one backup (of the original partition) was performed before any plugins were applied
+/-/ - In case of issues, damaged partitions can be restored from the backup
+/-/ - Backups are deleted after N days defined in .cfg.bckDays variable in configuration file (by default set to 7 days)
+/-/ 
+/-/ Custom plugins:
+/-/ Functionality of the hdbHk.q can be extended through custom plugins with following generic signature
+/-/ (start code)
+/-/ .hdbHk.plug.action[name of the plugin][date;tableHnd;args]
+/-/ (end)
+/-/ where
+/-/ date - date of the partition on which it operates
+/-/ tableHnd - file handle (symbol) for table partition
+/-/ args - dictionary of parameters required by the plugin
+/-/ 
+/-/ When writing new plugins one should use only tableHnd to operate on partition table.
+/-/ For example, following plugin to calculate most recent values could be added to the hdbHk.q
+/-/ (start code)
+/-/ .hdbHk.plug.action[`mrvs]:{[date;tableHnd;args]
+/-/ columns:cols[tableHnd];
+/-/ lasts:columns except `sym;
+/-/ result:columns xcols 0!?[tableHnd; () ; (enlist `sym)!enlist `sym ; ()];
+/-/ tableHnd set result;
+/-/ @[tableHnd;`sym;`p#];
+/-/ };
+/-/ (end)
 
 /------------------------------------------------------------------------------/
 system"l ",getenv[`EC_QSL_PATH],"/sl.q";
@@ -128,17 +128,25 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 .sl.lib["qsl/handle"];
 .sl.lib["qsl/os"];
 
-/G/ table with list of tasks
-/G/ plugin : Symbol - symbol with plugin name (ie. `compress for '.eodsync.hk.plugins.compress')
-/G/ table : Symbol- table name on which plugin should operate, (enlist `) for all tables
-/G/ dayInPast : Int - number of days separating current partition from partition on which 
-/G/ plugin should operate (eg. 5 would mean that plugin will work on partitions created 5 days ago)
-/G/ param[1-6]: SYMBOL - additional params for the plugin (ie. compression parameters for compression plugin)
+/------------------------------------------------------------------------------/
+/G/ Table with list of housekeeping tasks.
+/-/  -- plugin:SYMBOL         - symbol with plugin name (ie. `compress for '.eodsync.hk.plugins.compress')
+/-/  -- table:SYMBOL          - table name on which plugin should operate, (enlist `) for all tables
+/-/  -- dayInPast:INT         - number of days separating current partition from partition on which 
+/-/                           plugin should operate (eg. 5 would mean that plugin will work on partitions created 5 days ago)
+/-/  -- performBackup:BOOLEAN - true if backup should be performed
+/-/  -- param[1-6]:SYMBOL     - additional params for the plugin (ie. compression parameters for compression plugin)
 .hdbHk.cfg.taskList:([] action:`$() ; table:(enlist ::); dayInPast:`int$(); performBackup:0#0b; param1:`$(); param2:`$(); param3:`$(); param4:`$(); param5:`$(); param6:`$());
 
-/G/ directory with initial definition of housekeeping plugins
+/------------------------------------------------------------------------------/
+/G/ Directory with initial definition of housekeeping plugins.
 .hdbHk.plug.action:()!();
 
+/------------------------------------------------------------------------------/
+/F/ Returns full path to the given hdb date directory.
+/P/ dt:DATE - day
+/R/ :SYMBOL - full path
+/E/ .hdbHk.getDateHnd 2011.01.01
 .hdbHk.getDateHnd:{[dt]
   :$[0=count .hdbHk.cfg.hdbPars;
     ` sv (.hdbHk.cfg.hdbPath;`$string[dt]);
@@ -149,11 +157,14 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
     ];
   };
 
-.hdbHk.p.handleSet:([] handles:`$());
 /------------------------------------------------------------------------------/
-/F/ main function of the script, writes the state of housekeeping to statusFile and 
-/F/ executes plugins from .hdbHk.cfg.taskList in given order
+.hdbHk.p.handleSet:([] handles:`$());
+
+/------------------------------------------------------------------------------/
+/F/ Executes plugins from .hdbHk.cfg.taskList in given order.
+/-/  Main function of the script, writes the state of housekeeping to statusFile.
 /P/ date:DATE - date for which housekeeping should be performed
+/R/ no return value
 /E/ .hdbHk.performHk[.z.d]
 .hdbHk.performHk:{[date]
   .hdbHk.p.saveStatus[`begin];
@@ -188,10 +199,9 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   .hdbHk.p.saveStatus[`success];
   };
 
-
-/F/ function that saves status to file
-/P/ status : Symbol - status to write
-
+/------------------------------------------------------------------------------/
+/F/ Saves status to file.
+/P/ status:SYMBOL - status to write
 .hdbHk.p.saveStatus:{[status]
   if[not `~.hdbHk.cfg.statusFile;
     .pe.at[.hdbHk.cfg.statusFile 0: ;enlist (string status)," ",(string .sl.zz[]);
@@ -199,7 +209,8 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
     ];
   };
 
-/F/ function that clears old backups
+/------------------------------------------------------------------------------/
+/F/ Clears old backups.
 .hdbHk.p.deleteOldBackups:{[date;bckdir]
   toCut:count string[.hdbHk.cfg.hdbConn];
   bckDates:"D"$toCut _/:string key bckdir;
@@ -209,24 +220,26 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
     `info`info`error;"Deleting old backup from ",string[bckdir] ," and date ",string[date]]}[;bckdir]each toDelete;
   };
 
+/------------------------------------------------------------------------------/
 .hdbHk.p.deleteOneDir:{[date;bckdir]
   .os.rmdir 1_string ` sv bckdir,`$string[.hdbHk.cfg.hdbConn],string[date] ;
   };
 
-
 /------------------------------------------------------------------------------/
-/                                     plugins                                  /
+/                         hdb housekeeping plugins                             /
 /------------------------------------------------------------------------------/
-/F/ plugin for compressing splayed partitions preserving (splayed) file structure; 
-/F/ compression is supported by q and transparent for hdb; for more details on 
-/F/ compression please see http://code.kx.com/wiki/Cookbook/FileCompression
-/P/ date:DATE - the partition on which it operates (date)
+/F/ Hdb hk plugin for compressing splayed partitions preserving (splayed) file structure. 
+/-/ Compression is supported by q and transparent for hdb.
+/-/ More details compression available in http://code.kx.com/wiki/Cookbook/FileCompression
+/P/ date:DATE       - the partition on which it operates (date)
 /P/ tableHnd:SYMBOL - file handle for table partition
 /P/ args:DICTIONARY - with keys:
-/P/ -- logicalBlockSize:INT - always in power of 2 and between 12 and 20
-/P/ -- compressionAlgorithm:INT - one of the following: 0 - none, 1 - kdb+ ipc, 2 - gzip
-/P/ -- compressionLevel:INT - always between 0 and 9 (valid only for gzip, use 0 for other algorithms)
-
+/-/  -- logicalBlockSize:INT - always in power of 2 and between 12 and 20
+/-/  -- compressionAlgorithm:INT - one of the following: 0 - none, 1 - kdb+ ipc, 2 - gzip
+/-/  -- compressionLevel:INT - always between 0 and 9 (valid only for gzip, use 0 for other algorithms)
+/R/ no return value
+/E/ .hdbHk.plug.action[`compress][2012.01.01; `:/systemRoot/data/hdb/2012.01.01/trade/; `logicalBlockSize`compressionAlgorithm`compressionLevel!`17`2`6]
+/-/   - action compresses :/systemRoot/data/hdb/2012.01.01/trade/ using given compression parameters.
 .hdbHk.plug.action[`compress]:{[date;tableHnd;args]
   args:`logicalBlockSize`compressionAlgorithm`compressionLevel!"I"$string args;
   if[not args[`logicalBlockSize] within (12;20); '"Given logicalBlockSize is",string[args[`logicalBlockSize]], ". logicalBlockSize - is a power of 2 between 12 and 20"];
@@ -251,20 +264,26 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   .os.rmdir 1_string tmpPath;
   };
 
-/F/ plugin for deleting table in given partition;
-/F/ if partition is empty it will be deleted as well
-/P/ date:DATE - the partition on which it operates date
+/------------------------------------------------------------------------------/
+/F/ Hdb hk plugin for deleting table in given partition. If partition is empty it will be deleted as well.
+/P/ date:DATE       - the partition on which it operates date
 /P/ tableHnd:SYMBOL - file handle for table partition
-/P/ args:DICTIONARY - empty ()
+/P/ args:DICTIONARY - not used in `mrvs plugin, leave empty - ()!()
+/R/ no return value
+/E/ .hdbHk.plug.action[`delete][2012.01.01;`:/systemRoot/data/hdb/2012.01.01/trade/;()!()]
+/-/   - action deletes :/systemRoot/data/hdb/2012.01.01/trade/ from the database
 .hdbHk.plug.action[`delete]:{[date;tableHnd;args]
   tableHnd set 0#value tableHnd;
   };
 
-/F/ plugin for conflating given table partition
-/P/ date:DATE - the partition on which it operates date
+/------------------------------------------------------------------------------/
+/F/ Hdb hk plugin for conflating given table partition.
+/P/ date:DATE       - the partition on which it operates date
 /P/ tableHnd:SYMBOL - file handle for table partition
 /P/ args:DICTIONARY - with column:
-/P/ -- conflationInterval:INT - time in milliseconds for data conflation
+/P/  -- conflationInterval:INT - time in milliseconds for data conflation
+/R/ no return value
+/E/ .hdbHk.plug.action[`conflate][2012.01.01;`:/systemRoot/data/hdb/2012.01.01/trade/;(enlist `conflationInterval)!enlist `60000]
 .hdbHk.plug.action[`conflate]:{[date;tableHnd;args]
   args:(enlist `conflationInterval)!"J"$string args;
   if[not args[`conflationInterval]>0; '"Given conflationInterval is",string[args[`conflationInterval]], ". conflationInterval should be grater then 0"];
@@ -276,10 +295,13 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   @[tableHnd;`sym;`p#];
   };
 
+/------------------------------------------------------------------------------/
 /F/ plugin for removing all values except for the last value for each symbol
-/P/ date:DATE - the partition on which it operates date
+/P/ date:DATE       - the partition on which it operates date
 /P/ tableHnd:SYMBOL - file handle for table partition
-/P/ args:DICTIONARY - empty ()
+/P/ args:DICTIONARY - not used in `mrvs plugin, leave empty - ()!()
+/R/ no return value
+/E/ .hdbHk.plug.action[`mrvs][2012.01.01;`:/systemRoot/data/hdb/2012.01.01/trade/;()!()]
 .hdbHk.plug.action[`mrvs]:{[date;tableHnd;args]
   columns:cols[tableHnd];
   lasts:columns except `sym;
@@ -288,20 +310,17 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   @[tableHnd;`sym;`p#];
   };
 
-/F/ performs plugin
-/P/ plugin - plugin name
-/P/ date - partition date
-/P/ tabs - tables names
-/E/ args - plugin parameters
-//plugin:`conflate
-//plugin:`compress
-//tabs:`trade
-//when:1
-//args:`logicalBlockSize`compressionAlgorithm`compressionLevel!`17`2`6
-//args:(enlist `conflationInterval)!enlist `60000
-//tab:tabs
-//date:p 0;plugin:p 1;tabs:p 2;when:p 3;args:p 4
-
+/------------------------------------------------------------------------------/
+/F/ Executes hk plugin.
+/P/ date:DATE        - partition date
+/P/ plugin:SYMBOL    - plugin name
+/P/ tabs:LIST SYMBOL - tables names
+/P/ when:INT         - n-th day in the past        
+/P/ doBck:BOOLEAN    - do backup before hk action
+/P/ args:DICT        - plugin parameters
+/R/ no return value
+/E/ .hdbHk.p.pluginAct[2012.01.01;`conflate;enlist `trade;7;1b;(enlist `conflationInterval)!enlist `60000]
+/E/ .hdbHk.p.pluginAct[2012.01.01;`compress;enlist `trade;7;1b;`logicalBlockSize`compressionAlgorithm`compressionLevel!`17`2`6]
 .hdbHk.p.pluginAct:{[date;plugin;tabs;when;doBck;args]
   hnd:.hdbHk.getDateHnd[date-when];
   if[()~ key hnd;  // partition does not exist
@@ -323,10 +342,10 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
     }[funcName;date;;when;doBck;args] each tabs;
   };
 
-/F/ creates backup of table partition in path specified by .hdbHk.cfg.bckDir
-/P/ date : Date - date of partition
-/P/ tab : Symbol - nameof table 
-
+/------------------------------------------------------------------------------/
+/F/ Creates backup of table partition in path specified by .hdbHk.cfg.bckDir.
+/P/ date:DATE  - date of partition
+/P/ tab:SYMBOL - nameof table 
 .hdbHk.p.backup:{[date;tab] 
   tabHnd:` sv (.hdbHk.getDateHnd[date];tab);
   dst:1_string[.hdbHk.cfg.bckDir],"/",string[date];
@@ -337,13 +356,12 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   .os.cpdir[1_string[tabHnd];dst]; 
   };
 
+/------------------------------------------------------------------------------/
 .hdbHk.p.raport:{[]
   raport:(`timestamp;`hdb;`tasks)!(.sl.zz[];.hdbHk.cfg.hdbPath;(select action,table,date:.sl.eodSyncedDate[]-dayInPast from .hdbHk.cfg.taskList));
   };
 
 /------------------------------------------------------------------------------/
-
-
 .hdbHk.p.getPartsHdb:{[hdbPath]
   path:` sv (hdbPath;`par.txt);
   :$[count key path;
@@ -352,6 +370,10 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 /==============================================================================/
+/F/ Component initialization entry point.
+/P/ flags:LIST - nyi
+/R/ no return value
+/E/ .sl.main`
 .sl.main:{[flags]
   cmdParams:.Q.opt[.z.x];
   .hdbHk.cfg.hdbPath:hsym `$first cmdParams`hdb;
@@ -376,6 +398,7 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   .sl.libCmd[];
   .hdbHk.performHk[.hdbHk.cfg.date];
   };
+
 /------------------------------------------------------------------------------/
 if[not all `hdb`hdbConn in key .Q.opt[.z.x];
   .log.error[`hdbHk]"Missing input parameters. Obligatory parmaters are: hdb and hdbConn";
@@ -384,9 +407,11 @@ if[not all `hdb`hdbConn in key .Q.opt[.z.x];
   ];
 
 
+/------------------------------------------------------------------------------/
 .sl.run[`hdbHk;`.sl.main;`];
 
 if[not `noexit in `$.z.x;exit 0];
 
 
+/------------------------------------------------------------------------------/
 /

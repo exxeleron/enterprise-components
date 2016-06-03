@@ -1,27 +1,28 @@
 /L/ Copyright (c) 2011-2014 Exxeleron GmbH
-/L/
-/L/ Licensed under the Apache License, Version 2.0 (the "License");
-/L/ you may not use this file except in compliance with the License.
-/L/ You may obtain a copy of the License at
-/L/
-/L/   http://www.apache.org/licenses/LICENSE-2.0
-/L/
-/L/ Unless required by applicable law or agreed to in writing, software
-/L/ distributed under the License is distributed on an "AS IS" BASIS,
-/L/ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-/L/ See the License for the specific language governing permissions and
-/L/ limitations under the License.
+/-/
+/-/ Licensed under the Apache License, Version 2.0 (the "License");
+/-/ you may not use this file except in compliance with the License.
+/-/ You may obtain a copy of the License at
+/-/
+/-/   http://www.apache.org/licenses/LICENSE-2.0
+/-/
+/-/ Unless required by applicable law or agreed to in writing, software
+/-/ distributed under the License is distributed on an "AS IS" BASIS,
+/-/ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+/-/ See the License for the specific language governing permissions and
+/-/ limitations under the License.
 
 /A/ DEVnet: Joanna Jarmulska
 /V/ 3.0
+
 /S/ tickHF adapter library for feedCsv:
-/S/ Responsible for:
-/S/ - publishing data in tickLF protocol
-/S/ Notes:
-/S/ - parsed data is published to tickLF component using interface functions <.tickLF.pubUpd> and <.tickLF.pubImg> (<tickLF.q>)
-/S/ - filenames that match defined patterns are handled in two ways (those actions match tickLF interface actions):
-/S/ -- image - completely replaces content of destination table with current input, expected file name pattern is YYYY.DD.MMDhh.mm.ss.uuu.table.img.csv, e.g. 2012.01.01D07.00.00.000.universe.img.csv
-/S/ -- update - updates content of destination with current input, expected file name pattern is YYYY.DD.MMDhh.mm.ss.uuu.table.upd.csv, e.g. 2012.01.01D07.00.00.000.universe.upd.csv
+/-/ Responsible for:
+/-/ - publishing data in tickLF protocol
+/-/ Notes:
+/-/ - parsed data is published to tickLF component using interface functions <.tickLF.pubUpd> and <.tickLF.pubImg> (<tickLF.q>)
+/-/ - filenames that match defined patterns are handled in two ways (those actions match tickLF interface actions):
+/-/ -- image - completely replaces content of destination table with current input, expected file name pattern is YYYY.DD.MMDhh.mm.ss.uuu.table.img.csv, e.g. 2012.01.01D07.00.00.000.universe.img.csv
+/-/ -- update - updates content of destination with current input, expected file name pattern is YYYY.DD.MMDhh.mm.ss.uuu.table.upd.csv, e.g. 2012.01.01D07.00.00.000.universe.upd.csv
 
 /------------------------------------------------------------------------------/
 system"l ",getenv[`EC_QSL_PATH],"/sl.q";
@@ -30,16 +31,13 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 /------------------------------------------------------------------------------/
 /G/ supported publishing functions
 .fcsv.p.supportedFunc:`img`upd;
+
 /------------------------------------------------------------------------------/
-/F/ parse and publish data as updates and images in tickLF format
-/P/ files:LIST PATH - list of files to be parsed
+/F/ Parses and publishes data as updates and images in tickLF format.
+/P/ files:LIST PATH   - list of files to be parsed
 /P/ config:DICTIONARY - with fileFormat, destTab, separator
-/R/ :DICTIONARY - with ok and corrupted files: `ok`corrupted!(enlist `:data/file1;enlist `:data/file2)
-/E/ config:`fileFormat`destTab`separator!("TSD";`universe;";")
-/E/ .fcsv.processData[`:data/file1`:data/file2;config]
-//files:ff;config:cc
-// files:(toRead`ok) 0
-// config:first toRead;
+/R/ :DICTIONARY - with ok and corrupted files: `ok`corrupted!(enlist `:data/file1.csv;enlist `:data/file2.csv)
+/E/ .fcsv.processData[`:data/file1.csv`:data/file2.csv;`fileFormat`destTab`separator!("TSD";`universe;";")]
 .fcsv.processData:{[files;config]
   //    ff::files;cc::config;
   .log.info[`LFPub] "Start processing #files:",string[count files]," for table ", string config`destTab;
@@ -56,10 +54,9 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   };
 
 /------------------------------------------------------------------------------/
-/F/ process one file
-/P/ file - file name
-/P/ config - row from .fcsv.cfg.files
-// file:first files
+/F/ Processes one file.
+/P/ file:SYMBOL - file name
+/P/ config:DICT - row from .fcsv.cfg.files
 .fcsv.p.processOneFile:{[file;config]
   //    f::file; c::config;
   format:config`fileFormat;separator:config`separator;destTab:config`destTab;
@@ -81,3 +78,5 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
   status:.pe.dot[.fcsv.p.pub;(func2pub;destTab;data2pub);{[x] .log.warn[`LFPub]"Error during data publishing: ",x;`$x}];
   status
   };
+
+/------------------------------------------------------------------------------/

@@ -70,5 +70,11 @@
 - parseq - Parseq library - Parseq is a Q clone of the Haskell's Parsec, a parser combinator library. 
   - Most parser names are the same as in the original, except when colliding with q keywords.
 
-- tabs - tabs library - data model validation facilities
+- tabs - Tabs library - data model validation facilities
   - validation of the data model
+
+- doc - Documentation loader library - access to the doc-string documentation from the source code
+  - extract doc-strings from the q source files
+  - documentation browsing - .doc.list
+  - searching functionality - .doc.find
+  - displaying detailed function description - .doc.show

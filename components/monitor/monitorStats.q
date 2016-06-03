@@ -1,26 +1,26 @@
 /L/ Copyright (c) 2011-2014 Exxeleron GmbH
-/L/
-/L/ Licensed under the Apache License, Version 2.0 (the "License");
-/L/ you may not use this file except in compliance with the License.
-/L/ You may obtain a copy of the License at
-/L/
-/L/   http://www.apache.org/licenses/LICENSE-2.0
-/L/
-/L/ Unless required by applicable law or agreed to in writing, software
-/L/ distributed under the License is distributed on an "AS IS" BASIS,
-/L/ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-/L/ See the License for the specific language governing permissions and
-/L/ limitations under the License.
+/-/
+/-/ Licensed under the Apache License, Version 2.0 (the "License");
+/-/ you may not use this file except in compliance with the License.
+/-/ You may obtain a copy of the License at
+/-/
+/-/   http://www.apache.org/licenses/LICENSE-2.0
+/-/
+/-/ Unless required by applicable law or agreed to in writing, software
+/-/ distributed under the License is distributed on an "AS IS" BASIS,
+/-/ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+/-/ See the License for the specific language governing permissions and
+/-/ limitations under the License.
 
 /A/ DEVnet: Pawel Hudak
 /V/ 3.0
 /D/ 2012.04.10
 
 /S/ Monitor component:
-/S/ Responsible for:
-/S/ - capturing system daily statistics
-/S/ Note:
-/S/ Schema of monitor tables is described in <monitor.qsd>.
+/-/ Responsible for:
+/-/ - capturing system daily statistics
+/-/ Note:
+/-/ Schema of monitor tables is described in <monitor.qsd>.
 
 /------------------------------------------------------------------------------/
 /                         sysHdbSummary                                        /
@@ -37,7 +37,7 @@
   };
 
 /------------------------------------------------------------------------------/
-//calculate hdb size
+/F/ Calculates hdb size.
 .monitor.p.hdbSummary:{[path]
   if["w"~first string .z.o;:([]hdb:enlist `$path;sizeMB:0Nj)];
   sizeKB:.pe.atLog[`monitor;`.q.system;"du --max-depth=0 ",path;enlist"\t",path;`error];
@@ -84,7 +84,7 @@
   };
 
 /------------------------------------------------------------------------------/
-//get func stats
+/F/ Gets func stats.
 .monitor.p.getFuncSummary:{[procList;procNs]
   toCheck:([]sym:procList)cross ([](),procNs);
   funcStats:.pe.dotLog[`monitor;`.monitor.p.getRemoteFuncList;;`funcCnt`func!(0Ni;`symbol$());`error] each flip value flip toCheck;

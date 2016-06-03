@@ -568,7 +568,7 @@ chainl1:{[pa;op;ps]
     :(last args) f/ oa
     };
 
-/R/ Parses zero or more occurrences of a pattern, separated by another one. This parser always succeeds.
+/F/ Parses zero or more occurrences of a pattern, separated by another one. This parser always succeeds.
 /P/ pa - parser for the pattern
 /P/ op -  parser for the separator. This parser must return a dyadic (binary) function in the ast field.
 /P/ x0 - default value to be returned when no pa is matched

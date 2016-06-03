@@ -1,47 +1,50 @@
 /L/ Copyright (c) 2011-2014 Exxeleron GmbH
-/L/
-/L/ Licensed under the Apache License, Version 2.0 (the "License");
-/L/ you may not use this file except in compliance with the License.
-/L/ You may obtain a copy of the License at
-/L/
-/L/   http://www.apache.org/licenses/LICENSE-2.0
-/L/
-/L/ Unless required by applicable law or agreed to in writing, software
-/L/ distributed under the License is distributed on an "AS IS" BASIS,
-/L/ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-/L/ See the License for the specific language governing permissions and
-/L/ limitations under the License.
+/-/
+/-/ Licensed under the Apache License, Version 2.0 (the "License");
+/-/ you may not use this file except in compliance with the License.
+/-/ You may obtain a copy of the License at
+/-/
+/-/   http://www.apache.org/licenses/LICENSE-2.0
+/-/
+/-/ Unless required by applicable law or agreed to in writing, software
+/-/ distributed under the License is distributed on an "AS IS" BASIS,
+/-/ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+/-/ See the License for the specific language governing permissions and
+/-/ limitations under the License.
 
 /A/ DEVnet:  Joanna Jarmulska, Pawel Hudak.
 /V/ 3.0
 
 /S/ Subscription management library:
-/S/ This library should be used via qsl/sub library.
-/S/ Provides API for subscription to data published in tickLF (<tickLF.q>) or tickHF (<tickHF.q>) protocols
+/-/ This library should be used via qsl/sub library.
+/-/ Provides API for subscription to data published in tickLF (<tickLF.q>) or tickHF (<tickHF.q>) protocols
 
-/S/ Features:
-/S/ - event based subscription and data replay from tickLF and tickHF components
-/S/ - handling data updates in tickLF and tickHF protocols
+/-/ Features:
+/-/ - event based subscription and data replay from tickLF and tickHF components
+/-/ - handling data updates in tickLF and tickHF protocols
 
 /------------------------------------------------------------------------------/
 /                      tickLF subscription                                     /
 /------------------------------------------------------------------------------/
-//F/ Subscription to using tickLF interface
-//P/ server - logical name of the server that was initialized by .hnd.hopen
-//P/ tabs - list of table to be subscribed
-//P/ uni - list of universe to subscribe
-//E/ tabs:enlist `universe
-//E/ server:`tickLF1
-//E/ uni:enlist `
+/F/ Subscribes to tickLF-like data source.
+/P/ server:SYMBOL - logical name of the server that was initialized by .hnd.hopen
+/P/ tabs:SYMBOL | LIST SYMBOL - list of tables requested for subscribtion, ` for ALL
+/P/ uni:SYMBOL | LIST SYMBOL - list of universe entries requested for subscription, ` for ALL
+/R/ no return value
+/E/ .sub.tickLF.subscribe[`core.tickLF; `; `]
+/-/   - subscribes for all tables, full universe from core.tickLF server
+/E/ .sub.tickLF.subscribe[`core.tickLF; enlist `refData; `]
+/-/   - subscribes for `refData table, full universe from core.tickLF server
 .sub.tickLF.subscribe:{[server;tabs;uni]
   subDetails:{[server;table;uni].hnd.h[server](".tickLF.sub";table;uni)}[server;;]'[tabs;uni];
   .sub.tickLF.initAndReplayTab each subDetails;
   };
 
 /------------------------------------------------------------------------------/
-/F/ Initialize in memory and relay data for one table.
-/P/ subDetail - data model and journal((table name;model);(number of entries to replay; journal name)
-/E/ subDetail:(`universe;flip `time`sym`mat!(`time$();0#`;`date$());(1;`:jrn))
+/F/ Initializes in-memory and replay data for one table.
+/P/ subDetail:PAIR(SYMBOL;MODEL;LIST) - data model and journal((table name;model);(number of entries to replay; journal name)
+/R/ no return value
+/E/ .sub.tickLF.initAndReplayTab (`universe;flip `time`sym`mat!(`time$();0#`;`date$());(1;`:jrn))
 .sub.tickLF.initAndReplayTab:{[subDetail]
   .log.debug[`sub] "Set data model for table:", .Q.s1[subDetail[0;0]];
   .[;();:;]. subDetail[0];
@@ -51,8 +54,9 @@
   };
 
 /------------------------------------------------------------------------------/
-/F/ Replay data from one tickLF journal.
+/F/ Replays data from one tickLF journal.
 /P/ jrn:(PAIR(INT;SYMBOL)) - pair with (number of entries to replay; journal name)
+/R/ no return value
 /E/ .sub.tickLF.replayData[(1;`:jrn)]
 .sub.tickLF.replayData:{[jrn]
   .log.info[`sub] "Replaying ",string[jrn 0], " messages from: ",string[jrn 1];
@@ -62,7 +66,7 @@
 /------------------------------------------------------------------------------/
 /                      tickLF default callbacks                                /
 /------------------------------------------------------------------------------/
-/G/ default realtime callbacks for tickLF
+/G/ Fefault realtime callbacks for tickLF.
 .sub.tickLF.default:()!();
 
 /------------------------------------------------------------------------------/
@@ -75,7 +79,7 @@
   };
 
 /------------------------------------------------------------------------------/
-/F/ function for receiving data images from tickLF
+/F/ Function for receiving data images from tickLF.
 /P/ x - table name (symbol)
 /P/ y - data (table;list) 
 .sub.tickLF.default[`.tickLF.img`.tickLF.jImg]:{[x;y]
@@ -85,7 +89,7 @@
   };
 
 /------------------------------------------------------------------------------/
-/F/ function for receiving data upserts from tickLF
+/F/ Function for receiving data upserts from tickLF.
 /P/ x - table name (symbol)
 /P/ d - data (table;list) 
 /P/ c - list of constraints, 
@@ -103,7 +107,7 @@
   };
 
 /------------------------------------------------------------------------------/
-/F/ function for receiving data deletes from tickLF
+/F/ Function for receiving data deletes from tickLF.
 /P/ x - table name (symbol)
 /P/ c - list of constraints, 
 /P/ b - dictionary of group-bys, 

@@ -1,27 +1,26 @@
 /L/ Copyright (c) 2011-2014 Exxeleron GmbH
-/L/
-/L/ Licensed under the Apache License, Version 2.0 (the "License");
-/L/ you may not use this file except in compliance with the License.
-/L/ You may obtain a copy of the License at
-/L/
-/L/   http://www.apache.org/licenses/LICENSE-2.0
-/L/
-/L/ Unless required by applicable law or agreed to in writing, software
-/L/ distributed under the License is distributed on an "AS IS" BASIS,
-/L/ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-/L/ See the License for the specific language governing permissions and
-/L/ limitations under the License.
+/-/
+/-/ Licensed under the Apache License, Version 2.0 (the "License");
+/-/ you may not use this file except in compliance with the License.
+/-/ You may obtain a copy of the License at
+/-/
+/-/   http://www.apache.org/licenses/LICENSE-2.0
+/-/
+/-/ Unless required by applicable law or agreed to in writing, software
+/-/ distributed under the License is distributed on an "AS IS" BASIS,
+/-/ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+/-/ See the License for the specific language governing permissions and
+/-/ limitations under the License.
 
 /A/ DEVnet:  Bartosz Dolecki
 /V/ 3.0
 
 /S/ Store library:
-/S/ Library for data storage in the hdb (<hdb.q>)
-
-/S/ Provides:
-/S/ - data storage as splayed and partition table
-/S/ - callback for reloading and filling missing tables in hdb (<hdb.q>)
-/S/ - end of day support and integration with eodMng (<eodMng.q>) component
+/-/ library for data storage in the hdb (<hdb.q>)
+/-/ Functionality:
+/-/ - data storage as splayed and partition table
+/-/ - callback for reloading and filling missing tables in hdb (<hdb.q>)
+/-/ - end of day support and integration with eodMng (<eodMng.q>) component
 
 /------------------------------------------------------------------------------/
 /                               lib and etc                                    /
@@ -31,36 +30,57 @@
 /------------------------------------------------------------------------------/
 /                              interface functions                             /
 /------------------------------------------------------------------------------/
-/F/ initialization of store library
-/P/ config:TABLE - that contains:
-/P/  -- table:SYMBOL - table name
-/P/  -- hdbPath:SYMBOL - path to the hdb; path to hdb location is taken automatically from system.cfg (field: dataPath) for given hdb name
-/P/  -- hdbName:SYMBOL - connection to reload hdb
-/P/  -- memoryClear:BOOLEAN - flag for clearing data after data storing is performed
-/P/  -- store:BOOLEAN - flag for performing data storing
-/P/  -- attrCol:SYMBOL - column which should have attribute p applied (optional column in the configuration table, if missing will be filled with `sym)
-/P/ reloadHdb:BOOLEAN - flag for reloading hdb after storing
+/F/ Initializes store library. Function should be invoked once, before any calls of the .store.run[].
+/P/ config:TABLE               - that contains:
+/-/  -- table:SYMBOL             - table name
+/-/  -- hdbPath:SYMBOL           - path to the hdb; path to hdb location is taken automatically from system.cfg (field: dataPath) for given hdb name
+/-/  -- hdbName:SYMBOL           - connection to reload hdb
+/-/  -- memoryClear:BOOLEAN      - flag for clearing data after data storing is performed
+/-/  -- store:BOOLEAN            - flag for performing data storing
+/-/  -- attrCol:SYMBOL           - column which should have attribute p applied (optional column in the configuration table, if missing will be filled with `sym)
+/P/ reloadHdb:BOOLEAN          - flag for reloading hdb after storing
 /P/ fillMissingTabsHdb:BOOLEAN - flag for filling missing tables in hdb after storing is completed 
-/P/ dataPath:PATH - path to the directory that can be used for storing status of the store procedure
-/E/ .store.init[flip (`table`hdbPath`hdbName`memoryClear`store!(enlist `quote;enlist `:hdb;enlist `kdb.hdb;enlist 1b; enlist 1b));1b;1b;`:data/]
-//config:p 0;reloadHdb:p 1;fillMissingTabsHdb:p 2
+/P/ dataPath:PATH              - path to the directory that can be used for storing status of the store procedure
+/R/ no return value
+/E/ .store.init[([]table:enlist `quote;hdbPath:`:hdb;hdbName:`core.hdb;memoryClear:1b;store:1b); 1b; 1b; `:data/]
+/-/     - initializes store library for one table - quote with the following configuration:
+/-/       -- quote will be stored in `:hdb directory
+/-/       -- `core.hdb process will be reloaded after store is completed
+/-/       -- quote table content will be deleted in memory once the store procedure is completed.
 .store.init:{[config;reloadHdb;fillMissingTabsHdb;dataPath]
-  .store.comFile:` sv dataPath,`eodStatus;    /G/ file to communicate with eodMng 
+  /G/ Path to the file used for communication with eodMng.
+  .store.comFile:` sv dataPath,`eodStatus;    
   .store.notifyStoreBefore[.sl.eodSyncedDate[]];
   hdbNames:distinct exec hdbName from config where not hdbName~'`;
+  /G/ Table with settings connected with postprocessing steps executed once the store procedure is completed.
+  /-/  -- reloadHdb:BOOLEAN          - true if hdb should be reloaded
+  /-/  -- fillMissingTabsHdb:BOOLEAN - true if fillMissingTabs shoult be executed on hdb after store is completed
+  /-/  -- hdbConns:LIST SYMBOL       - list of hdb processes that should receive reload signal once the store is completed.
   .store.settings:flip  `reloadHdb`fillMissingTabsHdb`hdbConns!enlist each (reloadHdb;fillMissingTabsHdb;hdbNames);
   if[not `attrCol in cols config;
     config:update attrCol:`sym from config;
     ];
+  /G/ Table with settings connected with tables processed by the store library.
+  /-/  -- table:SYMBOL        - table name
+  /-/  -- hdbPath:SYMBOL      - full path to the hdb directory
+  /-/  -- memoryClear:BOOLEAN - true if garbage collector should be executed after the store is completed
+  /-/  -- store:BOOLEAN       - true if actual data write should be performed
+  /-/  -- attrCol:SYMBOL      - name of the column that should get `p attribute
   .store.tabs:config;
   };
 
 /------------------------------------------------------------------------------/
-/F/ Perform storing procedure; main top level function
-/F/ - data storing and cleaning
-/F/ - invoke callbacks for reloading and filling missing tables in partitions
-/F/ - .store.run should be proceeded by the <.store.init> with proper data storing settings
+/F/ Writes tables to PARTITIONED hdb for the given day. Triggers notification callbacks, main top-level store function.
+/-/ Requires one initial call of .store.init[].
+/-/ Perform actions based on the configuration set via .store.init[], those might include:
+/-/  - data storing and cleaning
+/-/  - invoke callbacks for reloading 
+/-/  - filling missing tables in partitions
 /P/ date:DATE - eod date (in most cases current date) 
+/R/ no return value
+/E/ .store.run[2015.01.01]
+/-/     - executes storing configured tables to partition 2015.01.01
+/-/     - triggers .store.notifyStoreBegin, .store.notifyStoreRecovery, .store.notifyStoreSuccess and .store.notifyStoreBefore callbacks
 .store.run:{[date]
   .log.info[`store] "[Start] Store data for date ", string date;
   .store.notifyStoreBegin[date];
@@ -73,15 +93,18 @@
 /------------------------------------------------------------------------------/
 /                              additional functions                            /
 /------------------------------------------------------------------------------/
-/F/ Perform storing procedure for all tables specified in eodTabs parameter
+/F/ Performs storing procedure for tables specified in the config param, without trigger of notification callbacks.
 /P/ date:DATE - eod date (in most cases current date) 
 /P/ config:TABLE - (equivalent to <.store.tabs> and to <.store.init> parameter):
-/P/  -- table:SYMBOL - table name
-/P/  -- hdbPath:SYMBOL - path to the hdb; path to hdb location is taken automatically from system.cfg (field: dataPath) for given hdb name
-/P/  -- hdbName:SYMBOL - connection to reload hdb
-/P/  -- memoryClear:BOOLEAN - flag for clearing data after data storing is performed
-/P/  -- store:BOOLEAN - flag for performing data storing
-/P/  -- attrCol:SYMBOL - column which should have attribute p applied (optional column in the configuration table, if missing will be filled with `sym).
+/-/  -- table:SYMBOL - table name
+/-/  -- hdbPath:SYMBOL - path to the hdb; path to hdb location is taken automatically from system.cfg (field: dataPath) for given hdb name
+/-/  -- hdbName:SYMBOL - connection to reload hdb
+/-/  -- memoryClear:BOOLEAN - flag for clearing data after data storing is performed
+/-/  -- store:BOOLEAN - flag for performing data storing
+/-/  -- attrCol:SYMBOL - column which should have attribute p applied (optional column in the configuration table, if missing will be filled with `sym).
+/R/ :LIST[SYMBOL] - list of statuses of each stored table (`error in case of given table failure)
+/E/ .store.storeAll[2015.01.01;config]
+/-/     - executes storing configured tables to partition 2015.01.01 with given configuration
 .store.storeAll:{[date;config]
   tabexclude:config[`table] where not config[`table] in tables[];
   if[count tabexclude;
@@ -113,8 +136,7 @@
   };
 
 /------------------------------------------------------------------------------/
-/F/ store and clear tables
-// eodTab:first eodPerform
+/F/ Store and clear tables.
 .store.p.store:{[date;eodTab]
   table:eodTab`table;
   if[eodTab`store;
@@ -127,9 +149,10 @@
   };
 
 /------------------------------------------------------------------------------/
-/F/ splay tables using .Q.dpft
+/F/ Splay tables using .Q.dpft.
 .store.p.splay:{[date;table;eodPath;attrCol]
   .log.info[`store] "Storing table: ", string[table], ", attrCol:",.Q.s1[attrCol]," #count:",string count value table; 
+  /G/ Temporary global variable used to persist in-memory table keys.
   .store.tmp.eodKeys:();
   if[99h=type value table;
     .store.tmp.eodKeys:cols key value table;
@@ -142,7 +165,7 @@
   };
 
 /------------------------------------------------------------------------------/
-/F/ clear global tables
+/F/ Clear global tables.
 /E/ table:`trade
 .store.p.clear:{[table;attrCol]
   delete from table;
@@ -153,15 +176,21 @@
   };
 
 /------------------------------------------------------------------------------/
-/F/ Reload hdb server asynchronously
+/F/ Reload hdb server asynchronously (trigger ".hdb.reload[]"). 
 /P/ hdb:SYMBOL - name of the hdb process that should be reloaded
+/R/ no return value
+/E/ .store.reloadHdb[`core.hdb]
+/-/     - trigger asynchronously reload of the content on the hdb directory on hdb process `core.hdb
 .store.reloadHdb:{[hdb]
   .hnd.ah[hdb]".hdb.reload[]";
   };
 
 /------------------------------------------------------------------------------/
-/F/ Fill missing tables in partitioned hdb directory
+/F/ Fill missing tables in partitioned hdb directory. (see http://code.kx.com/wiki/DotQ/DotQDotchk)
 /P/ hdb:SYMBOL - path to the hdb that should be modified
+/R/ no return value
+/E/ .store.fillMissingTabs[`:hdb]
+/-/     - fills missing tables in the `:hdb directory
 .store.fillMissingTabs:{[hdb]
   .Q.chk[hdb];
   };
@@ -174,23 +203,38 @@
   .pe.at[(`$(string .store.comFile),(string date)) 0: ;enlist msg," ",string date;{}]
   };
 
-/F/ Configuration initialized correctly; notify that waiting for store procedure startup
+/F/ Default .store.notifyStoreBefore callback - configuration initialized correctly, notify that waiting for store procedure startup.
+/-/ Callback used for communication with the eodMng, see .store.comFile file.
 /P/ date:DATE - eod date
-.store.notifyStoreBefore:{[date].store.p.notifyFile["eodBefore";date];}
+/R/ no return value
+/E/ .store.notifyStoreBefore 2010.01.01
+.store.notifyStoreBefore:{[date].store.p.notifyFile["eodBefore";date];};
 
-/F/ Notify that the store procedure started
+/F/ Default .store.notifyStoreBegin callback - notify that the store procedure started.
+/-/ Callback used for communication with the eodMng, see .store.comFile file.
 /P/ date:DATE - eod date
-.store.notifyStoreBegin:{[date].store.p.notifyFile["eodDuring";date];}
+/R/ no return value
+/E/ .store.notifyStoreBegin 2010.01.01
+.store.notifyStoreBegin:{[date].store.p.notifyFile["eodDuring";date];};
 
-/F/ Notify that the store was successful
+/F/ Default .store.notifyStoreSuccess callback - notify that the store was successful.
+/-/ Callback used for communication with the eodMng, see .store.comFile file.
 /P/ date:DATE - eod date
-.store.notifyStoreSuccess:{[date].store.p.notifyFile["eodSuccess";date];}
+/R/ no return value
+/E/ .store.notifyStoreSuccess 2010.01.01
+.store.notifyStoreSuccess:{[date].store.p.notifyFile["eodSuccess";date];};
 
-/F/ Notify that the store failed;
-/F/ *note:* unused at the moment - may be useful in the future
+/F/ Default .store.notifyStoreFail callback - notify that the store failed.
+/-/ Callback used for communication with the eodMng, see .store.comFile file.
+/-/ *note:* unused at the moment - may be useful in the future
 /P/ date:DATE - eod date
-.store.notifyStoreFail:{[date].store.p.notifyFile["eodFail";date];}
+/R/ no return value
+/E/ .store.notifyStoreFail 2010.01.01
+.store.notifyStoreFail:{[date].store.p.notifyFile["eodFail";date];};
 
-/F/ Notify recovery state
+/F/ Default .store.notifyStoreRecovery callback - notify recovery state.
+/-/ Callback used for communication with the eodMng, see .store.comFile file.
 /P/ date:DATE - eod date
-.store.notifyStoreRecovery:{[date].store.p.notifyFile["eodRecovery";date];}
+/R/ no return value
+/E/ .store.notifyStoreRecovery 2010.01.01
+.store.notifyStoreRecovery:{[date].store.p.notifyFile["eodRecovery";date];};

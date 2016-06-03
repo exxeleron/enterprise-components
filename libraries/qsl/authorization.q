@@ -1,37 +1,38 @@
 /L/ Copyright (c) 2011-2014 Exxeleron GmbH
-/L/
-/L/ Licensed under the Apache License, Version 2.0 (the "License");
-/L/ you may not use this file except in compliance with the License.
-/L/ You may obtain a copy of the License at
-/L/
-/L/   http://www.apache.org/licenses/LICENSE-2.0
-/L/
-/L/ Unless required by applicable law or agreed to in writing, software
-/L/ distributed under the License is distributed on an "AS IS" BASIS,
-/L/ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-/L/ See the License for the specific language governing permissions and
-/L/ limitations under the License.
+/-/
+/-/ Licensed under the Apache License, Version 2.0 (the "License");
+/-/ you may not use this file except in compliance with the License.
+/-/ You may obtain a copy of the License at
+/-/
+/-/   http://www.apache.org/licenses/LICENSE-2.0
+/-/
+/-/ Unless required by applicable law or agreed to in writing, software
+/-/ distributed under the License is distributed on an "AS IS" BASIS,
+/-/ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+/-/ See the License for the specific language governing permissions and
+/-/ limitations under the License.
 
 /A/ DEVnet: Pawel Hudak, Joanna Jarmulska
 /V/ 3.0
 
 /S/ Authorization library:
-/S/ Responsible for:
-/S/ - providing authorization by validating incoming function calls against allowed namespaces and forbidden keywords (stop words); authorization configuration is described in access.cfg schema file (see <access.qsd>)
-/S/ - logging access and function calls facilities (audit view) - logging of incoming synchronous and asynchronous function calls and user login/logout; audit view configuration is described in access.cfg schema file (see <access.qsd>)
+/-/ - providing authorization by validating incoming function calls against allowed namespaces and forbidden keywords (stop words); authorization configuration is described in access.cfg schema file (see <access.qsd>)
+/-/ - logging access and function calls facilities (audit view) - logging of incoming synchronous and asynchronous function calls and user login/logout; audit view configuration is described in access.cfg schema file (see <access.qsd>)
 
-/------------------------------------------------------------------------------/
-
-
-/------------------------------------------------------------------------------/
-/F/ Set authorization and audit view in run-time
-/P/ cfg:TABLE - that contains:
-/P/  -- users:SYMBOL - user name
-/P/  -- auditView:ENUM[``CONNECTIONS_INFO`SYNC_ACCESS_INFO`ASYNC_ACCESS_INFO] - audit view
-/P/  -- checkLevel:ENUM[`NONE`STRICT`FLEX] - authorization level
-/E/ ([] users: enlist`adminUser; auditView: enlist`CONNECTIONS_INFO`SYNC_ACCESS_INFO; checkLevel: enlist`NONE)
-// cfg:.auth.cfg.tab
-// .auth.setAuth[cfg]
+//----------------------------------------------------------------------------//
+//                          interface functions                               //
+//----------------------------------------------------------------------------//
+/F/ Changes authorization and/or auditView settings in the run-time. Note: The change will not persist after the restart.
+/-/  access.cfg file must be modified manually in order to make persistent authorization configuration change.
+/P/ cfg:TABLE - authorization configuration table with columns:
+/-/  -- users:SYMBOL - user name
+/-/  -- auditView:ENUM[``CONNECTIONS_INFO`SYNC_ACCESS_INFO`ASYNC_ACCESS_INFO] - audit view
+/-/  -- checkLevel:ENUM[`NONE`STRICT`FLEX] - authorization level
+/R/ TABLE - new, currently activ configuration
+/E/ .auth.setAuth ([] users: enlist`adminUser; auditView: enlist`CONNECTIONS_INFO`SYNC_ACCESS_INFO; checkLevel: enlist`NONE)
+/-/    - overwrites authorization settings with the specified configuration table 
+/E/ .auth.setAuth .auth.cfg.tab
+/-/     - sets authorization back to the settings in .auth.cfg.tab
 .auth.setAuth:{[cfg]
   // turn on `CONNECTIONS_INFO
   connOn:exec users from  cfg where `CONNECTIONS_INFO in/:auditView;
@@ -89,21 +90,43 @@
   };
 
 /------------------------------------------------------------------------------/
-/F/ Add authorized functions
+/F/ Refreshes authorization data structures, in particular activates access for newly added functions.
+/-/  Access to functions is configured on the level of namespaces (see namespaces field in the access.cfg file). 
+/-/  Authorization library maintains internal data structure, which contains mapping of each user to a set of allowed functions - .auth.user2nm.
+/-/  Functions added in the runtime, after the authorization library as initialized, are not included in the .auth.user2nm.
+/-/  .auth.updateAuthFunctions[] refreshes content of the .auth.user2nm basing on the functions currently available in memory.
+/R/ TABLE - new, currently activ user2nm configuration, content of the .auth.user2nm global variable
 /E/ .auth.updateAuthFunctions[]
 .auth.updateAuthFunctions:{[]
   auth:update functions:namespaces from .auth.cfg.tab;
   nmAdded:update functions:raze each .auth.p.getNs''[namespaces] from  auth  where not `ALL in/:namespaces;
   validNm:update validNm:{[p]{[x;y]1b}[p;]} each functions from nmAdded where `ALL in/: functions;
   validNm:update validNm:{[p]{[x;y]y in x}[p;]} each functions from  validNm where not `ALL in/: functions;
+
+  /G/ Authorization configuration, loaded from access.cfg.
+  /-/  -- users:SYMBOL                       - user name
+  /-/  -- usergroups:SYMBOL                  - user group
+  /-/  -- userType:ENUM(user, technicalUser) - type of the user
+  /-/  -- pass:STRING                        - encoded password
+  /-/  -- auditView:LIST SYMBOL              - currently active audit view - based on auditView field in the access.cfg
+  /-/  -- namespaces:LIST SYMBOL             - list of namespaces allowed for the given user
+  /-/  -- stopWords:LIST STRING              - list of stop words, used to block queries in case of FLEX access
+  /-/  -- functions:LIST SYMBOL              - list of functions allowed in the queries
+  /-/  -- validNm:LAMBDA                     - namespace validation
   .auth.cfg.tab:validNm;
+  /G/ Dictionary with function level restrictions per user, loaded from access.cfg.
+  /-/  -- key:SYMBOL - user name
+  /-/  -- val:LAMBDA - lambda returning allowed function names
   .auth.user2nm:exec users!validNm from  .auth.cfg.tab;
   .auth.user2nm
   };
 
-/------------------------------------------------------------------------------/
-/F/ Logging user logout
-/P/ h - connection handle
+//----------------------------------------------------------------------------//
+//                            private functions                               //
+//----------------------------------------------------------------------------//
+/F/ Logging user logout.
+/P/ h:SHORT - connection handle
+/R/ no return value
 .auth.p.pc:{[h]
   if[not count u:exec user from .auth.status where hnd~\:h;:()];
   u:first u;
@@ -112,19 +135,19 @@
   };
 
 /------------------------------------------------------------------------------/
-/F/ Port open callbacks by user
+/F/ Port open callbacks by user.
 .auth.p.poUser:()!();
 
 /------------------------------------------------------------------------------/
-/F/ Logging user login 
-/P/ h - connection handle
+/F/ Logging user login.
+/P/ h:SHORT - connection handle
 // port open user - .z.u
 .auth.p.po:{[h]
   .auth.p.poUser[.z.u;h];
   };
 
 /------------------------------------------------------------------------------/
-/F/ Port open callback definition
+/F/ Port open callback definition.
 .auth.p.poCall:{[h]
   ip:"."sv string "i"$0x0 vs .z.a; host:.Q.host .z.a;
   `.auth.status insert (.z.u;h;`$ip;host;.sl.zp[]);
@@ -132,18 +155,18 @@
   };
 
 /------------------------------------------------------------------------------/
-/F/ Synchronous callbacks by user
+/F/ Synchronous callbacks by user.
 .auth.p.pgUser:()!();
 
 /------------------------------------------------------------------------------/
-/F/ Logging synchronous access with turn on authentication provided by u/U file (u_opt in system.cfg)
+/F/ Logging synchronous access with turn on authentication provided by u/U file (u_opt in system.cfg).
 /P/ cmd:STRING - command
 .auth.p.pgUOptOn:{[cmd]
   .auth.p.pgUser[.z.u;cmd]
   };
 
 /------------------------------------------------------------------------------/
-/F/ Logging synchronous access with turn off authentication (no settings for u_opt in system.cfg)
+/F/ Logging synchronous access with turn off authentication (no settings for u_opt in system.cfg).
 /P/ cmd:STRING - command
 .auth.p.pgUOptOff:{[cmd]
   if[.z.u in .auth.cfg.tab`users;:.auth.p.pgUser[.z.u;cmd]];
@@ -151,11 +174,11 @@
   };
 
 /------------------------------------------------------------------------------/
-/F/default initialization as turned off
+/F/ Default initialization as turned off.
 .auth.p.pg:.auth.p.pgUOptOff;
 
 /------------------------------------------------------------------------------/
-/F/ Synchronous callback for logging audit
+/F/ Synchronous callback for logging audit.
 .auth.p.pgAudit:{[cmd]
   f:10=type cmd;
   .log.info[`auth] `action`user`hnd`asString`query!(`SYNC_STARTED;.z.u;.z.w;f;$[f;cmd;"(",(";" sv .Q.s1 each cmd),")"]);
@@ -165,11 +188,11 @@
   };
 
 /------------------------------------------------------------------------------/
-/F/ Synchronous callback with only command evaluation
+/F/ Synchronous callback with only command evaluation.
 .auth.p.pgOff:value;
 
 /------------------------------------------------------------------------------/
-/F/ Synchronous callback for authorization
+/F/ Synchronous callback for authorization.
 .auth.p.pgAuth:{[cmd]
   if[not .auth.p.validcmd[u:.z.u;cmd];
     .log.warn[`auth] "ACCESS_DENIED    user=",.Q.s1[u], " hnd=", string[.z.w]," query=", $[10=type cmd;cmd;"(",(";" sv .Q.s1 each cmd),")"];
@@ -179,7 +202,7 @@
   };
 
 /------------------------------------------------------------------------------/
-/F/ Synchronous callback for authorization and audit logging
+/F/ Synchronous callback for authorization and audit logging.
 .auth.p.pgAuthAudit:{[cmd]
   if[not .auth.p.validcmd[u:.z.u;cmd];
     .log.warn[`auth] "ACCESS_DENIED    user=",.Q.s1[u], " hnd=", string[.z.w]," query=", $[10=type cmd;cmd;"(",(";" sv .Q.s1 each cmd),")"];
@@ -196,18 +219,18 @@
   };
 
 /------------------------------------------------------------------------------/
-/F/ Asynchronous callbacks by user
+/F/ Asynchronous callbacks by user.
 .auth.p.psUser:()!();
 
 /------------------------------------------------------------------------------/
-/F/ Logging asynchronous access with turn on authentication provided by u/U file (u_opt in system.cfg)
+/F/ Logging asynchronous access with turn on authentication provided by u/U file (u_opt in system.cfg).
 /P/ cmd:STRING - command
 .auth.p.psUOptOn:{[cmd]
   .auth.p.psUser[.z.u;cmd]
   };
 
 /------------------------------------------------------------------------------/
-/F/ Logging asynchronous access with turn off authentication (no settings for u_opt in system.cfg)
+/F/ Logging asynchronous access with turn off authentication (no settings for u_opt in system.cfg).
 /P/ cmd:STRING - command
 .auth.p.psUOptOff:{[cmd]
   if[.z.u in .auth.cfg.tab`users;:.auth.p.psUser[.z.u;cmd]];
@@ -215,11 +238,11 @@
   };
 
 /------------------------------------------------------------------------------/
-/F/default initialization as turned off
+/F/ Default initialization as turned off.
 .auth.p.ps:.auth.p.psUOptOff;
 
 /------------------------------------------------------------------------------/
-/F/ Asynchronous callback for logging audit
+/F/ Asynchronous callback for logging audit.
 .auth.p.psCall:{[cmd]
   f:10=type cmd;
   .log.info[`auth] `action`user`hnd`asString`query!(`ASYNC_STARTED;.z.u;.z.w;f;$[f;cmd;"(",(";" sv .Q.s1 each cmd),")"]);
@@ -229,19 +252,18 @@
   };
 
 /------------------------------------------------------------------------------/
-/F/ Asynchronous callback with only command evaluation
+/F/ Asynchronous callback with only command evaluation.
 .auth.p.psDef:value;
 
 /------------------------------------------------------------------------------/
-/E/ nm:`.demo;
 .auth.p.getKind:{[nm;kind] :(),raze ` sv/:nm,/:@[system;kind," ",string nm;()]};
 .auth.p.getFuns:.auth.p.getKind[;"f"];
 .auth.p.getVars:.auth.p.getKind[;"v"];
 .auth.p.getNs:{[nm] :raze (.auth.p.getVars;.auth.p.getFuns)@\:nm};
 
 /------------------------------------------------------------------------------/
-/F/ Verify if command is permitted for execution for user
-/P/ u:SYMBOL - user name
+/F/ Verify if command is permitted for execution for user.
+/P/ u:SYMBOL   - user name
 /P/ cmd:STRING - command executed by the user
 .auth.p.validcmd:{[u;cmd]
   :@[.auth.p.check[.auth.checkLevels[u]][u;];cmd;{[x;cmd;u]'"unsupported query type for check level: ",string[exec first checkLevel from .auth.cfg.tab where users=u], ", query: ", .Q.s1[cmd]}[;cmd;u]];
@@ -249,20 +271,19 @@
 
 /------------------------------------------------------------------------------/
 /F/ Command parse tree. Helper function for command validation.
-/P/ cmd:LIST - command to execute given as a list
-/P/ cmd:STRING - command to execute given as a string
-/E/ cmd:(".demo.test1"; `param1; 2012.01.01)
-/E/ cmd:".demo.test1[`param1; 2012.01.01]"
+/P/ cmd:(LIST|STRING  - command to execute given (as string or list)
+/E/ .auth.p.cmdpt cmd:(".demo.test1"; `param1; 2012.01.01)
+/E/ .auth.p.cmdpt cmd:".demo.test1[`param1; 2012.01.01]"
 .auth.p.cmdpt:{[cmd]
   $[10h=type cmd;parse cmd;cmd]
   };
 
 /------------------------------------------------------------------------------/
-/F/ Tokenize supplied command. Return symbols defining functions used in the expression
-/P/ cmd:LIST - parse tree of a supplied command. Can contain nested expressions.
-/E/ cmd:.auth.p.cmdpt[(".demo.test1";`param1;2012.01.01)]
-/E/ cmd:.auth.p.cmdpt[(".demo.test1";`param1;2012.01.01)]
-.auth.p.tokenize:{
+/F/ Tokenize supplied command. Return symbols defining functions used in the expression.
+/P/ x:LIST - parse tree of a supplied command. Can contain nested expressions.
+/E/ .auth.p.tokenize cmd:.auth.p.cmdpt[(".demo.test1";`param1;2012.01.01)]
+/E/ .auth.p.tokenize cmd:.auth.p.cmdpt[(".demo.test1";`param1;2012.01.01)]
+.auth.p.tokenize:{[x]
   :raze (raze each)over {
     $[0h=type x;
       $[(not 0h=type fx)&1=count $[10h=type fx:first x;fx:`$fx;fx];fx;()],.z.s each x where 0h=type each x;()]
@@ -307,10 +328,12 @@
   :all .auth.user2nm[u] wc;
   };
 
-/------------------------------------------------------------------------------/
-/F/ Initialize authorization library. Notes :
-/F/ 1 - function is invoked in <.sl.run[]> function; 
-/F/ 2 - if available - details from configuration are used by this function
+//----------------------------------------------------------------------------//
+//                            init functions                                  //
+//----------------------------------------------------------------------------//
+/F/ Initializes authorization library. Automatically invoked in .sl.run[] on process startup.
+/-/ Function extracts authorization information from access.cfg configuration file.
+/R/ no return value
 /E/ .auth.init[]
 .auth.init:{[]
   uOpt:`;
@@ -337,12 +360,19 @@
   .auth.p.init[users;groups;uOpt;warnList];
   };
 
+//----------------------------------------------------------------------------//
 .auth.p.init:{[users;groups;uOpt;warnList]
   if[`initialized in key .auth.p; 
     .log.debug[`auth] "already initialized";
     :()
     ];
   .auth.p.initialized:1b;
+  /G/ Table with current status of the authorization library.
+  /-/  -- user:SYMBOL       - user name
+  /-/  -- hnd:INT           - connection handle
+  /-/  -- ip:SYMBOL         - user ip
+  /-/  -- host:SYMBOL       - user host name
+  /-/  -- loginTs:TIMESTAMP - user login timestamp
   .auth.status:([]user:`symbol$(); hnd:`int$(); ip:`symbol$(); host:`symbol$(); loginTs:`timestamp$());
   //Note: .auding.p.pc is using handle column in .hnd.status to determine whether 
   //     the connection is initialized internally or externally.
@@ -373,8 +403,13 @@
     .log.warn[`auth]"Processing of synchronous messages will be slowed down, because authorization is turned on.";
     ];
 
-  // auth settings
+  /G/ Dictionary with stop words per user, loaded from access.cfg.
+  /-/  -- key:SYMBOL - user name
+  /-/  -- val:LAMBDA - list of stop words for the given user
   .auth.stopWords:`$exec users!stopWords from  .auth.cfg.tab;
+  /G/ Dictionary with checkLevel (NONE, FLEX or STRICT) per user, loaded from access.cfg.
+  /-/  -- key:SYMBOL                     - user name
+  /-/  -- val:ENUM(NONE, FLEX or STRICT) - check level 
   .auth.checkLevels:exec users!checkLevel from  .auth.cfg.tab;
   .auth.updateAuthFunctions[];
   .auth.setAuth[select users, auditView, checkLevel from .auth.cfg.tab];

@@ -1,23 +1,24 @@
 /L/ Copyright (c) 2011-2014 Exxeleron GmbH
-/L/
-/L/ Licensed under the Apache License, Version 2.0 (the "License");
-/L/ you may not use this file except in compliance with the License.
-/L/ You may obtain a copy of the License at
-/L/
-/L/   http://www.apache.org/licenses/LICENSE-2.0
-/L/
-/L/ Unless required by applicable law or agreed to in writing, software
-/L/ distributed under the License is distributed on an "AS IS" BASIS,
-/L/ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-/L/ See the License for the specific language governing permissions and
-/L/ limitations under the License.
+/-/
+/-/ Licensed under the Apache License, Version 2.0 (the "License");
+/-/ you may not use this file except in compliance with the License.
+/-/ You may obtain a copy of the License at
+/-/
+/-/   http://www.apache.org/licenses/LICENSE-2.0
+/-/
+/-/ Unless required by applicable law or agreed to in writing, software
+/-/ distributed under the License is distributed on an "AS IS" BASIS,
+/-/ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+/-/ See the License for the specific language governing permissions and
+/-/ limitations under the License.
 
 /A/ DEVnet: Slawomir Kolodynski
 /V/ 3.0
 
 /S/ Shell commands abstraction, covers Linux and Windows
 
-/F/ removes a directory - Linux version
+/------------------------------------------------------------------------------/
+/F/ Removes a directory - Linux version.
 /P/ dirname:STRING
 .os.p.L.rmdir:{[dirname]
   dirname:.os.p.fixPath dirname;
@@ -25,22 +26,24 @@
   };
 
 
-/F/ removes a directory Windows version
+/F/ Removes a directory - Windows version.
 /P/ dirname:STRING
 .os.p.W.rmdir:{[dirname]
   dirname:.os.p.fixPath dirname;
   .os.system["rmdir"] "rmdir /S /Q ",.os.p.q dirname;
   };
   
-/F/ removes a file - Linux version
+/------------------------------------------------------------------------------/
+/F/ Removes a file - Linux version.
 /P/ path:STRING - path to file
 .os.p.L.rm:{[path] .os.system["rm"] "rm ",.os.p.fixPath path};
 
-/F/ removes a file - Linux version
+/F/ Removes a file - Linux version.
 /P/ path:STRING - path to file
 .os.p.W.rm:{[path] .os.system["rm"] "del /Q ",.os.p.fixPath path};
 
-/F/ copies directory with contents - Linux version
+/------------------------------------------------------------------------------/
+/F/ Copies directory with contents - Linux version.
 /P/ dir1:STRING - source dir
 /P/ dir2:STRING - target dir
 .os.p.L.cpdir:{[dir1;dir2]
@@ -57,7 +60,7 @@
   .os.system["cpdir"] "cp -rf ",(.os.p.q dir1)," ",.os.p.q dir2;
   };
   
-/F/ copies directory with contents - Windows version
+/F/ Copies directory with contents - Windows version.
 /P/ dir1:STRING - source dir
 /P/ dir2:STRING - target dir
 .os.p.W.cpdir:{[dir1;dir2]
@@ -68,14 +71,15 @@
   .os.system["cpdir"] "xcopy  ",(.os.p.q dir1)," ",(.os.p.q dir2)," /i/q/k/h/o/y";
   };
   
-/F/ creates a directory - Linux version
+/------------------------------------------------------------------------------/
+/F/ Creates a directory - Linux version.
 /P/ dir:STRING - name of the directory to create
 .os.p.L.mkdir:{[dir]
   dir:.os.p.fixPath dir;
   .os.system["mkdir"] "mkdir -p ",.os.p.q dir;
   };
   
-/F/ creates a directory - Windows version
+/F/ Creates a directory - Windows version.
 /P/ dir:STRING - name of the directory to create
 .os.p.W.mkdir:{[dir]
   dir:.os.p.fixPath dir;
@@ -83,7 +87,8 @@
   .os.system["mkdir"] "mkdir ",.os.p.q dir;
   };
   
-/F/ moves a file - Linux version
+/------------------------------------------------------------------------------/
+/F/ Moves a file - Linux version.
 /P/ source:STRING - the source name
 /P/ target:STRING - the target name
 .os.p.L.move:{[source;target]
@@ -92,7 +97,7 @@
   .os.system["move"] "mv ",source," ",target;
   };
 
-/F/ moves a file - Windows version
+/F/ Moves a file - Windows version.
 /P/ source:STRING - the source name
 /P/ target:STRING - the target name
 .os.p.W.move:{[source;target]
@@ -101,7 +106,8 @@
   .os.system["move"] "move /y ",source," ",target;
   };
 
-/F/ finds old files - Linux version
+/------------------------------------------------------------------------------/
+/F/ Finds old files - Linux version.
 /P/ dir:SYMBOL - directory to look into
 /P/ age:LONG - age of the files in days
 /P/ pattern:SYMBOL - pattern for the file path
@@ -111,7 +117,7 @@
 	:`$.pe.at[system;findCmd;{[cmd;sig] .log.error[`os] "error while calling \"",cmd,"\". Maybe invalid arguments?"; :()}[findCmd;]]
 	};
 
-/F/ finds old files - Windows version. Note: on Windows the pattern applies to files only
+/F/ Finds old files - Windows version. Note: on Windows the pattern applies to files only.
 /P/ dir:SYMBOL - directory to look into
 /P/ age:LONG - age of the files in days
 /P/ pattern:SYMBOL - pattern for the files
@@ -123,7 +129,8 @@
 	:{x where not null x} `$.pe.at[system;findCmd;{[cmd;sig] .log.warn[`hk] "error while calling \"",cmd,"\". This may be caused by the command not finding any matching files, or invalid arguments"; :()}[findCmd;]]
 	};
 
-/F/ Compresses a file or directory - Linux (and Mac) version
+/------------------------------------------------------------------------------/
+/F/ Compresses a file or directory - Linux (and Mac) version.
 /P/ path:STRING - path to the directory or file to compress
 .os.p.L.compress:{[path]
 	mac:"m"~first string .z.o;
@@ -132,7 +139,7 @@
 	:res
 	};
 
-/F/ Compresses a file or directory - Windows version
+/F/ Compresses a file or directory - Windows version.
 /P/ path:STRING - path to the directory or file to compress
 .os.p.W.compress:{[path]
 	path:.os.p.fixPath path;
@@ -141,6 +148,7 @@
 	$[0<type key hsym `$path;.os.p.W.rmdir path;.os.p.W.rm path];
 	};
   
+/------------------------------------------------------------------------------/
 /F/ Sleeps for given number of milliseconds. Linux version, requires Bash
 /P/ ms:LONG - number of milliseconds to sleep
 .os.p.L.sleep:{[ms]
@@ -154,6 +162,7 @@
   system "ping 127.0.0.1 -n ",(string s+1)," > null";
   };
 
+/------------------------------------------------------------------------------/
 /F/ Removes the last slash from a string - Windows version
 /P/ path:STRING - directory path
 /R/ :STRING - the path with slash removed if present
@@ -164,16 +173,22 @@
 /R/ :STRING - the path with slash removed if present
 .os.p.W.remSlash:{[path] $["\\" ~last path;(-1)_path;path]};
 
-/F/ converts slashes to the correct ones for Linux. Makes it easier to use literal paths 
+/------------------------------------------------------------------------------/
+/F/ Converts slashes to the correct ones for Linux. Makes it easier to use literal paths.
 /P/ p:STRING - a path
 .os.p.L.slash:{[p] ssr[p;"\\";"/"]};
 
-/F/ converts slashes to the correct ones for Windows. Makes it easier to use literal paths 
+/F/ Converts slashes to the correct ones for Windows. Makes it easier to use literal paths.
 /P/ p:STRING - a path
 .os.p.W.slash:{[p] ssr[p;"/";"\\"]};
 
-/F/ a wrapper for the system calls. The standard error is redirected to a disk file and thrown as signal.
-/P/ cmd:STRING - command string
+/------------------------------------------------------------------------------/
+/F/ Executes system command. The standard error is redirected to a disk file and thrown as signal.
+/P/ origin:STRING - command origin, used in the signal message in case of command failure
+/P/ cmd:STRING    - command string that should be executed in the operating system
+/R/ no return value
+/E/ .os.system["mkdir"] "mkdir TEST_DUMMY_DIR"
+/-/     - creates TEST_DUMMY_DIR
 .os.system:{[origin;cmd]
 	// wrap only id we have a valid log path
 	if[`dest in key `.log; // we are not running standalone
@@ -186,51 +201,96 @@
      @[system;cmd;{[origin;cmd;sig]'`$origin," failed with command \"",cmd,"\""}[origin;cmd]];
 	};	
 	
-/F/ surrounds a string with quotation marks
+/------------------------------------------------------------------------------/
+/F/ Surrounds a string with quotation marks.
 /P/ s:STRING
 .os.p.q:{[s] "\"",s,"\""};
 
-/F/ fixes a path - converts to string if needed and replaces slashes
+/------------------------------------------------------------------------------/
+/F/ Fixes a path - converts to string if needed and replaces slashes.
 /P/ path:UNION[STRING;SYMBOL] - a path in the form of string or symbol
 /R/ STRING: fixed path in for of string
 .os.p.fixPath:{[path] .os.slash  {$[(-11h)~type x;1_string x;x]} path};
 
-/--- stubs for docs generation, overwritten by initialization
+/------------------------------------------------------------------------------/
+/            stubs for docs generation, overwritten by initialization          /
+/------------------------------------------------------------------------------/
 
-/F/ removes a directory 
-/P/ dirname:STRING
+/F/ Removes a file.
+/P/ path:STRING - path to file
+/R/ no return value
+/E/ .os.rm `:/tmp/test/testFile
+.os.rm:{[path] };
+
+/F/ Removes a directory.
+/P/ dirname:STRING - directory name
+/R/ no return value
+/E/ .os.rmdir "testDir"
+/-/     - removes testDir and its content
 .os.rmdir:{[dirname] };
 
-/F/ copies directory with contents. On Linux, when dir2 points to an existing directory the 
-/F/ actual command executed is cp -rf dir1/* dir2. This way both on Linux and Windows
-/F/ the contents of dir1 is written to dir2 when dir2 already exists. 
+/F/ Copies directory with contents. On Linux, when dir2 points to an existing directory the 
+/-/ actual command executed is cp -rf dir1/* dir2. This way both on Linux and Windows
+/-/ the contents of dir1 is written to dir2 when dir2 already exists. 
 /P/ dir1:STRING - source dir
 /P/ dir2:STRING - target dir
+/R/ no return value
+/E/ .os.cpdir["testDir";"testDirCopy"]
+/-/     - creates copy of testDir and its content with a name "testDirCopy"
 .os.cpdir:{[dir1;dir2] };
 
-/F/ creates a directory
+/F/ Creates a directory.
 /P/ dir:STRING - name of the directory to create
+/R/ no return value
+/E/ .os.mkdir "testDir/subDir1/subDir2"
+/-/     - creates testDir directory with additional nested subdirectories subDir1/subDir2
 .os.mkdir:{[dir] };
 
-/F/ moves a file
+/F/ Moves a file.
 /P/ source:STRING - the source name
 /P/ target:STRING - the target name
+/R/ no return value
+/E/ .os.move["testFile";"testDir/"]
+/-/     - moves testFile to testDir
 .os.move:{[source;target] };
 
-/F/ converts slashes to the correct ones for OS. Makes it easier to use literal paths 
+/F/ Converts slashes to the correct ones for OS. Makes it easier to use literal paths.
 /P/ p:STRING - a path
-/R/ :STRING - a path with all wrong slashes converted to correct ones
+/R/ :STRING  - a path with all wrong slashes converted to correct ones
+/E/ .os.slash"bin\\ec/components\\rdb"
+/-/     - returns "bin/ec/components/rdb" on Linux
+/-/     - returns "bin\\ec\\components\\rdb" on Windows
 .os.slash:{[p] };
 
-/F/ returns a command that can be used to find old files
-/P/ dir:SYMBOL - directory to look into
-/P/ age:LONG - age of the files in days
-/P/ pattern:SYMBOL - pattern for the file path
+/F/ Finds files with given pattern and age. Can be used to find old files.
+/P/ dir:SYMBOL | STRING    - directory to look into
+/P/ age:LONG               - age of the files in days
+/P/ pattern:SYMBOL | SRING - pattern for the file path
+/R/ :LIST[SYMBOL] - a list of matching file paths
+/E/ .os.find[".";5;"*"]
+/-/     - returns all files from the current directory that are older than 5 days
 .os.find:{[dir;age;pattern] };
 
-/F/ sleeps given number of milliseconds. On Windows, the resolution is 1000ms (1s)
-/P/ t:LONG - time in millisecods. On Windows, this parameter is rounded UP to the nearest multiple of 1000.
+/F/ Sleeps given number of milliseconds. On Windows, the resolution is 1000ms (1s).
+/P/ ms:LONG - number of milliseconds to sleep. On Windows, this parameter is rounded UP to the nearest multiple of 1000.
+/R/ no return value
+/E/ .os.sleep 5000
+/-/     - sleeps 5 seconds
 .os.sleep:{[t] };
 
-/--- initialization
+/F/ Compresses a file or directory.
+/P/ path:STRING - path to the directory or file to compress
+/R/ no return value
+/E/ .os.compress `:testFile
+.os.compress:{[path] };
+
+/F/ Removes the last slash from a string
+/P/ path:STRING - directory path
+/R/ :STRING - the path with slash removed if present
+/E/ .os.remSlash `:/tmp/test/
+.os.remSlash:{[path] };
+
+/------------------------------------------------------------------------------/
+/                                  initialization                              /
+/------------------------------------------------------------------------------/
 $["w"~first string .z.o;.os,:.os.p.W;.os,:.os.p.L];
