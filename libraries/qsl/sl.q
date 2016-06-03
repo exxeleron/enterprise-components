@@ -74,6 +74,7 @@
   .sl.lib["qsl/handle.q"];
   .sl.lib["qsl/authorization.q"];
   .sl.lib["qsl/sub.q"];
+  .sl.lib["qsl/doc.q"];
   };
 
 //----------------------------------------------------------------------------//
