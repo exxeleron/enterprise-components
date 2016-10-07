@@ -1,8 +1,0 @@
-[table:<type(SYMBOL)>]     
-  	model = <type(TABLE), col1(SYMBOL), col2(SYMBOL)>
-	[[<type(SYMBOL), isComponent()>]]
-
-[sysTable:<type(SYMBOL)>]     
-	modelSrc = <type(SYMBOL), isComponent()>
-	[[<type(SYMBOL), isComponent()>]]
-	
