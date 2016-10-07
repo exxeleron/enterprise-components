@@ -1,6 +1,0 @@
-[group]
-	cfg.hdbPath = <type(PATH), default(hdb)>
-[table]
-[sysTable:sysUniverse]
-[user]
-[userGroup]
