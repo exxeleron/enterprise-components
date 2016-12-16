@@ -140,6 +140,8 @@ system"l ",getenv[`EC_QSL_PATH],"/sl.q";
 /-----------------------------------------------------------------------------/
 .hk.p.processOneTask:{[taskDef]
   plugin:` sv (`.hk.plug;taskDef[`action]);
+  if[0~count key taskDef[`dir];
+    .log.warn[`hk]"Given directory ",string[taskDef[`dir]], " is missing. Hk will skip this task. Please check if process ", string[taskDef[`proc]], " was properly started";:(::)];
   files:.os.find[taskDef `dir;taskDef `age;taskDef `pattern];
   if[0~count files;.log.info[`hk] "no files found matching pattern ",(string taskDef `pattern),", skipping task ",string taskDef `action;:(::)];
   .log.info[`hk] "Running ",string[plugin], " for ", string[taskDef[`proc]], " on ",string[count files], " files";
