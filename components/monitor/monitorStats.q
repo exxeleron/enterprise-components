@@ -87,6 +87,12 @@
 /F/ Gets func stats.
 .monitor.p.getFuncSummary:{[procList;procNs]
   toCheck:([]sym:procList)cross ([](),procNs);
+  if[count notCfg:procList where not procList in (distinct .monitor.status[`sym]);
+    .log.warn[`monitor]"Process: ",( "," sv string[notCfg]), " are either not added to the cfg.procMaskList in system.cfg [[admin.monitor]] or are not configured in system.cfg at all";
+    .log.info[`monitor]"Process: ",( "," sv string[notCfg]), " will be excluded from the sysFuncSummary";
+    toCheck:select from ([]sym:procList)cross ([](),procNs) where not sym in notCfg;
+    ];
+  if[not count toCheck; :0#([] time:enlist 0Nt; sym:`; procNs:`;funcCnt:0Ni; func:`)];
   funcStats:.pe.dotLog[`monitor;`.monitor.p.getRemoteFuncList;;`funcCnt`func!(0Ni;`symbol$());`error] each flip value flip toCheck;
   select time:.sl.zt[], sym, procNs,funcCnt, func from flip flip[toCheck],flip[funcStats]
   };
