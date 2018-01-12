@@ -40,8 +40,8 @@ files older than 8 days (which gives 38 days before log file is deleted) in the 
 directory is given below:
 
 ```cfg
-housekeeping = ((action(compress), dir(${EC_LOG_PATH}), age(30), pattern(*.log)), 
-                (action(delete),   dir(${EC_LOG_PATH}), age(8),  pattern(*.gz)))
+housekeeping = ((action(compress), dir(${logPath}), age(30), pattern(*.log)), 
+                (action(delete),   dir(${logPath}), age(8),  pattern(*.gz)))
 ```
 
 Placing above definition on the top-level of `system.cfg` file will ensure that actions will be

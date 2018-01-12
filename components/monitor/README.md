@@ -29,7 +29,6 @@ Note: configure port and component name according to your conventions (core.moni
     port = ${basePort} + 16
     cfg.procMaskList = ALL
     cfg.monitorStatusPublishing = FALSE
-    cfg.eventDir = ${KDB_ROOT_PATH}/data/shared/events/monitor_transfer/events/
 
   [[admin.rdb]]
     command = "q rdb.q"
