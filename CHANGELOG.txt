@@ -1,4 +1,12 @@
 ------------------------------------------------------------------------------
+  enterprise-components 3.3.2 [2018.01.12]
+------------------------------------------------------------------------------
+
+  - Fix: refreshUFiles = remove spurious warnings (#53)
+  - Fix: monitor - added a check if process name configured in dataflow.cfg is defined in system.cfg (#54)
+  - Fix: hk - added a check for directory existence to log a warning instead of errror (#56)
+
+------------------------------------------------------------------------------
   enterprise-components 3.3.1 [2016.06.03]
 ------------------------------------------------------------------------------
 
