@@ -33,6 +33,8 @@
   #/C/ flag for performing eod
   #/E/ eodPerform = 1
   eodPerform = <type(BOOLEAN) default(1)>
+  #/E/ table column to partition by for dhb eod write
+  attrCol = <type(SYMBOL) default(sym)>
 [sysTable]
   #/C/ connection settings for hdb
   #/E/ hdbConn = kdb.hdb
